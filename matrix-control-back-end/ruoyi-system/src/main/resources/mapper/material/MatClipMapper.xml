@@ -136,5 +136,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{materialId}
         </foreach>
     </delete>
+
+    <update id="outputMatClipStatus" parameterType="String">
+        update mat_clip set material_status = ${"4"} where material_status = ${"0"} and material_id in
+        <foreach item="materialId" collection="array" open="(" separator="," close=")">
+            #{materialId}
+        </foreach>
+    </update>
     
 </mapper>
