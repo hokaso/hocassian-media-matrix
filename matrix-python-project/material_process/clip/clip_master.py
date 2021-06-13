@@ -227,7 +227,7 @@ class ClipMaster(object):
             if not os.path.exists(self.final_path + "/output"):
                 os.makedirs(self.final_path + "/output")
 
-            current_time = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+            current_time = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
 
             current_folder = self.final_path + "/output/" + current_time
             os.makedirs(current_folder)
