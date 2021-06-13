@@ -78,8 +78,12 @@ class ImageMaster(object):
                 }
             }
         }
-        r = requests.post(self.send_url, data=json.dumps(body))
-        print(r)
+        try:
+            r = requests.post(self.send_url, data=json.dumps(body))
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            return None
         return r
 
     @retry(wait=wait_fixed(5))

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -171,5 +172,16 @@ public class MatClipController extends BaseController
     public AjaxResult remove(@PathVariable Long[] materialIds)
     {
         return toAjax(matClipService.deleteMatClipByIds(materialIds));
+    }
+
+    /**
+     * 导出视频素材
+     */
+    @PreAuthorize("@ss.hasPermi('material:clip:add')")
+    @GetMapping("/output/{materialIds}")
+    public AjaxResult output(@PathVariable Long[] materialIds)
+    {
+        System.out.println(Arrays.toString(materialIds));
+        return toAjax(matClipService.outputMatClipStatus(materialIds));
     }
 }

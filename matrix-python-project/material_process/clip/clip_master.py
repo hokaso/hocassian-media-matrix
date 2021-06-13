@@ -1,5 +1,5 @@
 # 该服务既是消费者，又是生产者，上文接新媒体后端发来的处理请求，下文接各具体运算单元，将任务分发给他们并行处理；
-import pika, json, time, os, sys, requests
+import pika, json, time, os, sys, requests, traceback, shutil
 
 sys.path.append(os.getcwd())
 from multiprocessing import JoinableQueue
@@ -113,8 +113,47 @@ class ClipMaster(object):
                 }
             }
         }
-        r = requests.post(self.send_url, data=json.dumps(body))
-        print(r.json())
+        try:
+            r = requests.post(self.send_url, data=json.dumps(body))
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            return None
+        return r
+
+    def output_notice(self, msg, count, duration):
+        body = {
+            "msg_type": "post",
+            "content": {
+                "post": {
+                    "zh_cn": {
+                        "title": "视频导出通知",
+                        "content": [
+                            [
+                                {
+                                    "tag": "text",
+                                    "text": msg + "\n"
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "本次导出了" + str(count) + "个素材\n"
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "导出耗时：" + duration + "\n"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+        try:
+            r = requests.post(self.send_url, data=json.dumps(body))
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            return None
         return r
 
     # 定义一个回调函数来处理消息队列中的消息，这里是打印出来
@@ -178,6 +217,43 @@ class ClipMaster(object):
             duration = "%02d时%02d分%02d秒" % (h, m, s)
             self.redis_handle.delete("batchClip")
             self.notice("视频素材裁切处理完成！", counting, duration)
+
+        elif raw_msg["optional_id"] == 3:
+            start = time.perf_counter()
+            prepare_sql = "SELECT material_id, material_path from mat_clip " \
+                          "where material_status = '4'"
+            all_prepared_clips = self.db_handle.search_DB(prepare_sql)
+
+            if not os.path.exists(self.final_path + "/output"):
+                os.makedirs(self.final_path + "/output")
+
+            current_time = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
+
+            current_folder = self.final_path + "/output/" + current_time
+            os.makedirs(current_folder)
+            os.makedirs(current_folder + "/proxies")
+
+            counting = 0
+
+            for ikey in all_prepared_clips:
+
+                counting += 1
+                # 複製原始文件
+                shutil.copyfile(self.final_path + "/raw/" + ikey["material_path"] + ".mp4", current_folder + "/" + ikey["material_path"] + ".mp4")
+                # 複製代理文件
+                shutil.copyfile(self.final_path + "/preview/" + ikey["material_path"] + ".mp4", current_folder + "/proxies/" + ikey["material_path"] + ".mp4")
+
+                reduction_sql = "UPDATE mat_clip set material_status = '0' where material_id = '%s'" % (ikey["material_id"])
+                self.db_handle.modify_DB(reduction_sql)
+
+            self.task_queue.join()
+            end = time.perf_counter()
+            m, s = divmod(round(end - start), 60)
+            h, m = divmod(m, 60)
+            duration = "%02d时%02d分%02d秒" % (h, m, s)
+            self.redis_handle.delete("translateClip")
+            self.output_notice("视频导出完成！", counting, duration)
+
 
 
 if __name__ == '__main__':

@@ -137,7 +137,7 @@
           type="primary"
           icon="el-icon-magic-stick"
           size="mini"
-          @click="handleOption(3)"
+          @click="handleOutput"
           v-hasPermi="['material:clip:add']"
         >导出素材
         </el-button>
@@ -555,7 +555,8 @@
           0: '处理完毕',
           1: '初入库',
           2: '正在处理',
-          3: '准备处理'
+          3: '准备处理',
+          4: '正在导出'
         }
         return statusMap[status]
       },
@@ -565,6 +566,7 @@
           1: 'error',
           2: 'warning',
           3: 'info',
+          4: 'info',
         }
         return statusMap[status]
       },
@@ -647,7 +649,8 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {}
+        rules: {},
+        outputMaterialIds: null
       };
     },
     // beforeDestroy() {
@@ -842,20 +845,21 @@
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
+          if (optionalId === 3){
+            outputClip(this.outputMaterialIds);
+            this.msgSuccess("后台正在导出中，请稍作等待~");
+          }
           optionClip(optionalId).then(response => {
               // console.log(response);
               this.msgSuccess("处理指令推送成功！");
               this.getList();
             }
           )
-        })
-        if (optionalId === 3){
-          const materialIds = row.materialId || this.ids;
-          outputClip(materialIds);
-          this.getList();
-          this.msgSuccess("后台正在导出中，请稍作等待~");
-        }
-
+        });
+      },
+      handleOutput(row) {
+        this.outputMaterialIds = row.materialId || this.ids;
+        this.handleOption(3);
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
