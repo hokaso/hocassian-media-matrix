@@ -81,29 +81,42 @@ public class MatClipController extends BaseController
     }
 
     /**
-     * 导入/处理素材（批操作，其中：1导入，2处理）
+     * 导入/处理素材（批操作，其中：1导入，2处理，3导出）
      */
     @PreAuthorize("@ss.hasPermi('material:clip:add')")
     @GetMapping(value = "/option/{optionalId}")
     public AjaxResult option(@PathVariable("optionalId") Long optionalId)
     {
+        int IMPORT_CLIP = 1;
+        int BATCH_CLIP = 2;
+        int TRANSLATE_CLIP = 3;
+
         HashMap<String, Object> map=new HashMap<>(16);
         Long importClip = redisCache.getCacheObject("importClip");
         Long batchClip = redisCache.getCacheObject("batchClip");
+        Long translateClip = redisCache.getCacheObject("translateClip");
 
-        if (importClip != null && optionalId == 1 && importClip == 1){
+        if (importClip != null && optionalId == IMPORT_CLIP && importClip == IMPORT_CLIP){
             return AjaxResult.error("导入正在进行中，请等待当前处理完毕后再试！");
         }
-        else if (optionalId == 1) {
+        else if (optionalId == IMPORT_CLIP) {
             redisCache.setCacheObject("importClip", optionalId);
             map.put("optional_id", optionalId);
         }
 
-        if (batchClip != null && optionalId == 2 && batchClip == 2){
+        if (batchClip != null && optionalId == BATCH_CLIP && batchClip == BATCH_CLIP){
             return AjaxResult.error("批处理正在进行中，请等待当前处理完毕后再试！");
         }
-        else if (optionalId == 2) {
+        else if (optionalId == BATCH_CLIP) {
             redisCache.setCacheObject("batchClip", optionalId);
+            map.put("optional_id", optionalId);
+        }
+
+        if (translateClip != null && optionalId == TRANSLATE_CLIP && translateClip == TRANSLATE_CLIP){
+            return AjaxResult.error("批处理正在进行中，请等待当前处理完毕后再试！");
+        }
+        else if (optionalId == TRANSLATE_CLIP) {
+            redisCache.setCacheObject("translateClip", optionalId);
             map.put("optional_id", optionalId);
         }
 
@@ -112,7 +125,7 @@ public class MatClipController extends BaseController
     }
 
     /**
-     * 确定批处理那两个按钮的状态
+     * 确定批处理那三个按钮的状态
      */
     @GetMapping("/status")
     public AjaxResult status()
@@ -120,8 +133,10 @@ public class MatClipController extends BaseController
         HashMap<String, Object> map=new HashMap<>(16);
         Long importClip = redisCache.getCacheObject("importClip");
         Long batchClip = redisCache.getCacheObject("batchClip");
+        Long translateClip = redisCache.getCacheObject("translateClip");
         map.put("importClip", importClip);
         map.put("batchClip", batchClip);
+        map.put("translateClip", translateClip);
         return AjaxResult.success(map);
     }
 
