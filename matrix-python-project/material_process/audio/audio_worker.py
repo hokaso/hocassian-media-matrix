@@ -61,5 +61,5 @@ class AudioWorker(object):
         shutil.rmtree("output")
 
 if __name__ == '__main__':
-    aw = AudioWorker()
+    aw = AudioWorker(SERVER_PORT)
     aw.start()
