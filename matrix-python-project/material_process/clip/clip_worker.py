@@ -26,7 +26,7 @@ class ClipWorker(object):
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
             _info = json.loads(f0.read())
 
-        current = os.getcwd().replace("/hocassian-media-matrix/matrix-python-project", "")
+        current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.origin_path = current + "/matrix/material/video_clip_temp/"
         self.final_path = current + "/matrix/material/video_clip/"
         self.raw_path = current + "/matrix/material/video_clip/raw/"
