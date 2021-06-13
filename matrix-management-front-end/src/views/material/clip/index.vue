@@ -120,6 +120,28 @@
         >处理素材
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          v-if="this.translateClip === 3"
+          type="primary"
+          disabled
+          icon="el-icon-loading"
+          size="mini"
+          @click=""
+          v-hasPermi="['material:clip:add']"
+        >导出素材
+        </el-button>
+        <el-button
+          v-else
+          :disabled="multiple"
+          type="primary"
+          icon="el-icon-magic-stick"
+          size="mini"
+          @click="handleOutput"
+          v-hasPermi="['material:clip:add']"
+        >导出素材
+        </el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table v-loading="loading" :data="clipList" @selection-change="handleSelectionChange">
@@ -476,6 +498,7 @@
     addClip,
     updateClip,
     exportClip,
+    outputClip,
     changeStatusClip
   } from "@/api/material/clip";
 
@@ -532,7 +555,8 @@
           0: '处理完毕',
           1: '初入库',
           2: '正在处理',
-          3: '准备处理'
+          3: '准备处理',
+          4: '正在导出'
         }
         return statusMap[status]
       },
@@ -542,6 +566,7 @@
           1: 'error',
           2: 'warning',
           3: 'info',
+          4: 'info',
         }
         return statusMap[status]
       },
@@ -581,6 +606,8 @@
         importClip: 0,
         // 批量处理
         batchClip: 0,
+        // 转移处理
+        translateClip: 0,
         // 遮罩层
         loading: true,
         // 选中数组
@@ -622,7 +649,8 @@
         // 表单参数
         form: {},
         // 表单校验
-        rules: {}
+        rules: {},
+        outputMaterialIds: null
       };
     },
     // beforeDestroy() {
@@ -662,8 +690,11 @@
             if (response.data.batchClip) {
               this.batchClip = response.data.batchClip
             }
+            if (response.data.translateClip) {
+              this.translateClip = response.data.translateClip
+            }
           }
-        )
+        );
         listClip(this.queryParams).then(response => {
           this.clipList = response.rows;
           Object.keys(this.clipList).forEach(key => {
@@ -809,18 +840,26 @@
 
       /** 进行批处理 */
       handleOption(optionalId) {
-        this.$confirm('是否确认执行该转码操作？', "警告", {
+        this.$confirm('是否确认执行该操作？', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
+          if (optionalId === 3){
+            outputClip(this.outputMaterialIds);
+            this.msgSuccess("后台正在导出中，请稍作等待~");
+          }
           optionClip(optionalId).then(response => {
               // console.log(response);
               this.msgSuccess("处理指令推送成功！");
               this.getList();
             }
           )
-        })
+        });
+      },
+      handleOutput(row) {
+        this.outputMaterialIds = row.materialId || this.ids;
+        this.handleOption(3);
       },
       /** 修改按钮操作 */
       handleUpdate(row) {

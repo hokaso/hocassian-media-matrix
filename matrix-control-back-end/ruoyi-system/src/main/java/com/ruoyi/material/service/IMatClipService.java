@@ -61,6 +61,14 @@ public interface IMatClipService
     public int deleteMatClipByIds(Long[] materialIds);
 
     /**
+     * 批量導出视频素材
+     *
+     * @param materialIds 需要導出的数据ID
+     * @return 结果
+     */
+    public int outputMatClipStatus(Long[] materialIds);
+
+    /**
      * 删除视频素材信息
      * 
      * @param materialId 视频素材ID

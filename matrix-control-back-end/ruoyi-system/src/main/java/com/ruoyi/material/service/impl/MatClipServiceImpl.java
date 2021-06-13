@@ -106,6 +106,17 @@ public class MatClipServiceImpl implements IMatClipService
     }
 
     /**
+     * 批量导出视频素材
+     *
+     * @param materialIds 需要导出的视频素材ID
+     * @return 结果
+     */
+    @Override
+    public int outputMatClipStatus(Long[] materialIds){
+        return matClipMapper.outputMatClipStatus(materialIds);
+    }
+
+    /**
      * 删除视频素材信息
      * 
      * @param materialId 视频素材ID
