@@ -47,7 +47,7 @@ class AudioWorker(object):
         off_vocal_set = "spleeter separate -p spleeter:2stems -o output \""+ path +"\""
         os.system(off_vocal_set)
         audio_handle_set_list = [
-            "ffmpeg -i \"",
+            "./ffmpeg -i \"",
             "output/",
             path.split(".")[0],
             "/accompaniment.wav",
