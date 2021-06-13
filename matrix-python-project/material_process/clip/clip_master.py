@@ -9,7 +9,7 @@ from db.redis_handler import InstantRedis
 from tenacity import retry, wait_fixed
 
 # 队列通讯端口
-# SERVER_IP = '0.0.0.0'
+SERVER_IP = '0.0.0.0'
 SERVER_PORT = 7968
 
 
@@ -19,7 +19,7 @@ class ServerManager(BaseManager):
 
 class ClipMaster(object):
 
-    def __init__(self, SERVER_IP):
+    def __init__(self):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
             info = json.loads(f0.read())

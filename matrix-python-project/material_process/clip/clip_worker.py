@@ -11,7 +11,7 @@ from tenacity import retry, wait_fixed
 from PIL import Image
 from material_process.clip.clip_analyze import ClipAnalyze
 
-SERVER_IP = '127.0.0.1'
+# SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7968
 
 
@@ -21,7 +21,7 @@ class ServerManager(BaseManager):
 
 class ClipWorker(object):
 
-    def __init__(self):
+    def __init__(self, SERVER_IP):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
             _info = json.loads(f0.read())

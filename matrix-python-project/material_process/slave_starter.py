@@ -16,13 +16,13 @@ class Starter(object):
 
     @staticmethod
     def clip_master():
-        clip_master = ClipMaster(SERVER_IP)
+        clip_master = ClipMaster()
         clip_master.listen()
 
     @staticmethod
     def clip_worker():
         time.sleep(5)
-        clip_worker = ClipWorker()
+        clip_worker = ClipWorker(SERVER_IP)
         clip_worker.start()
 
     @staticmethod
@@ -33,7 +33,7 @@ class Starter(object):
     @staticmethod
     def audio_worker():
         time.sleep(5)
-        audio_worker = AudioWorker()
+        audio_worker = AudioWorker(SERVER_IP)
         audio_worker.start()
 
     @staticmethod
