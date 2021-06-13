@@ -1,0 +1,8 @@
+.idea
+/files/
+db/config.json
+sync_ytb_video/config.json
+utils/test.py
+material_process/config.json
+pretrained_models/
+key.txt

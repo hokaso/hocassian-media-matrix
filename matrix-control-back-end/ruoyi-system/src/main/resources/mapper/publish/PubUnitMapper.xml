@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.publish.mapper.PubUnitMapper">
+    
+    <resultMap type="PubUnit" id="PubUnitResult">
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="unitInfo"    column="unit_info"    />
+        <result property="unitEmail"    column="unit_email"    />
+        <result property="unitType"    column="unit_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPubUnitVo">
+        select unit_id, unit_name, unit_info, unit_email, unit_type, create_by, create_time, update_by, update_time from pub_unit
+    </sql>
+
+    <select id="selectPubUnitList" parameterType="PubUnit" resultMap="PubUnitResult">
+        <include refid="selectPubUnitVo"/>
+        <where>  
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="unitType != null  and unitType != ''"> and unit_type = #{unitType}</if>
+        </where>
+    </select>
+    
+    <select id="selectPubUnitById" parameterType="Long" resultMap="PubUnitResult">
+        <include refid="selectPubUnitVo"/>
+        where unit_id = #{unitId}
+    </select>
+        
+    <insert id="insertPubUnit" parameterType="PubUnit">
+        insert into pub_unit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitId != null">unit_id,</if>
+            <if test="unitName != null">unit_name,</if>
+            <if test="unitInfo != null">unit_info,</if>
+            <if test="unitEmail != null">unit_email,</if>
+            <if test="unitType != null">unit_type,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitId != null">#{unitId},</if>
+            <if test="unitName != null">#{unitName},</if>
+            <if test="unitInfo != null">#{unitInfo},</if>
+            <if test="unitEmail != null">#{unitEmail},</if>
+            <if test="unitType != null">#{unitType},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePubUnit" parameterType="PubUnit">
+        update pub_unit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitName != null">unit_name = #{unitName},</if>
+            <if test="unitInfo != null">unit_info = #{unitInfo},</if>
+            <if test="unitEmail != null">unit_email = #{unitEmail},</if>
+            <if test="unitType != null">unit_type = #{unitType},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where unit_id = #{unitId}
+    </update>
+
+    <delete id="deletePubUnitById" parameterType="Long">
+        delete from pub_unit where unit_id = #{unitId}
+    </delete>
+
+    <delete id="deletePubUnitByIds" parameterType="String">
+        delete from pub_unit where unit_id in 
+        <foreach item="unitId" collection="array" open="(" separator="," close=")">
+            #{unitId}
+        </foreach>
+    </delete>
+    
+</mapper>

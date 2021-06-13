@@ -1,0 +1,110 @@
+import pymysql, json, os
+
+
+class DatabaseHandler(object):
+    def __init__(self, host, username, password, database, port):
+        self.host = host
+        self.username = username
+        self.password = password
+        self.database = database
+        self.port = port
+        self.db = pymysql.connect(
+            self.host,
+            self.username,
+            self.password, self.database,
+            self.port,
+            charset='utf8',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        self.cursor = self.db.cursor()
+
+    # 增删改数据库操作
+    def modify_DB(self, sql):
+        self.db.ping(reconnect=True)
+        try:
+            self.cursor.execute(sql)
+            # log = self.cursor.execute(sql)  # 返回 插入数据 条数 可以根据 返回值 判定处理结果
+            # print(log)
+            self.db.commit()
+        except Exception as e:
+            print(e)
+            # 发生错误时回滚
+            self.db.rollback()
+
+    # 查数据库操作
+    def search_DB(self, sql):
+        self.db.ping(reconnect=True)
+        try:
+            self.cursor.execute(sql)
+            # log = self.cursor.execute(sql) # 返回 查询数据 条数 可以根据 返回值 判定处理结果
+            # print(log)
+            data = self.cursor.fetchall()  # 返回所有记录列表
+        except Exception as e:
+            print(e)
+            data = None
+        return data
+
+    # 查数据库中某个表是否存在某个条目，存在返回具体值，不存在则返回None
+    def exist_DB(self, table, entry, numerical):
+        try:
+            sql = "select * from " + table + " where " + entry + " = \"" + numerical + "\" LIMIT 1"
+            self.cursor.execute(sql)
+            col = self.cursor.description
+            data = self.cursor.fetchone()  # 返回指定记录列表
+        except Exception as e:
+            print(e)
+            data = None
+            col = None
+        return data, col
+
+    # 当程序调用表中某个条目时，该条目的调用计数字段+1
+    def count_DB(self, table, entry, numerical):
+        try:
+            sql = "update " + table + " set call_count=call_count+'1' where " + entry + " = \"" + numerical + "\" LIMIT 1"
+            self.cursor.execute(sql)
+            self.db.commit()
+        except Exception as e:
+            print(e)
+            self.db.rollback()
+
+    def db_close(self):
+        self.db.close()
+
+
+class InstantDB(object):
+
+    def __init__(self):
+        # 初始化数据库
+
+        with open(os.getcwd() + "/db/config.json", 'r') as f0:
+            info = json.loads(f0.read())
+
+        # 本地生產
+        self.db_handle = DatabaseHandler(
+            info["local_prod"]["ip"],
+            info["local_prod"]["account"],
+            info["local_prod"]["password"],
+            info["local_prod"]["database"],
+            info["local_prod"]["port"]
+        )
+
+        # 遠程生產
+        # self.db_handle = DatabaseHandler(
+        #     info["remote_prod"]["ip"],
+        #     info["remote_prod"]["account"],
+        #     info["remote_prod"]["password"],
+        #     info["remote_prod"]["database"],
+        #     info["remote_prod"]["port"]
+        # )
+
+        # 本地開發
+        # self.db_handle = DatabaseHandler(
+        #     info["local_dev"]["ip"],
+        #     info["local_dev"]["account"],
+        #     info["local_dev"]["password"],
+        #     info["local_dev"]["database"],
+        #     info["local_dev"]["port"]
+        # )
+
+    def get_connect(self):
+        return self.db_handle

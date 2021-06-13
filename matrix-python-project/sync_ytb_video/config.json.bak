@@ -1,0 +1,8 @@
+{
+  "ydl_opts": {
+    "proxy": "socks5://127.0.0.1:1080",
+    "outtmpl": "/home/ubuntu/matrix/video_matrix/%(id)s.mp4",
+    "cookies": ""
+  },
+  "file_path": "/home/ubuntu/matrix/video_matrix/"
+}

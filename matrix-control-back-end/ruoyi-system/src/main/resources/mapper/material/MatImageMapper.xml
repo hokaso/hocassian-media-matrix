@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.material.mapper.MatImageMapper">
+    
+    <resultMap type="MatImage" id="MatImageResult">
+        <result property="imageId"    column="image_id"    />
+        <result property="imagePath"    column="image_path"    />
+        <result property="imageNote"    column="image_note"    />
+        <result property="imageSize"    column="image_size"    />
+        <result property="imageTag"    column="image_tag"    />
+        <result property="imageMark"    column="image_mark"    />
+        <result property="imageStatus"    column="image_status"    />
+        <result property="imageType"    column="image_type"    />
+        <result property="isCopyright"    column="is_copyright"    />
+        <result property="isShow"    column="is_show"    />
+    </resultMap>
+
+    <sql id="selectMatImageVo">
+        select image_id, image_path, image_note, image_size, image_tag, image_mark, image_status, image_type, is_copyright, is_show from mat_image
+    </sql>
+
+    <select id="selectMatImageList" parameterType="MatImage" resultMap="MatImageResult">
+        <include refid="selectMatImageVo"/>
+        <where>  
+            <if test="imageTag != null  and imageTag != ''"> and (image_tag like concat('%', #{imageTag}, '%') or image_note like concat('%', #{imageTag}, '%'))</if>
+            <if test="imageType != null  and imageType != ''"> and image_type = #{imageType}</if>
+            <if test="isCopyright != null  and isCopyright != ''"> and is_copyright = #{isCopyright}</if>
+            <if test="isShow != null  and isShow != ''"> and is_show = #{isShow}</if>
+        </where>
+        order by image_id desc
+    </select>
+    
+    <select id="selectMatImageById" parameterType="Long" resultMap="MatImageResult">
+        <include refid="selectMatImageVo"/>
+        where image_id = #{imageId}
+    </select>
+        
+    <insert id="insertMatImage" parameterType="MatImage" useGeneratedKeys="true" keyProperty="imageId">
+        insert into mat_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imagePath != null">image_path,</if>
+            <if test="imageNote != null">image_note,</if>
+            <if test="imageSize != null">image_size,</if>
+            <if test="imageTag != null">image_tag,</if>
+            <if test="imageMark != null">image_mark,</if>
+            <if test="imageStatus != null">image_status,</if>
+            <if test="imageType != null">image_type,</if>
+            <if test="isCopyright != null">is_copyright,</if>
+            <if test="isShow != null">is_show,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imagePath != null">#{imagePath},</if>
+            <if test="imageNote != null">#{imageNote},</if>
+            <if test="imageSize != null">#{imageSize},</if>
+            <if test="imageTag != null">#{imageTag},</if>
+            <if test="imageMark != null">#{imageMark},</if>
+            <if test="imageStatus != null">#{imageStatus},</if>
+            <if test="imageType != null">#{imageType},</if>
+            <if test="isCopyright != null">#{isCopyright},</if>
+            <if test="isShow != null">#{isShow},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMatImage" parameterType="MatImage">
+        update mat_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imagePath != null">image_path = #{imagePath},</if>
+            <if test="imageNote != null">image_note = #{imageNote},</if>
+            <if test="imageSize != null">image_size = #{imageSize},</if>
+            <if test="imageTag != null">image_tag = #{imageTag},</if>
+            <if test="imageMark != null">image_mark = #{imageMark},</if>
+            <if test="imageStatus != null">image_status = #{imageStatus},</if>
+            <if test="imageType != null">image_type = #{imageType},</if>
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+        </trim>
+        where image_id = #{imageId}
+    </update>
+
+    <update id="changeMatImageStatus" parameterType="MatImage">
+        update mat_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+            <if test="imageType != null">image_type = #{imageType},</if>
+        </trim>
+        where image_id = #{imageId}
+    </update>
+
+    <delete id="deleteMatImageById" parameterType="Long">
+        delete from mat_image where image_id = #{imageId}
+    </delete>
+
+    <delete id="deleteMatImageByIds" parameterType="String">
+        delete from mat_image where image_id in 
+        <foreach item="imageId" collection="array" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </delete>
+    
+</mapper>

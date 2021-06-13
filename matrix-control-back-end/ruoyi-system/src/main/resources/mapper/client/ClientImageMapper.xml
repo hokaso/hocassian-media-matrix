@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientImageMapper">
+
+    <resultMap type="MatImage" id="ClientImageResult">
+        <result property="imageId"    column="image_id"    />
+        <result property="imagePath"    column="image_path"    />
+        <result property="imageSize"    column="image_size"    />
+        <result property="imageTag"    column="image_tag"    />
+        <result property="imageMark"    column="image_mark"    />
+        <result property="imageStatus"    column="image_status"    />
+        <result property="imageType"    column="image_type"    />
+    </resultMap>
+
+    <sql id="selectClientImageVo">
+        select image_id, image_path, image_size, image_tag, image_mark, image_status, image_type, is_copyright, is_show from mat_image
+    </sql>
+
+    <select id="selectClientImageList" parameterType="MatImage" resultMap="ClientImageResult">
+        <include refid="selectClientImageVo"/>
+        <where>
+            <if test="imageTag != null  and imageTag != ''"> and (image_tag like concat('%', #{imageTag}, '%') or image_note like concat('%', #{imageTag}, '%'))</if>
+            and is_copyright = ${"0"} and is_show = ${"0"} and image_type = ${"0"}
+        </where>
+        order by image_id desc
+    </select>
+
+    <select id="selectImageUrls" resultType="string">
+        select image_path from mat_image
+        where is_copyright = ${"0"} and is_show = ${"0"} and image_type = ${"0"}
+        order by image_id desc
+        limit 20
+    </select>
+
+    <select id="selectImageKeywords" resultType="string">
+        select image_tag from mat_image
+        where is_copyright = ${"0"} and is_show = ${"0"} and image_type = ${"0"}
+        order by image_id desc
+        limit 10
+    </select>
+
+</mapper>

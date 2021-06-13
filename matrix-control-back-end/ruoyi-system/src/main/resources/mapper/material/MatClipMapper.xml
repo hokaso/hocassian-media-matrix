@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.material.mapper.MatClipMapper">
+    
+    <resultMap type="MatClip" id="MatClipResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="materialPath"    column="material_path"    />
+        <result property="materialSize"    column="material_size"    />
+        <result property="materialTime"    column="material_time"    />
+        <result property="materialNote"    column="material_note"    />
+        <result property="materialMark"    column="material_mark"    />
+        <result property="materialStatus"    column="material_status"    />
+        <result property="materialTag"    column="material_tag"    />
+        <result property="materialCreate"    column="material_create"    />
+        <result property="materialType"    column="material_type"    />
+        <result property="materialStart"    column="material_start"    />
+        <result property="materialEnd"    column="material_end"    />
+        <result property="isCopyright"    column="is_copyright"    />
+        <result property="isShow"    column="is_show"    />
+        <result property="isMerge"    column="is_merge"    />
+        <result property="errorInfo"    column="error_info"    />
+    </resultMap>
+
+    <sql id="selectMatClipVo">
+        select material_id, material_path, material_size, material_time, material_note, material_mark, material_status, material_tag, material_create, material_type, material_start, material_end, is_copyright, is_show, is_merge, error_info from mat_clip
+    </sql>
+
+    <select id="selectMatClipList" parameterType="MatClip" resultMap="MatClipResult">
+        <include refid="selectMatClipVo"/>
+        <where>  
+            <if test="materialTag != null  and materialTag != ''"> and (material_tag like concat('%', #{materialTag}, '%') or material_note like concat('%', #{materialTag}, '%'))</if>
+            <if test="materialStatus != null "> and material_status = #{materialStatus}</if>
+            <if test="materialType != null  and materialType != ''"> and material_type = #{materialType}</if>
+            <if test="isCopyright != null  and isCopyright != ''"> and is_copyright = #{isCopyright}</if>
+            <if test="isShow != null  and isShow != ''"> and is_show = #{isShow}</if>
+        </where>
+        <choose>
+            <when test="orderbyMark == 0">
+                order by material_mark desc
+            </when>
+            <when test="orderbyMark == 1">
+                order by material_id desc
+            </when>
+            <otherwise>
+                order by material_id desc
+            </otherwise>
+        </choose>
+<!--        <if test="orderbyMark != null  and orderbyMark == '1'"> order by material_mark desc</if>-->
+<!--        <if test="orderbyMark == null  or orderbyMark == '0'"> order by material_id desc</if>-->
+    </select>
+    
+    <select id="selectMatClipById" parameterType="Long" resultMap="MatClipResult">
+        <include refid="selectMatClipVo"/>
+        where material_id = #{materialId}
+    </select>
+        
+    <insert id="insertMatClip" parameterType="MatClip" useGeneratedKeys="true" keyProperty="materialId">
+        insert into mat_clip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialPath != null">material_path,</if>
+            <if test="materialSize != null">material_size,</if>
+            <if test="materialTime != null">material_time,</if>
+            <if test="materialNote != null">material_note,</if>
+            <if test="materialMark != null">material_mark,</if>
+            <if test="materialStatus != null">material_status,</if>
+            <if test="materialTag != null">material_tag,</if>
+            <if test="materialCreate != null">material_create,</if>
+            <if test="materialType != null">material_type,</if>
+            <if test="materialStart != null">material_start,</if>
+            <if test="materialEnd != null">material_end,</if>
+            <if test="isCopyright != null">is_copyright,</if>
+            <if test="isShow != null">is_show,</if>
+            <if test="isMerge != null">is_merge,</if>
+            <if test="errorInfo != null">error_info,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialPath != null">#{materialPath},</if>
+            <if test="materialSize != null">#{materialSize},</if>
+            <if test="materialTime != null">#{materialTime},</if>
+            <if test="materialNote != null">#{materialNote},</if>
+            <if test="materialMark != null">#{materialMark},</if>
+            <if test="materialStatus != null">#{materialStatus},</if>
+            <if test="materialTag != null">#{materialTag},</if>
+            <if test="materialCreate != null">#{materialCreate},</if>
+            <if test="materialType != null">#{materialType},</if>
+            <if test="materialStart != null">#{materialStart},</if>
+            <if test="materialEnd != null">#{materialEnd},</if>
+            <if test="isCopyright != null">#{isCopyright},</if>
+            <if test="isShow != null">#{isShow},</if>
+            <if test="isMerge != null">#{isMerge},</if>
+            <if test="errorInfo != null">#{errorInfo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMatClip" parameterType="MatClip">
+        update mat_clip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialPath != null">material_path = #{materialPath},</if>
+            <if test="materialSize != null">material_size = #{materialSize},</if>
+            <if test="materialTime != null">material_time = #{materialTime},</if>
+            <if test="materialNote != null">material_note = #{materialNote},</if>
+            <if test="materialMark != null">material_mark = #{materialMark},</if>
+            <if test="materialStatus != null">material_status = #{materialStatus},</if>
+            <if test="materialTag != null">material_tag = #{materialTag},</if>
+            <if test="materialCreate != null">material_create = #{materialCreate},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="materialStart != null">material_start = #{materialStart},</if>
+            <if test="materialEnd != null">material_end = #{materialEnd},</if>
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+            <if test="isMerge != null">is_merge = #{isMerge},</if>
+            <if test="errorInfo != null">error_info = #{errorInfo},</if>
+        </trim>
+        where material_id = #{materialId}
+    </update>
+
+    <update id="changeMatClipStatus" parameterType="MatClip">
+        update mat_clip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+        </trim>
+        where material_id = #{materialId}
+    </update>
+
+    <delete id="deleteMatClipById" parameterType="Long">
+        delete from mat_clip where material_id = #{materialId}
+    </delete>
+
+    <delete id="deleteMatClipByIds" parameterType="String">
+        delete from mat_clip where material_id in 
+        <foreach item="materialId" collection="array" open="(" separator="," close=")">
+            #{materialId}
+        </foreach>
+    </delete>
+    
+</mapper>

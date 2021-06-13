@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientAudioMapper">
+
+    <resultMap type="MatAudio" id="ClientAudioResult">
+        <result property="audioId"    column="audio_id"    />
+        <result property="audioPath"    column="audio_path"    />
+        <result property="audioName"    column="audio_name"    />
+        <result property="audioAuthor"    column="audio_author"    />
+        <result property="audioType"    column="audio_type"    />
+        <result property="audioStatus"    column="audio_status"    />
+        <result property="audioEmotion"    column="audio_emotion"    />
+        <result property="audioTime"    column="audio_time"    />
+        <result property="isCopyright"    column="is_copyright"    />
+        <result property="isShow"    column="is_show"    />
+    </resultMap>
+
+    <sql id="selectClientAudioVo">
+        select audio_id, audio_path, audio_name, audio_author, audio_type, audio_status, audio_emotion, audio_note, audio_time, is_copyright, is_show, audio_meta from mat_audio
+    </sql>
+
+    <select id="selectClientAudioList" parameterType="MatAudio" resultMap="ClientAudioResult">
+        <include refid="selectClientAudioVo"/>
+        <where>
+            <if test="audioName != null  and audioName != ''">
+                and (audio_name like concat('%', #{audioName}, '%') or audio_author like concat('%', #{audioName}, '%') or audio_emotion like concat('%', #{audioName}, '%'))
+            </if>
+            and is_copyright = ${"0"} and is_show = ${"0"} and (audio_status = ${"0"} or audio_status = ${"2"})
+        </where>
+    </select>
+
+    <select id="selectAudioKeywords" resultType="string">
+        select audio_emotion from mat_audio
+        where is_copyright = ${"0"} and is_show = ${"0"} and (audio_status = ${"0"} or audio_status = ${"2"})
+        order by audio_id desc
+        limit 10
+    </select>
+
+</mapper>

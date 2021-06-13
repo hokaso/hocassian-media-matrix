@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BusChannelMapper">
+    
+    <resultMap type="com.ruoyi.business.domain.BusChannel" id="BusChannelResult">
+        <result property="channelId"    column="channel_id"    />
+        <result property="channelUrl"    column="channel_url"    />
+        <result property="channelLogo"    column="channel_logo"    />
+        <result property="channelOwner"    column="channel_owner"    />
+        <result property="channelVideoCount"    column="channel_video_count"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBusChannelVo">
+        select channel_id, channel_url, channel_logo, channel_owner, channel_video_count ,create_by,create_time,update_by,update_time from bus_channel
+    </sql>
+
+    <select id="selectBusChannelList" parameterType="com.ruoyi.business.domain.BusChannel" resultMap="BusChannelResult">
+        <include refid="selectBusChannelVo"/>
+        <where>  
+            <if test="channelOwner != null  and channelOwner != ''"> and channel_owner like concat('%', #{channelOwner}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectBusChannelById" parameterType="Long" resultMap="BusChannelResult">
+        <include refid="selectBusChannelVo"/>
+        where channel_id = #{channelId}
+    </select>
+        
+    <insert id="insertBusChannel" parameterType="com.ruoyi.business.domain.BusChannel" useGeneratedKeys="true" keyProperty="channelId">
+        insert into bus_channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelUrl != null">channel_url,</if>
+            <if test="channelLogo != null">channel_logo,</if>
+            <if test="channelOwner != null">channel_owner,</if>
+            <if test="channelVideoCount != null">channel_video_count,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelUrl != null">#{channelUrl},</if>
+            <if test="channelLogo != null">#{channelLogo},</if>
+            <if test="channelOwner != null">#{channelOwner},</if>
+            <if test="channelVideoCount != null">#{channelVideoCount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusChannel" parameterType="com.ruoyi.business.domain.BusChannel">
+        update bus_channel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channelUrl != null">channel_url = #{channelUrl},</if>
+            <if test="channelLogo != null">channel_logo = #{channelLogo},</if>
+            <if test="channelOwner != null">channel_owner = #{channelOwner},</if>
+            <if test="channelVideoCount != null">channel_video_count = #{channelVideoCount},</if>
+            <if test="createBy != null">create_by= #{createBy},</if>
+            <if test="createTime != null">create_time= #{createTime},</if>
+            <if test="updateBy != null">update_by= #{updateBy},</if>
+            <if test="updateTime != null">update_time= #{updateTime},</if>
+        </trim>
+        where channel_id = #{channelId}
+    </update>
+
+    <delete id="deleteBusChannelById" parameterType="Long">
+        delete from bus_channel where channel_id = #{channelId}
+    </delete>
+
+    <delete id="deleteBusChannelByIds" parameterType="String">
+        delete from bus_channel where channel_id in 
+        <foreach item="channelId" collection="array" open="(" separator="," close=")">
+            #{channelId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientVideoMapper">
+
+    <resultMap type="BusVideo" id="ClientVideoResult">
+        <result property="videoId" column="video_id"/>
+        <result property="videoTitle" column="video_title"/>
+        <result property="videoProfile" column="video_profile"/>
+        <result property="videoUrl" column="video_url"/>
+        <result property="videoPic" column="video_pic"/>
+        <result property="videoStatus" column="video_status"/>
+        <result property="videoClass" column="video_class"/>
+        <result property="videoAuthor" column="channel_id"/>
+        <result property="videoIsHuge" column="video_is_huge"/>
+        <result property="videoHugePic" column="video_huge_pic"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="videoPublish" column="video_publish"/>
+        <association property="busChannel" column="channel_id" javaType="BusChannel" resultMap="clientChannelResult"/>
+    </resultMap>
+
+    <resultMap id="clientChannelResult" type="BusChannel">
+        <result property="channelId" column="channel_id"/>
+        <result property="channelOwner" column="channel_owner"/>
+        <result property="channelUrl" column="channel_url"/>
+    </resultMap>
+
+    <sql id="selectClientVideoVo">
+        select video_id, video_title, video_profile, video_url, video_pic, video_status, video_class, video_author,
+        video_is_huge, video_huge_pic, video_path from bus_video
+    </sql>
+
+    <sql id="selectClientVideoAssociationVo">
+        select v.video_id, v.video_title, v.video_profile, v.video_url, v.video_pic, v.video_status, v.video_class,
+        v.video_author, v.video_is_huge, v.video_huge_pic, v.video_path, v.video_publish, c.channel_owner, c.channel_url
+        from bus_video v
+        left join bus_channel c on v.video_author = c.channel_id
+    </sql>
+
+    <select id="selectClientVideoList" parameterType="BusVideo" resultMap="ClientVideoResult">
+        <include refid="selectClientVideoAssociationVo"/>
+        <where>
+            <if test="videoTitle != null  and videoTitle != ''">
+                and ( v.video_title like concat('%', #{videoTitle}, '%') or v.video_profile like concat('%',
+                #{videoTitle}, '%') or c.channel_owner like concat('%', #{videoTitle}, '%') )
+            </if>
+            <if test="videoIsHuge != null  and videoIsHuge != ''">and v.video_is_huge = #{videoIsHuge}</if>
+            and v.video_status = ${"1"} order by v.video_publish desc
+        </where>
+    </select>
+
+    <select id="selectClientVideoById" parameterType="Long" resultMap="ClientVideoResult">
+        <include refid="selectClientVideoAssociationVo"/>
+        where v.video_id = #{videoId} and v.video_status = ${"1"}
+    </select>
+
+</mapper>

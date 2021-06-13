@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.create.mapper.CreChapterMapper">
+    
+    <resultMap type="CreChapter" id="CreChapterResult">
+        <result property="chapterStoryId"    column="chapter_story_id"    />
+        <result property="chapterWorkId"    column="chapter_work_id"    />
+        <result property="chapterStoryName"    column="chapter_story_name"    />
+        <result property="chapterStoryDescription"    column="chapter_story_description"    />
+        <result property="chapterStoryTimes"    column="chapter_story_times"    />
+        <result property="chapterStoryEnding"    column="chapter_story_ending"    />
+        <result property="chapterStoryType"    column="chapter_story_type"    />
+        <result property="chapterStoryCondiation"    column="chapter_story_condiation"    />
+        <result property="chapterStoryOperation"    column="chapter_story_operation"    />
+        <result property="chapterStoryNext"    column="chapter_story_next"    />
+        <result property="chapterStoryPrevious"    column="chapter_story_previous"    />
+        <result property="chapterStoryAddtional"    column="chapter_story_addtional"    />
+    </resultMap>
+
+    <sql id="selectCreChapterVo">
+        select chapter_story_id, chapter_work_id, chapter_story_name, chapter_story_description, chapter_story_times, chapter_story_ending, chapter_story_type, chapter_story_condiation, chapter_story_operation, chapter_story_next, chapter_story_previous, chapter_story_addtional from cre_chapter
+    </sql>
+
+    <select id="selectCreChapterList" parameterType="CreChapter" resultMap="CreChapterResult">
+        <include refid="selectCreChapterVo"/>
+        <where>  
+            <if test="chapterWorkId != null "> and chapter_work_id = #{chapterWorkId}</if>
+            <if test="chapterStoryName != null  and chapterStoryName != ''"> and chapter_story_name like concat('%', #{chapterStoryName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCreChapterById" parameterType="Long" resultMap="CreChapterResult">
+        <include refid="selectCreChapterVo"/>
+        where chapter_story_id = #{chapterStoryId}
+    </select>
+        
+    <insert id="insertCreChapter" parameterType="CreChapter">
+        insert into cre_chapter
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="chapterStoryId != null">chapter_story_id,</if>
+            <if test="chapterWorkId != null">chapter_work_id,</if>
+            <if test="chapterStoryName != null">chapter_story_name,</if>
+            <if test="chapterStoryDescription != null">chapter_story_description,</if>
+            <if test="chapterStoryTimes != null">chapter_story_times,</if>
+            <if test="chapterStoryEnding != null">chapter_story_ending,</if>
+            <if test="chapterStoryType != null">chapter_story_type,</if>
+            <if test="chapterStoryCondiation != null">chapter_story_condiation,</if>
+            <if test="chapterStoryOperation != null">chapter_story_operation,</if>
+            <if test="chapterStoryNext != null">chapter_story_next,</if>
+            <if test="chapterStoryPrevious != null">chapter_story_previous,</if>
+            <if test="chapterStoryAddtional != null">chapter_story_addtional,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="chapterStoryId != null">#{chapterStoryId},</if>
+            <if test="chapterWorkId != null">#{chapterWorkId},</if>
+            <if test="chapterStoryName != null">#{chapterStoryName},</if>
+            <if test="chapterStoryDescription != null">#{chapterStoryDescription},</if>
+            <if test="chapterStoryTimes != null">#{chapterStoryTimes},</if>
+            <if test="chapterStoryEnding != null">#{chapterStoryEnding},</if>
+            <if test="chapterStoryType != null">#{chapterStoryType},</if>
+            <if test="chapterStoryCondiation != null">#{chapterStoryCondiation},</if>
+            <if test="chapterStoryOperation != null">#{chapterStoryOperation},</if>
+            <if test="chapterStoryNext != null">#{chapterStoryNext},</if>
+            <if test="chapterStoryPrevious != null">#{chapterStoryPrevious},</if>
+            <if test="chapterStoryAddtional != null">#{chapterStoryAddtional},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCreChapter" parameterType="CreChapter">
+        update cre_chapter
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="chapterWorkId != null">chapter_work_id = #{chapterWorkId},</if>
+            <if test="chapterStoryName != null">chapter_story_name = #{chapterStoryName},</if>
+            <if test="chapterStoryDescription != null">chapter_story_description = #{chapterStoryDescription},</if>
+            <if test="chapterStoryTimes != null">chapter_story_times = #{chapterStoryTimes},</if>
+            <if test="chapterStoryEnding != null">chapter_story_ending = #{chapterStoryEnding},</if>
+            <if test="chapterStoryType != null">chapter_story_type = #{chapterStoryType},</if>
+            <if test="chapterStoryCondiation != null">chapter_story_condiation = #{chapterStoryCondiation},</if>
+            <if test="chapterStoryOperation != null">chapter_story_operation = #{chapterStoryOperation},</if>
+            <if test="chapterStoryNext != null">chapter_story_next = #{chapterStoryNext},</if>
+            <if test="chapterStoryPrevious != null">chapter_story_previous = #{chapterStoryPrevious},</if>
+            <if test="chapterStoryAddtional != null">chapter_story_addtional = #{chapterStoryAddtional},</if>
+        </trim>
+        where chapter_story_id = #{chapterStoryId}
+    </update>
+
+    <delete id="deleteCreChapterById" parameterType="Long">
+        delete from cre_chapter where chapter_story_id = #{chapterStoryId}
+    </delete>
+
+    <delete id="deleteCreChapterByIds" parameterType="String">
+        delete from cre_chapter where chapter_story_id in 
+        <foreach item="chapterStoryId" collection="array" open="(" separator="," close=")">
+            #{chapterStoryId}
+        </foreach>
+    </delete>
+    
+</mapper>

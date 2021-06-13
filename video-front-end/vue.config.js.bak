@@ -1,0 +1,168 @@
+"use strict";
+const path = require("path");
+const defaultSettings = require("./src/settings.js");
+
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
+
+const name = defaultSettings.title || "同和视频矩阵"; // page title
+
+/**
+ * 如果您的端口设置为80，使用管理员权限执行命令行。
+ * 例如，Mac：sudo npm run
+ * 您可以通过以下方法更改端口：
+ * port = 8099 npm run dev或npm run dev --port = 8099
+ * @type {string | number}
+ */
+const port = process.env.port;
+
+module.exports = {
+  // css: {
+  //   loaderOptions: {
+  //     css: {},
+  //     postcss: {
+  //       plugins: [
+  //         require('postcss-px2rem')({
+  //           remUnit: 75
+  //         })
+  //       ]
+  //     }
+  //   }
+  // },
+
+  /**
+   * 如果您打算在子路径（例如GitHub Pages）下部署站点，则需要设置publicPath。 如果您打算将站点部署到https://foo.github.io/bar/，则publicPath应该设置为“ / bar /”。 在大多数情况下，请使用'/'！
+   * 详细信息： https://cli.vuejs.org/config/#publicpath
+   */
+  // 基本路径
+  publicPath: process.env.NODE_ENV === "development" ? "/" : "./",
+  // 输出文件目录
+  outputDir: "dist",
+  // 静态资源目录
+  assetsDir: "static",
+  // eslint-loader 是否在保存的时候检查
+  lintOnSave: process.env.NODE_ENV === "development",
+  // webpack配置
+  // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+  chainWebpack: config => {
+    // set svg-sprite-loader
+    config.module
+      .rule("css")
+      .test(/\.css$/)
+      .oneOf("vue")
+      .resourceQuery(/\?vue/)
+      .use("px2rem")
+      .loader("px2rem-loader")
+      .options({
+        remUnit: 75
+      });
+    config.module
+      .rule("svg")
+      .exclude.add(resolve("src/icons"))
+      .end();
+    config.module
+      .rule("icons")
+      .test(/\.svg$/)
+      .include.add(resolve("src/icons"))
+      .end()
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
+      .options({
+        symbolId: "icon-[name]"
+      })
+      .end();
+    // set preserveWhitespace
+    config.module
+      .rule("vue")
+      .use("vue-loader")
+      .loader("vue-loader")
+      .tap(options => {
+        options.compilerOptions.preserveWhitespace = true;
+        return options;
+      })
+      .end();
+    // https://webpack.js.org/configuration/devtool/#development
+    config.when(process.env.NODE_ENV === "development", config =>
+      config.devtool("cheap-source-map")
+    );
+    config.when(process.env.NODE_ENV !== "development", config => {
+      config.optimization.splitChunks({
+        chunks: "all",
+        cacheGroups: {
+          libs: {
+            name: "chunk-libs",
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            chunks: "initial" // only package third parties that are initially dependent
+          },
+          elementUI: {
+            name: "chunk-elementUI", // split elementUI into a single package
+            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+          },
+          commons: {
+            name: "chunk-commons",
+            test: resolve("src/components"), // can customize your rules
+            minChunks: 3, //  minimum common number
+            priority: 5,
+            reuseExistingChunk: true
+          }
+        }
+      });
+      config.optimization.runtimeChunk("single");
+    });
+  },
+  configureWebpack: {
+    // 在webpack的名称字段中提供应用程序的标题，以便可以在index.html中对其进行访问以注入正确的标题。
+    name: name,
+    resolve: {
+      extensions: [".js", ".vue", ".json"],
+      alias: {
+        vue$: "vue/dist/vue.esm.js",
+        "@": resolve("src")
+      }
+    }
+  },
+  // 生产环境是否生成 sourceMap 文件
+  productionSourceMap: false,
+  // use thread-loader for babel & TS in production build
+  // enabled by default if the machine has more than 1 cores
+  parallel: require("os").cpus().length > 1,
+  // PWA 插件相关配置
+  // see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
+  pwa: {},
+  // webpack-dev-server 相关配置
+  devServer: {
+    disableHostCheck: true,
+    open: true,
+    overlay: {
+      warnings: false,
+      errors: true
+    },
+    port: port,
+    host: "0.0.0.0",
+    hot: true,
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://127.0.0.1:8080`,
+        changeOrigin: true,
+        pathRewrite: {
+          ["^" + process.env.VUE_APP_BASE_API]: ""
+        }
+      }
+      // "/api": {
+      //   target: process.env.VUE_APP_API,
+      //   changeOrigin: true,
+      //   ws: true
+      //   // pathRewrite: {
+      //   //   "/api": ''
+      //   // }
+      // },
+    }
+  },
+  // 第三方插件配置
+  pluginOptions: {
+    // ...
+  }
+};

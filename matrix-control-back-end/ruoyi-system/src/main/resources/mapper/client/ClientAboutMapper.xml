@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientAboutMapper">
+
+    <resultMap type="BusAbout" id="ClientAboutResult">
+        <result property="aboutId" column="about_id"/>
+        <result property="aboutInfo" column="about_info"/>
+        <result property="aboutKeyword" column="about_keyword"/>
+        <result property="aboutDeclaration" column="about_declaration"/>
+        <result property="aboutQrcode" column="about_qrcode"/>
+        <result property="aboutName" column="about_name"/>
+        <result property="aboutContact" column="about_contact"/>
+        <result property="aboutIcon" column="about_icon"/>
+        <result property="aboutStatus" column="about_status"/>
+        <result property="aboutCopyright" column="about_copyright"/>
+        <result property="aboutRecord" column="about_record"/>
+    </resultMap>
+
+    <sql id="selectClientAboutVo">
+        select about_id, about_info, about_keyword, about_declaration, about_qrcode, about_name, about_contact,
+        about_icon, about_status, about_copyright, about_record from bus_about
+    </sql>
+
+    <select id="selectClientAbout" resultMap="ClientAboutResult">
+        <include refid="selectClientAboutVo"/>
+        where about_status = ${"0"} limit 1
+    </select>
+
+</mapper>

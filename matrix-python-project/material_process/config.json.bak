@@ -1,0 +1,55 @@
+{
+  "local_dev": {
+    "ip": "",
+    "port": 5672,
+    "account": "",
+    "password": "",
+    "virtual_host": ""
+  },
+  "local_prod": {
+    "ip": "127.0.0.1",
+    "port": 5672,
+    "account": "",
+    "password": "",
+    "virtual_host": "/media"
+  },
+  "remote_prod": {
+    "ip": "",
+    "port": 5672,
+    "account": "",
+    "password": "",
+    "virtual_host": ""
+  },
+  "send_url": "",
+  "azure": {
+    "url": "",
+    "image_url": "https://你的域名前缀（如果有，没有的话记得把.去掉）.你的域名.你的域名后缀/prod-api/profile/image/",
+    "clip_pic_url": "https://你的域名前缀（如果有，没有的话记得把.去掉）.你的域名.你的域名后缀/prod-api/profile/video_clip/clip_slot/",
+    "auth": ""
+  },
+  "tencent": {
+    "app_id": "",
+    "app_secret": "",
+    "area": ""
+  },
+  "hifi": {
+    "emo_url": "https://hi.hifiveai.com/hifive_ai/api/ai_music_classification_hai/",
+    "hifi_url": "https://agm-api.hifiveai.com/home/uploadSearch",
+    "hifi_url_token": "https://agm.hifiveai.com",
+    "obtain_url": "https://agm-api.hifiveai.com/home/callback?id="
+  },
+  "imagex": {
+    "app_id": "",
+    "app_secret": "",
+    "service_id": "",
+    "prefix": "https://你在火山引擎里配置的域名前缀（和上边配置的是不一样的）.你的域名.你的域名后缀/",
+    "suffix": ""
+  },
+  "threads": {
+    "op": false,
+    "peak": "5",
+    "idle": "1",
+    "time": [23, 24, 0, 1, 2, 3, 4, 5, 6, 7]
+  },
+  "master_ip": ""
+}

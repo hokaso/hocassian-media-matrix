@@ -1,0 +1,23 @@
+{
+  "local_dev": {
+    "ip": "",
+    "port": 3306,
+    "account": "",
+    "password": "",
+    "database": "media_matrix"
+  },
+  "local_prod": {
+    "ip": "localhost",
+    "port": 3306,
+    "account": "",
+    "password": "",
+    "database": "media_matrix"
+  },
+  "remote_prod": {
+    "ip": "",
+    "port": 0,
+    "account": "",
+    "password": "",
+    "database": "media_matrix"
+  }
+}

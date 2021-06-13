@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BusFriendMapper">
+    
+    <resultMap type="BusFriend" id="BusFriendResult">
+        <result property="friendId"    column="friend_id"    />
+        <result property="friendName"    column="friend_name"    />
+        <result property="friendInfo"    column="friend_info"    />
+        <result property="friendUrl"    column="friend_url"    />
+        <result property="friendPic"    column="friend_pic"    />
+        <result property="friendType"    column="friend_type"    />
+        <result property="friendStatus"    column="friend_status"    />
+    </resultMap>
+
+    <sql id="selectBusFriendVo">
+        select friend_id, friend_name, friend_info, friend_url, friend_pic, friend_type, friend_status from bus_friend
+    </sql>
+
+    <select id="selectBusFriendList" parameterType="BusFriend" resultMap="BusFriendResult">
+        <include refid="selectBusFriendVo"/>
+        <where>  
+            <if test="friendName != null  and friendName != ''"> and friend_name like concat('%', #{friendName}, '%')</if>
+            <if test="friendInfo != null  and friendInfo != ''"> and friend_info = #{friendInfo}</if>
+            <if test="friendUrl != null  and friendUrl != ''"> and friend_url = #{friendUrl}</if>
+            <if test="friendType != null  and friendType != ''"> and friend_type = #{friendType}</if>
+            <if test="friendStatus != null  and friendStatus != ''"> and friend_status = #{friendStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusFriendById" parameterType="Long" resultMap="BusFriendResult">
+        <include refid="selectBusFriendVo"/>
+        where friend_id = #{friendId}
+    </select>
+        
+    <insert id="insertBusFriend" parameterType="BusFriend" useGeneratedKeys="true" keyProperty="friendId">
+        insert into bus_friend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="friendName != null">friend_name,</if>
+            <if test="friendInfo != null">friend_info,</if>
+            <if test="friendUrl != null">friend_url,</if>
+            <if test="friendPic != null">friend_pic,</if>
+            <if test="friendType != null">friend_type,</if>
+            <if test="friendStatus != null">friend_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="friendName != null">#{friendName},</if>
+            <if test="friendInfo != null">#{friendInfo},</if>
+            <if test="friendUrl != null">#{friendUrl},</if>
+            <if test="friendPic != null">#{friendPic},</if>
+            <if test="friendType != null">#{friendType},</if>
+            <if test="friendStatus != null">#{friendStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusFriend" parameterType="BusFriend">
+        update bus_friend
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="friendName != null">friend_name = #{friendName},</if>
+            <if test="friendInfo != null">friend_info = #{friendInfo},</if>
+            <if test="friendUrl != null">friend_url = #{friendUrl},</if>
+            <if test="friendPic != null">friend_pic = #{friendPic},</if>
+            <if test="friendType != null">friend_type = #{friendType},</if>
+            <if test="friendStatus != null">friend_status = #{friendStatus},</if>
+        </trim>
+        where friend_id = #{friendId}
+    </update>
+
+    <delete id="deleteBusFriendById" parameterType="Long">
+        delete from bus_friend where friend_id = #{friendId}
+    </delete>
+
+    <delete id="deleteBusFriendByIds" parameterType="String">
+        delete from bus_friend where friend_id in 
+        <foreach item="friendId" collection="array" open="(" separator="," close=")">
+            #{friendId}
+        </foreach>
+    </delete>
+    
+</mapper>

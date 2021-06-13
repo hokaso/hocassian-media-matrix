@@ -1,0 +1,3 @@
+../material_process/config.json
+../db/config.json
+../sync_ytb_video/config.json

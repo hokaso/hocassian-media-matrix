@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BusSwiperMapper">
+    
+    <resultMap type="com.ruoyi.business.domain.BusSwiper" id="BusSwiperResult">
+        <result property="swiperId"    column="swiper_id"    />
+        <result property="swiperPic"    column="swiper_pic"    />
+        <result property="swiperName"    column="swiper_name"    />
+        <result property="swiperStatus"    column="swiper_status"    />
+        <result property="createAt"    column="create_at"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateAt"    column="update_at"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectBusSwiperVo">
+        select swiper_id, swiper_pic, swiper_name, swiper_status, create_at, create_by, update_at, update_by from bus_swiper
+    </sql>
+
+    <select id="selectBusSwiperList" parameterType="com.ruoyi.business.domain.BusSwiper" resultMap="BusSwiperResult">
+        <include refid="selectBusSwiperVo"/>
+        <where>  
+            <if test="swiperName != null  and swiperName != ''"> and swiper_name like concat('%', #{swiperName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectBusSwiperById" parameterType="Long" resultMap="BusSwiperResult">
+        <include refid="selectBusSwiperVo"/>
+        where swiper_id = #{swiperId}
+    </select>
+        
+    <insert id="insertBusSwiper" parameterType="com.ruoyi.business.domain.BusSwiper" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_swiper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="swiperPic != null">swiper_pic,</if>
+            <if test="swiperName != null">swiper_name,</if>
+            <if test="swiperStatus != null">swiper_status,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateAt != null">update_at,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="swiperPic != null">#{swiperPic},</if>
+            <if test="swiperName != null">#{swiperName},</if>
+            <if test="swiperStatus != null">#{swiperStatus},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateAt != null">#{updateAt},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusSwiper" parameterType="com.ruoyi.business.domain.BusSwiper">
+        update bus_swiper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="swiperPic != null">swiper_pic = #{swiperPic},</if>
+            <if test="swiperName != null">swiper_name = #{swiperName},</if>
+            <if test="swiperStatus != null">swiper_status = #{swiperStatus},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateAt != null">update_at = #{updateAt},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where swiper_id = #{swiperId}
+    </update>
+
+    <update id="changeBusSwiperStatus" parameterType="com.ruoyi.business.domain.BusSwiper">
+        update bus_swiper
+        set swiper_status = #{swiperStatus}
+        where swiper_id = #{swiperId}
+    </update>
+
+    <delete id="deleteBusSwiperById" parameterType="Long">
+        delete from bus_swiper where swiper_id = #{swiperId}
+    </delete>
+
+    <delete id="deleteBusSwiperByIds" parameterType="String">
+        delete from bus_swiper where swiper_id in
+        <foreach item="swiperId" collection="array" open="(" separator="," close=")">
+            #{swiperId}
+        </foreach>
+    </delete>
+    
+</mapper>

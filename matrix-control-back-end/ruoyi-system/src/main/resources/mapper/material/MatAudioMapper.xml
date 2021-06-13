@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.material.mapper.MatAudioMapper">
+    
+    <resultMap type="MatAudio" id="MatAudioResult">
+        <result property="audioId"    column="audio_id"    />
+        <result property="audioPath"    column="audio_path"    />
+        <result property="audioName"    column="audio_name"    />
+        <result property="audioAuthor"    column="audio_author"    />
+        <result property="audioType"    column="audio_type"    />
+        <result property="audioStatus"    column="audio_status"    />
+        <result property="audioEmotion"    column="audio_emotion"    />
+        <result property="audioNote"    column="audio_note"    />
+        <result property="audioTime"    column="audio_time"    />
+        <result property="isCopyright"    column="is_copyright"    />
+        <result property="isShow"    column="is_show"    />
+    </resultMap>
+
+    <sql id="selectMatAudioVo">
+        select audio_id, audio_path, audio_name, audio_author, audio_type, audio_status, audio_emotion, audio_note, audio_time, is_copyright, is_show, audio_meta from mat_audio
+    </sql>
+
+    <select id="selectMatAudioList" parameterType="MatAudio" resultMap="MatAudioResult">
+        <include refid="selectMatAudioVo"/>
+        <where>  
+            <if test="audioName != null  and audioName != ''"> and (audio_name like concat('%', #{audioName}, '%') or audio_author like concat('%', #{audioName}, '%') or audio_emotion like concat('%', #{audioName}, '%'))</if>
+            <if test="audioType != null  and audioType != ''"> and audio_type = #{audioType}</if>
+            <if test="audioStatus != null  and audioStatus != ''"> and audio_status = #{audioStatus}</if>
+            <if test="isCopyright != null  and isCopyright != ''"> and is_copyright = #{isCopyright}</if>
+            <if test="isShow != null  and isShow != ''"> and is_show = #{isShow}</if>
+        </where>
+        order by audio_id desc
+    </select>
+    
+    <select id="selectMatAudioById" parameterType="Long" resultMap="MatAudioResult">
+        <include refid="selectMatAudioVo"/>
+        where audio_id = #{audioId}
+    </select>
+        
+    <insert id="insertMatAudio" parameterType="MatAudio" useGeneratedKeys="true" keyProperty="audioId">
+        insert into mat_audio
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="audioName != null">audio_name,</if>
+            <if test="audioAuthor != null">audio_author,</if>
+            <if test="audioType != null">audio_type,</if>
+            <if test="audioStatus != null">audio_status,</if>
+            <if test="audioEmotion != null">audio_emotion,</if>
+            <if test="audioNote != null">audio_note,</if>
+            <if test="audioTime != null">audio_time,</if>
+            <if test="isCopyright != null">is_copyright,</if>
+            <if test="isShow != null">is_show,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="audioName != null">#{audioName},</if>
+            <if test="audioAuthor != null">#{audioAuthor},</if>
+            <if test="audioType != null">#{audioType},</if>
+            <if test="audioStatus != null">#{audioStatus},</if>
+            <if test="audioEmotion != null">#{audioEmotion},</if>
+            <if test="audioNote != null">#{audioNote},</if>
+            <if test="audioTime != null">#{audioTime},</if>
+            <if test="isCopyright != null">#{isCopyright},</if>
+            <if test="isShow != null">#{isShow},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMatAudio" parameterType="MatAudio">
+        update mat_audio
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioName != null">audio_name = #{audioName},</if>
+            <if test="audioAuthor != null">audio_author = #{audioAuthor},</if>
+            <if test="audioType != null">audio_type = #{audioType},</if>
+            <if test="audioStatus != null">audio_status = #{audioStatus},</if>
+            <if test="audioEmotion != null">audio_emotion = #{audioEmotion},</if>
+            <if test="audioNote != null">audio_note = #{audioNote},</if>
+            <if test="audioTime != null">audio_time = #{audioTime},</if>
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+        </trim>
+        where audio_id = #{audioId}
+    </update>
+
+    <update id="changeMatAudioStatus" parameterType="MatAudio">
+        update mat_audio
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isCopyright != null">is_copyright = #{isCopyright},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+        </trim>
+        where audio_id = #{audioId}
+    </update>
+
+    <delete id="deleteMatAudioById" parameterType="Long">
+        delete from mat_audio where audio_id = #{audioId}
+    </delete>
+
+    <delete id="deleteMatAudioByIds" parameterType="String">
+        delete from mat_audio where audio_id in 
+        <foreach item="audioId" collection="array" open="(" separator="," close=")">
+            #{audioId}
+        </foreach>
+    </delete>
+    
+</mapper>

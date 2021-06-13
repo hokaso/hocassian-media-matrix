@@ -1,0 +1,91 @@
+base:
+  # mac：/Users/bytedance/Desktop/file/upload
+  # linux：/home
+  profile: /home/ubuntu/store
+server:
+  port: 8081
+  servlet:
+    context-path: /
+spring:
+#  profiles: dev # 环境,  会自动引入 application-*.yml 的配置,  上线只用改这个或在启动时添加参数 --spring.profiles=pro
+  application:
+    name: hocassian-people-neo4j
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driverClassName: org.neo4j.jdbc.bolt.BoltDriver
+#    url: jdbc:neo4j:bolt://132.232.33.52:7687
+#    username: neo4j
+#    password: Hechenghan1234
+    # Hikari 连接池配置
+    # 最小空闲连接数量
+#    hikari:
+#
+#      minimum-idle: 5
+#      idle-timeout: 600000
+#      maximum-pool-size: 10
+#      auto-commit: true
+#      pool-name: MyHikariCP
+#      max-lifetime: 1800000
+#      connection-timeout: 30000
+#      minimum-idle: 5
+#      # 空闲连接存活最大时间，默认600000（10分钟）
+#      idle-timeout: 180000
+#      # 连接池最大连接数，默认是10
+#      maximum-pool-size: 10
+#      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+#      auto-commit: true
+#      # 连接池名称
+#      pool-name: MyHikariCP
+#      # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+#      max-lifetime: 1800000
+#      # 数据库连接超时时间,默认30秒，即30000
+#      connection-timeout: 30000
+#      connection-test-query: match (n) return id(n) limit 2
+
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.neo4j.jdbc.bolt.BoltDriver
+    url: jdbc:neo4j:bolt://127.0.0.1:7687
+    username: neo4j
+    password:
+#   数据源其他配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    validationQuery: match (n) return id(n) limit 2
+    testWhileIdle: false
+    testOnBorrow: false
+    testOnReturn: false
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    # 配置一个连接在池中最大生存的时间，单位是毫秒
+    maxEvictableIdleTimeMillis: 900000
+#    validationQuery: SELECT 1
+    poolPreparedStatements: true
+#    filter:
+#      stat:
+#        enabled: true
+#        # 慢SQL记录
+#        log-slow-sql: true
+#        slow-sql-millis: 1000
+#        merge-sql: true
+#      wall:
+#        config:
+#          multi-statement-allow: true
+#    maxPoolPreparedStatementPerConnectionSize: 20
+#    useGlobalDataSourceStat: true
+#    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+mybatis:
+  mapper-locations: classpath*:/mapper/**/*Mapper.xml
+  config-location: classpath:mybatis-config.xml
+
+logging:
+  config: classpath:logback-spring.xml

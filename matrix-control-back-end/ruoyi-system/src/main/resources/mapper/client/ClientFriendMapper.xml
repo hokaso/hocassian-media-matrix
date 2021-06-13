@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientFriendMapper">
+
+    <resultMap type="BusFriend" id="ClientFriendResult">
+        <result property="friendId" column="friend_id"/>
+        <result property="friendName" column="friend_name"/>
+        <result property="friendInfo" column="friend_info"/>
+        <result property="friendUrl" column="friend_url"/>
+        <result property="friendPic" column="friend_pic"/>
+    </resultMap>
+
+    <sql id="selectClientFriendVo">
+        select friend_id, friend_name, friend_info, friend_url, friend_pic, friend_type from bus_friend
+    </sql>
+
+    <select id="selectClientPlatformList" resultMap="ClientFriendResult">
+        <include refid="selectClientFriendVo"/>
+        where friend_type = ${"0"} and friend_status = ${"0"} ORDER BY RAND() limit 10
+    </select>
+
+    <select id="selectClientColumnList" resultMap="ClientFriendResult">
+        <include refid="selectClientFriendVo"/>
+        where friend_type = ${"1"} and friend_status = ${"0"} ORDER BY RAND() limit 10
+    </select>
+</mapper>

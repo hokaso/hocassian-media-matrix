@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "bb7fe6f4-298c-40fa-a23b-822113787d6c",
+		"name": "neo4j-test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "story",
+			"item": [
+				{
+					"name": "getPersonInfo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/people/story/person/001",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"person",
+								"001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addPerson",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"personStoryName\": \"张和\",\r\n    \"personStorySex\": \"1\",\r\n    \"personStoryInfo\": \"成长中的男主，历经坎坷却仍然热爱生活。\",\r\n    \"personStoryFeature\": [\"真诚\",\"善良\",\"勇敢\",\"理想主义\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/people/story/person",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"person"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editPerson",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"personStoryId\": \"\",\r\n    \"personStoryName\": \"张和\",\r\n    \"personStorySex\": \"1\",\r\n    \"personStoryInfo\": \"成长中的男主，历经坎坷却仍然热爱生活。\",\r\n    \"personStoryFeature\": [\"真诚\",\"善良\",\"勇敢\",\"理想主义\",\"乐观\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/people/story/person",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"person"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removePerson",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/people/story/person/{personId}",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"person",
+								"{personId}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "connect",
+			"item": [
+				{
+					"name": "getInfoConnect",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/people/story/connect/{connectId}",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"connect",
+								"{connectId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addConnect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"connectStoryName\": \"好兄弟\",\r\n    \"connectStoryInfo\": \"从初中开始结识的师兄弟，虽然一直都在互相帮助，但果然还是何白渝师兄的助攻更重要……\",\r\n    \"personStoryIdAlpha\": \"\",\r\n    \"personStoryIdBeta\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/people/story/connect",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"connect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editConnect",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"connectStoryId\": \"\",\r\n    \"connectStoryName\": \"好兄弟\",\r\n    \"connectStoryInfo\": \"从初中开始结识的师兄弟，虽然一直都在互相帮助，但果然还是何白渝师兄的助攻更重要……\",\r\n    \"personStoryIdAlpha\": \"\",\r\n    \"personStoryIdBeta\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/people/story/connect",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"connect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeConnect",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/people/story/connect/{connectId}",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"people",
+								"story",
+								"connect",
+								"{connectId}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081/people/story/list",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"people",
+						"story",
+						"list"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

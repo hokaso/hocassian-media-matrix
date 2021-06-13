@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BusAboutMapper">
+
+    <resultMap type="BusAbout" id="BusAboutResult">
+        <result property="aboutId" column="about_id"/>
+        <result property="aboutInfo" column="about_info"/>
+        <result property="aboutKeyword" column="about_keyword"/>
+        <result property="aboutDeclaration" column="about_declaration"/>
+        <result property="aboutQrcode" column="about_qrcode"/>
+        <result property="aboutName" column="about_name"/>
+        <result property="aboutContact" column="about_contact"/>
+        <result property="aboutIcon" column="about_icon"/>
+        <result property="aboutStatus" column="about_status"/>
+        <result property="aboutCopyright" column="about_copyright"/>
+        <result property="aboutRecord" column="about_record"/>
+    </resultMap>
+
+    <sql id="selectBusAboutVo">
+        select about_id, about_info, about_keyword, about_declaration, about_qrcode, about_name, about_contact,
+        about_icon, about_status, about_copyright, about_record from bus_about
+    </sql>
+
+    <select id="selectBusAboutList" parameterType="BusAbout" resultMap="BusAboutResult">
+        <include refid="selectBusAboutVo"/>
+        <where>
+            <if test="aboutInfo != null  and aboutInfo != ''">and about_info like concat('%', #{aboutInfo}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectBusAboutById" parameterType="Long" resultMap="BusAboutResult">
+        <include refid="selectBusAboutVo"/>
+        where about_id = #{aboutId}
+    </select>
+
+    <insert id="insertBusAbout" parameterType="BusAbout">
+        insert into bus_about
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aboutId != null">about_id,</if>
+            <if test="aboutInfo != null">about_info,</if>
+            <if test="aboutKeyword != null">about_keyword,</if>
+            <if test="aboutDeclaration != null">about_declaration,</if>
+            <if test="aboutQrcode != null">about_qrcode,</if>
+            <if test="aboutName != null">about_name,</if>
+            <if test="aboutContact != null">about_contact,</if>
+            <if test="aboutIcon != null">about_icon,</if>
+            <if test="aboutStatus != null">about_status,</if>
+            <if test="aboutCopyright != null">about_copyright,</if>
+            <if test="aboutRecord != null">about_record,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="aboutId != null">#{aboutId},</if>
+            <if test="aboutInfo != null">#{aboutInfo},</if>
+            <if test="aboutKeyword != null">#{aboutKeyword},</if>
+            <if test="aboutDeclaration != null">#{aboutDeclaration},</if>
+            <if test="aboutQrcode != null">#{aboutQrcode},</if>
+            <if test="aboutName != null">#{aboutName},</if>
+            <if test="aboutContact != null">#{aboutContact},</if>
+            <if test="aboutIcon != null">#{aboutIcon},</if>
+            <if test="aboutStatus != null">#{aboutStatus},</if>
+            <if test="aboutCopyright != null">#{aboutCopyright},</if>
+            <if test="aboutRecord != null">#{aboutRecord},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBusAbout" parameterType="BusAbout">
+        update bus_about
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="aboutInfo != null">about_info = #{aboutInfo},</if>
+            <if test="aboutKeyword != null">about_keyword = #{aboutKeyword},</if>
+            <if test="aboutDeclaration != null">about_declaration = #{aboutDeclaration},</if>
+            <if test="aboutQrcode != null">about_qrcode = #{aboutQrcode},</if>
+            <if test="aboutName != null">about_name = #{aboutName},</if>
+            <if test="aboutContact != null">about_contact = #{aboutContact},</if>
+            <if test="aboutIcon != null">about_icon = #{aboutIcon},</if>
+            <if test="aboutStatus != null">about_status = #{aboutStatus},</if>
+            <if test="aboutCopyright != null">about_copyright = #{aboutCopyright},</if>
+            <if test="aboutRecord != null">about_record = #{aboutRecord},</if>
+        </trim>
+        where about_id = #{aboutId}
+    </update>
+
+    <delete id="deleteBusAboutById" parameterType="Long">
+        delete from bus_about where about_id = #{aboutId}
+    </delete>
+
+    <delete id="deleteBusAboutByIds" parameterType="String">
+        delete from bus_about where about_id in
+        <foreach item="aboutId" collection="array" open="(" separator="," close=")">
+            #{aboutId}
+        </foreach>
+    </delete>
+
+</mapper>

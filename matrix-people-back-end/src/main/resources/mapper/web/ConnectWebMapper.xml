@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hocassian.people.mapper.web.ConnectWebMapper">
+
+    <select id="selectConnectWebById" parameterType="String" resultType="com.hocassian.people.domain.web.ConnectWeb">
+        MATCH (m)-[c:ConnectWeb{
+        connectWebId: #{connectWebId}
+        }]->(n)
+        RETURN
+        c.connectWebId as connectWebId,
+        c.connectWebName as connectWebName,
+        c.connectWebInfo as connectWebInfo,
+        m.personWebId as personWebIdAlpha,
+        m.personWebName as personWebIdAlphaName,
+        n.personWebId as personWebIdBeta,
+        n.personWebName as personWebIdBetaName
+    </select>
+
+    <insert id="insertConnectWeb" parameterType="com.hocassian.people.domain.web.ConnectWeb">
+        match(pa:PersonWeb{
+        personWebId: #{personWebIdAlpha}
+        }),(pb:PersonWeb{
+        personWebId: #{personWebIdBeta}
+        })
+        merge (pa)-[c:ConnectWeb{
+        connectWebId: #{connectWebId},
+        connectWebName: #{connectWebName},
+        connectWebInfo: #{connectWebInfo}
+        }]->(pb)
+    </insert>
+
+    <update id="updateConnectWeb" parameterType="com.hocassian.people.domain.web.ConnectWeb">
+        MATCH (m)-[c:ConnectWeb{
+        connectWebId: #{connectWebId}
+        }]->(n)
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="connectWebName != null">c.connectWebName = #{connectWebName},</if>
+            <if test="connectWebInfo != null">c.connectWebInfo = #{connectWebInfo},</if>
+            <if test="personWebIdAlpha != null">m.personWebId = #{personWebIdAlpha},</if>
+            <if test="personWebIdBeta != null">n.personWebId = #{personWebIdBeta},</if>
+        </trim>
+    </update>
+
+    <delete id="deleteConnectWeb" parameterType="String">
+        MATCH ()-[c:ConnectWeb{
+        connectWebId: #{connectWebId}
+        }]-()
+        DELETE c
+    </delete>
+
+</mapper>

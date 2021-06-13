@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hocassian.people.mapper.story.ConnectStoryMapper">
+
+    <select id="selectConnectStoryById" parameterType="String" resultType="com.hocassian.people.domain.story.ConnectStory">
+        MATCH (m)-[c:ConnectStory{
+            connectStoryId: #{connectStoryId}
+        }]->(n)
+        RETURN
+            c.connectStoryId as connectStoryId,
+            c.connectStoryName as connectStoryName,
+            c.connectStoryInfo as connectStoryInfo,
+            m.personStoryId as personStoryIdAlpha,
+            n.personStoryId as personStoryIdBeta
+    </select>
+
+    <insert id="insertConnectStory" parameterType="com.hocassian.people.domain.story.ConnectStory">
+        match(pa:PersonStory{
+            personStoryId: #{personStoryIdAlpha}
+        }),(pb:PersonStory{
+            personStoryId: #{personStoryIdBeta}
+        })
+        merge (pa)-[c:ConnectStory{
+            connectStoryId: #{connectStoryId},
+            connectStoryName: #{connectStoryName},
+            connectStoryInfo: #{connectStoryInfo}
+        }]->(pb)
+    </insert>
+
+    <update id="updateConnectStory" parameterType="com.hocassian.people.domain.story.ConnectStory">
+        MATCH (m)-[c:ConnectStory{
+            connectStoryId: #{connectStoryId}
+        }]->(n)
+        SET
+            c.connectStoryName = #{connectStoryName},
+            c.connectStoryInfo = #{connectStoryInfo},
+            m.personStoryId = #{personStoryIdAlpha},
+            n.personStoryId = #{personStoryIdBeta}
+    </update>
+
+    <delete id="deleteConnectStory" parameterType="String">
+        MATCH ()-[c:ConnectStory{
+            connectStoryId: #{connectStoryId}
+        }]-()
+        DELETE c
+    </delete>
+
+</mapper>

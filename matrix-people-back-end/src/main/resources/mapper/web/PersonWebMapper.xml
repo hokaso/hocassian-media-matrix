@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hocassian.people.mapper.web.PersonWebMapper">
+
+    <select id="selectPersonWebMap" resultType="map">
+        MATCH (PersonAlpha:PersonWeb)-[Connect:ConnectWeb]->(PersonBeta:PersonWeb)
+        RETURN PersonAlpha,Connect,PersonBeta
+    </select>
+
+    <select id="selectPersonWebList" resultType="com.hocassian.people.domain.web.PersonWeb">
+        MATCH (p:PersonWeb)
+        RETURN
+        p.personWebId as personWebId,
+        p.personWebName as personWebName,
+        p.personWebPic as personWebPic,
+        p.personWebShow as personWebShow,
+        p.personWebLink as personWebLink,
+        p.personWebPlatform as personWebPlatform,
+        p.personWebField as personWebField,
+        p.personWebInfo as personWebInfo,
+        p.personWebKey as personWebKey
+    </select>
+
+    <select id="selectPersonWebSearchList" parameterType="String" resultType="com.hocassian.people.domain.web.PersonWeb">
+        MATCH (p:PersonWeb)
+        where p.personWebName Contains #{personWebName}
+        RETURN
+        p.personWebId as personWebId,
+        p.personWebName as personWebName
+    </select>
+
+    <select id="selectPersonWebSearchListOther" resultType="com.hocassian.people.domain.web.PersonWeb">
+        MATCH (pc:PersonWeb {
+        personWebId: #{personWebId}
+        })-[:ConnectWeb]-(p:PersonWeb)
+        where p.personWebName Contains #{personWebName}
+        RETURN
+        p.personWebId as personWebId,
+        p.personWebName as personWebName
+    </select>
+
+    <select id="selectPersonWebById" parameterType="String" resultType="com.hocassian.people.domain.web.PersonWeb">
+        MATCH (p:PersonWeb{
+        personWebId: #{personWebId}
+        })
+        RETURN
+        p.personWebId as personWebId,
+        p.personWebName as personWebName,
+        p.personWebPic as personWebPic,
+        p.personWebShow as personWebShow,
+        p.personWebLink as personWebLink,
+        p.personWebPlatform as personWebPlatform,
+        p.personWebField as personWebField,
+        p.personWebInfo as personWebInfo,
+        p.personWebKey as personWebKey
+    </select>
+
+    <insert id="insertPersonWeb" parameterType="com.hocassian.people.domain.web.PersonWeb">
+        merge (p:PersonWeb{
+        personWebId: #{personWebId},
+        personWebName: #{personWebName},
+        personWebPic: #{personWebPic},
+        personWebShow: #{personWebShow},
+        personWebLink: #{personWebLink},
+        personWebPlatform: #{personWebPlatform},
+        personWebField: #{personWebField},
+        personWebInfo: #{personWebInfo},
+        personWebKey: #{personWebKey}
+        })
+    </insert>
+
+    <update id="updatePersonWeb" parameterType="com.hocassian.people.domain.web.PersonWeb">
+        MATCH (p:PersonWeb{
+        personWebId: #{personWebId}
+        })
+        SET
+        p.personWebName = #{personWebName},
+        p.personWebPic = #{personWebPic},
+        p.personWebShow = #{personWebShow},
+        p.personWebLink = #{personWebLink},
+        p.personWebPlatform = #{personWebPlatform},
+        p.personWebField = #{personWebField},
+        p.personWebInfo = #{personWebInfo},
+        p.personWebKey = #{personWebKey}
+    </update>
+
+    <delete id="deletePersonWeb" parameterType="String">
+        MATCH (p:PersonWeb{
+        personWebId: #{personWebId}
+        })
+        DELETE p
+    </delete>
+
+
+</mapper>

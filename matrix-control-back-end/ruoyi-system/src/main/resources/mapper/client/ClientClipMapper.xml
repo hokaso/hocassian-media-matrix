@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.client.mapper.ClientClipMapper">
+
+    <resultMap type="MatClip" id="ClientClipResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="materialPath"    column="material_path"    />
+        <result property="materialSize"    column="material_size"    />
+        <result property="materialTime"    column="material_time"    />
+        <result property="materialMark"    column="material_mark"    />
+        <result property="materialTag"    column="material_tag"    />
+        <result property="materialType"    column="material_type"    />
+    </resultMap>
+
+    <sql id="selectClientClipVo">
+        select material_id, material_path, material_size, material_time, material_mark, material_tag, material_type from mat_clip
+    </sql>
+
+    <select id="selectClientClipList" parameterType="MatClip" resultMap="ClientClipResult">
+        <include refid="selectClientClipVo"/>
+        <where>
+            <if test="materialTag != null  and materialTag != ''">
+                and (material_tag like concat('%', #{materialTag}, '%') or material_note like concat('%', #{materialTag}, '%'))
+            </if>
+            and is_copyright = ${"0"} and is_show = ${"0"} and material_status = ${"0"} and material_type = ${"0"}
+        </where>
+        order by material_id desc
+    </select>
+
+    <select id="selectClipKeywords" resultType="string">
+        select material_tag from mat_clip
+        where is_copyright = ${"0"} and is_show = ${"0"} and material_status = ${"0"} and material_type = ${"0"}
+        order by material_id desc
+        limit 10
+    </select>
+
+</mapper>
