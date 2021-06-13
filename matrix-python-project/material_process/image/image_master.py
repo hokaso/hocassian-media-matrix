@@ -39,7 +39,7 @@ class ImageMaster(object):
         self.prefix = info["imagex"]["prefix"]
         self.suffix = info["imagex"]["suffix"]
 
-        current = os.getcwd().replace("/hocassian-media-matrix/matrix-python-project", "")
+        current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.db_handle = InstantDB().get_connect()
         self.redis_handle = InstantRedis().get_redis_connect()
         # 本地路径
