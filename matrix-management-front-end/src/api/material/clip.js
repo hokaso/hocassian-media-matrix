@@ -59,6 +59,14 @@ export function delClip(materialId) {
   })
 }
 
+// 删除视频素材
+export function outputClip(materialId) {
+  return request({
+    url: '/material/clip/output/' + materialId,
+    method: 'get'
+  })
+}
+
 // 导出视频素材
 export function exportClip(query) {
   return request({

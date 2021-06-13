@@ -498,6 +498,7 @@
     addClip,
     updateClip,
     exportClip,
+    outputClip,
     changeStatusClip
   } from "@/api/material/clip";
 
@@ -836,7 +837,7 @@
 
       /** 进行批处理 */
       handleOption(optionalId) {
-        this.$confirm('是否确认执行该转码操作？', "警告", {
+        this.$confirm('是否确认执行该操作？', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -848,6 +849,13 @@
             }
           )
         })
+        if (optionalId === 3){
+          const materialIds = row.materialId || this.ids;
+          outputClip(materialIds);
+          this.getList();
+          this.msgSuccess("后台正在导出中，请稍作等待~");
+        }
+
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
