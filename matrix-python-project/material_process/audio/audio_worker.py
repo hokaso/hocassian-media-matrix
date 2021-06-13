@@ -14,7 +14,7 @@ class AudioWorker(object):
 
     def __init__(self, SERVER_IP):
 
-        current = os.getcwd().replace("/hocassian-media-matrix/matrix-python-project", "")
+        current = os.getcwd().replace("/prod/matrix-python-project", "")
 
         ServerManager.register("get_task_queue")
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')

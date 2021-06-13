@@ -42,7 +42,7 @@ class ClipMaster(object):
         # self.password     = info["remote_prod"]["password"]
         # self.virtual_host = info["remote_prod"]["virtual_host"]
 
-        current = os.getcwd().replace("/hocassian-media-matrix/matrix-python-project", "")
+        current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.send_url = info["send_url"]
         self.origin_path = current + "/matrix/material/video_clip_temp"
         self.final_path = current + "/matrix/material/video_clip"
