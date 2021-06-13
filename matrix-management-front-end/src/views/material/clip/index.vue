@@ -133,6 +133,7 @@
         </el-button>
         <el-button
           v-else
+          :disabled="multiple"
           type="primary"
           icon="el-icon-magic-stick"
           size="mini"
