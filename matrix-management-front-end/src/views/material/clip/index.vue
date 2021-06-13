@@ -120,6 +120,27 @@
         >处理素材
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          v-if="this.translateClip === 3"
+          type="primary"
+          disabled
+          icon="el-icon-loading"
+          size="mini"
+          @click=""
+          v-hasPermi="['material:clip:add']"
+        >导出素材
+        </el-button>
+        <el-button
+          v-else
+          type="primary"
+          icon="el-icon-magic-stick"
+          size="mini"
+          @click="handleOption(3)"
+          v-hasPermi="['material:clip:add']"
+        >导出素材
+        </el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table v-loading="loading" :data="clipList" @selection-change="handleSelectionChange">
@@ -581,6 +602,8 @@
         importClip: 0,
         // 批量处理
         batchClip: 0,
+        // 转移处理
+        translateClip: 0,
         // 遮罩层
         loading: true,
         // 选中数组
@@ -662,8 +685,11 @@
             if (response.data.batchClip) {
               this.batchClip = response.data.batchClip
             }
+            if (response.data.translateClip) {
+              this.translateClip = response.data.translateClip
+            }
           }
-        )
+        );
         listClip(this.queryParams).then(response => {
           this.clipList = response.rows;
           Object.keys(this.clipList).forEach(key => {
