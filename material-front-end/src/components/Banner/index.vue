@@ -5,7 +5,7 @@
         style="width: 100%"
         :src="bannerUrl" autoplay muted loop />
       <div class="banner-content">
-        <h1>同和素材矩阵</h1>
+        <h1>{{about.aboutKeyword}}素材矩阵</h1>
         <p>高品质小众原创媒体推广平台</p>
       </div>
     </div>
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex";
 export default {
   props: {
     bannerUrl: {
@@ -20,6 +21,9 @@ export default {
       default: '/prod-api/profile/video_clip/preview/banner.mp4'
     }
   },
+  computed: {
+    ...mapGetters(["about"])
+  }
 }
 </script>
 
