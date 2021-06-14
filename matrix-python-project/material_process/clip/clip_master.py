@@ -219,6 +219,7 @@ class ClipMaster(object):
             self.notice("视频素材裁切处理完成！", counting, duration)
 
         elif raw_msg["optional_id"] == 3:
+            time.sleep(3)
             start = time.perf_counter()
             prepare_sql = "SELECT material_id, material_path from mat_clip " \
                           "where material_status = '4'"
