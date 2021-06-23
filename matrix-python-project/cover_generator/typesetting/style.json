@@ -1,0 +1,720 @@
+{
+  "one": [
+    {
+      "unit_name": "single",
+      "unit_desc": "整个画面就一幅图",
+      "unit_count": 1,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "windows",
+      "unit_desc": "四张相同的图片按「田」样式进行填充",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    }
+  ],
+  "two": [
+    {
+      "unit_name": "horizontal",
+      "unit_desc": "两张图水平布局",
+      "unit_count": 2,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 720
+        },
+        {
+          "width": 1080,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "vertical",
+      "unit_desc": "两张图垂直布局",
+      "unit_count": 2,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 1440
+        },
+        {
+          "width": 540,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "windows",
+      "unit_desc": "两张图片按「田」样式对角填充",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    }
+  ],
+  "three": [
+    {
+      "unit_name": "horizontal",
+      "unit_desc": "三张图水平布局",
+      "unit_count": 3,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 1080,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "vertical",
+      "unit_desc": "三张图垂直布局",
+      "unit_count": 3,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 1440
+        },
+        {
+          "width": 360,
+          "height": 1440
+        },
+        {
+          "width": 360,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "triple_vertical",
+      "unit_desc": "「两小一大·垂直」布局（├或者┤）",
+      "unit_count": 3,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "triple_horizontal",
+      "unit_desc": "「两小一大·水平」布局（┬或者┴）",
+      "unit_count": 3,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 1080,
+          "height": 720
+        }
+      ]
+    }
+  ],
+  "four": [
+    {
+      "unit_name": "quadruple_vertical",
+      "unit_desc": "「三小一大·垂直」布局（├或者┤）",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "quadruple_horizontal",
+      "unit_desc": "「三小一大·水平」布局（┬或者┴）",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 1080,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "chairs",
+      "unit_desc": "┬┤或者├┬或者┴┤或者├┴",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 720,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "chairs_spin",
+      "unit_desc": "上边那种情况顺时针转90°",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 960
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "h2v2",
+      "unit_desc": "两张图头对脚，两张图身对身",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 1440
+        },
+        {
+          "width": 360,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "unit_name": "h2v2_spin",
+      "unit_desc": "上边那种情况顺时针转90°",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "windows",
+      "unit_desc": "四张图片按「田」样式填充",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "windows_vertical",
+      "unit_desc": "「田」字垂直错开",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 720,
+          "height": 720
+        },
+        {
+          "width": 720,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "windows_horizontal",
+      "unit_desc": "「田」字水平错开",
+      "unit_count": 4,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 360
+        },
+        {
+          "width": 540,
+          "height": 360
+        },
+        {
+          "width": 540,
+          "height": 1080
+        },
+        {
+          "width": 540,
+          "height": 1080
+        }
+      ]
+    }
+  ],
+  "five": [
+    {
+      "unit_name": "offset_vertical",
+      "unit_desc": "「3+2·垂直」布局",
+      "unit_count": 5,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "offset_horizontal",
+      "unit_desc": "「3+2·水平」布局",
+      "unit_count": 5,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "align_vertical",
+      "unit_desc": "「1+2+2·垂直」布局",
+      "unit_count": 5,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 1440
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "align_horizontal",
+      "unit_desc": "「1+2+2·水平」布局",
+      "unit_count": 5,
+      "unit_detail": [
+        {
+          "width": 1080,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "mirror",
+      "unit_desc": "螺旋丸~（逐渐放飞自我）",
+      "unit_count": 5,
+      "unit_detail": [
+        {
+          "width": 720,
+          "height": 360
+        },
+        {
+          "width": 720,
+          "height": 360
+        },
+        {
+          "width": 360,
+          "height": 1080
+        },
+        {
+          "width": 360,
+          "height": 1080
+        },
+        {
+          "width": 360,
+          "height": 720
+        }
+      ]
+    }
+  ],
+  "six": [
+    {
+      "unit_name": "align_vertical",
+      "unit_desc": "「2*3·垂直」布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "align_horizontal",
+      "unit_desc": "「2*3·水平」布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "unit_name": "offset_vertical_small",
+      "unit_desc": "「五张图中的offset布局中，三张图那一层的其中一张拆成两份」垂直布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 360
+        },
+        {
+          "width": 360,
+          "height": 360
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "offset_horizontal_small",
+      "unit_desc": "「五张图中的offset布局中，三张图那一层的其中一张拆成两份」水平布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 270,
+          "height": 480
+        },
+        {
+          "width": 270,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "offset_vertical_big",
+      "unit_desc": "「五张图中的offset布局中，二张图那一层的其中一张拆成两份」垂直布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 360
+        },
+        {
+          "width": 540,
+          "height": 360
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "offset_horizontal_big",
+      "unit_desc": "「五张图中的offset布局中，二张图那一层的其中一张拆成两份」水平布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 540,
+          "height": 480
+        },
+        {
+          "width": 270,
+          "height": 720
+        },
+        {
+          "width": 270,
+          "height": 720
+        },
+        {
+          "width": 540,
+          "height": 720
+        }
+      ]
+    },
+    {
+      "unit_name": "arround",
+      "unit_desc": "『5小+1大』对齐布局",
+      "unit_count": 6,
+      "unit_detail": [
+        {
+          "width": 360,
+          "height": 480
+        },
+        {
+          "width": 360,
+          "height": 480
+        },
+        {
+          "width": 360,
+          "height": 480
+        },
+        {
+          "width": 360,
+          "height": 480
+        },
+        {
+          "width": 360,
+          "height": 480
+        },
+        {
+          "width": 720,
+          "height": 960
+        }
+      ]
+    }
+  ],
+  "seven": [
+    {
+    }
+  ]
+}
