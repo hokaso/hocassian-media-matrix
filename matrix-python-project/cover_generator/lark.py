@@ -44,7 +44,6 @@ class AESCipher(object):
 
 
 def get_tenant_access_token():
-
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
 
     headers = {
@@ -74,7 +73,6 @@ def get_tenant_access_token():
 
 
 def send_msg_card(body):
-
     url = 'https://open.feishu.cn/open-apis/message/v4/send/'
 
     access_token = get_tenant_access_token()
@@ -105,7 +103,6 @@ def send_msg_card(body):
 
 
 def send_init_msg(open_id):
-
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -129,7 +126,6 @@ def send_init_msg(open_id):
 
 
 def send_tip_msg(open_id):
-
     tip = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -153,7 +149,7 @@ def send_tip_msg(open_id):
                                    "○ 输入指令「2」后即可发送标题信息（7字以内，超出自动截取前7字）\n"
                                    "○ 输入指令「3」后即可发送副标题信息（11字以内，超出自动截取前11字）\n"
                                    "○ 输入指令「4」后即可执行渲染\n"
-                                   "○ 输入指令「0」可终止整个流程（当输入信息有误时可用其复位）"
+                                   "○ 输入指令「0」可终止整个流程（当图片输入有误时可用其复位）"
                     }
                 },
                 {
@@ -161,7 +157,7 @@ def send_tip_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位"
+                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交处理之前，可随时新增图片"
                         }
                     ]
                 }
@@ -173,7 +169,6 @@ def send_tip_msg(open_id):
 
 
 def send_fail_msg(open_id, report):
-
     error = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -204,7 +199,6 @@ def send_fail_msg(open_id, report):
 
 
 def send_create_msg(open_id):
-
     info = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -243,7 +237,7 @@ def send_create_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位"
+                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交渲染处理之前，可随时新增图片"
                         }
                     ]
                 }
@@ -256,7 +250,6 @@ def send_create_msg(open_id):
 
 
 def send_repeat_msg(open_id):
-
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -280,7 +273,6 @@ def send_repeat_msg(open_id):
 
 
 def send_upload_pic_msg(open_id):
-
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -302,8 +294,8 @@ def send_upload_pic_msg(open_id):
 
     return send_msg_card(note)
 
-def send_pic_count_msg(open_id, count):
 
+def send_pic_count_msg(open_id, count):
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -326,8 +318,99 @@ def send_pic_count_msg(open_id, count):
     return send_msg_card(note)
 
 
-def send_out_of_msg(open_id):
+def send_first_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "请输入主标题（在5分钟内完成）~"
+                    }
+                }
+            ]
+        }
+    }
 
+    return send_msg_card(note)
+
+
+def send_secord_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "请输入副标题（在5分钟内完成）~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def send_first_note_msg(open_id, first_title):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "确认主标题为「" + first_title + "」吗？如果需要修改可以直接输入，修改完后请输入「3」进入下一步~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def send_secord_note_msg(open_id, secord_title):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "确认副标题为「" + secord_title + "」吗？如果需要修改可以直接输入，修改完后可输入「2」修改主标题，或输入「4」执行渲染~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def send_out_of_msg(open_id):
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -349,8 +432,31 @@ def send_out_of_msg(open_id):
 
     return send_msg_card(note)
 
-def save_pic(record_id, open_id, pic_key, handler):
 
+def send_check_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "请检查你的输入是否有遗漏！"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def save_pic(record_id, open_id, pic_key, handler):
     access_token = get_tenant_access_token()
 
     if access_token is None:
@@ -461,14 +567,15 @@ def test():
 
         # 如果输入为文字，进行文字相关的操作
         if event_data["msg_type"] == "text":
+
             if event_data["text"] == "1":
 
                 try:
                     # 先查找5分钟内有没有
                     search_sql = "select * from gen_pic where record_created_by = '%s' " \
                                  "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE) " \
-                                 "and (record_status = '%s' or record_status = '%s')" % \
-                                 (event_data["employee_id"], 1, 2)
+                                 "and record_status in ('1', '2', '3') limit 1" % \
+                                 event_data["employee_id"]
 
                     if db_handle.search_DB(search_sql):
                         return send_repeat_msg(event_data["open_id"])
@@ -491,12 +598,101 @@ def test():
 
             elif event_data["text"] == "2":
 
+                # 没有创建得先创建
+                search_sql = "select * from gen_pic where record_created_by = '%s' " \
+                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('1', '2', '3') limit 1" % \
+                             event_data["employee_id"]
 
+                record = db_handle.search_DB(search_sql)
+
+                if record is None:
+                    return send_init_msg(event_data["open_id"])
+
+                # 更新状态
+                update_first_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (2, record[0]["record_id"])
+                db_handle.modify_DB(update_first_sql)
+
+                return send_first_msg(event_data["open_id"])
 
             elif event_data["text"] == "3":
 
+                # 没有创建得先创建
+                search_sql = "select * from gen_pic where record_created_by = '%s' " \
+                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('1', '2', '3') limit 1" % \
+                             event_data["employee_id"]
+
+                record = db_handle.search_DB(search_sql)
+
+                if record is None:
+                    return send_init_msg(event_data["open_id"])
+
+                # 更新状态
+                update_secord_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (3, record[0]["record_id"])
+                db_handle.modify_DB(update_secord_sql)
+
+                return send_secord_msg(event_data["open_id"])
+
+            elif event_data["text"] == "4":
+
+                # 没有创建得先创建
+                search_sql = "select * from gen_pic where record_created_by = '%s' " \
+                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('1', '2', '3') limit 1" % \
+                             event_data["employee_id"]
+
+                record = db_handle.search_DB(search_sql)
+
+                if record is None:
+                    return send_init_msg(event_data["open_id"])
+
+                # 检查各项信息是否为空，如果为空则提醒用户输入
+                check_sql = "select * from gen_pic where record_created_by = '%s' " \
+                            "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                            "and record_pic_count != 0 " \
+                            "and record_first_title is not null " \
+                            "and record_secord_title is not null limit 1" % \
+                            event_data["employee_id"]
+
+                check = db_handle.search_DB(check_sql)
+
+                if check is None:
+                    return send_check_msg(event_data["open_id"])
+
+                # 调隔壁的函数进行渲染
+
+
+
             else:
-                return send_tip_msg(event_data["open_id"])
+                # 除非是状态2和状态3，其他的一律当乱输处理
+                search_sql = "select * from gen_pic where record_created_by = '%s' " \
+                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('2', '3') limit 1" % \
+                             event_data["employee_id"]
+
+                record = db_handle.search_DB(search_sql)
+
+                if record is None:
+
+                    return send_tip_msg(event_data["open_id"])
+
+                else:
+
+                    # 输入主标题
+                    if record[0]["record_status"] == '2':
+
+                        update_first_sql = "update gen_pic set record_first_title = '%s' where record_id = '%s'" % (event_data["text"][:7], record[0]["record_id"])
+                        db_handle.modify_DB(update_first_sql)
+                        return send_first_note_msg(event_data["open_id"], event_data["text"][:7])
+
+
+                    else:
+
+                        update_secord_sql = "update gen_pic set record_secord_title = '%s' where record_id = '%s'" % (event_data["text"][:11], record[0]["record_id"])
+                        db_handle.modify_DB(update_secord_sql)
+                        return send_secord_note_msg(event_data["open_id"], event_data["text"][:11])
+
 
 
         # 如果输入的是图片，首先查找当前用户是否在5分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
@@ -504,8 +700,8 @@ def test():
 
             search_sql = "select * from gen_pic where record_created_by = '%s' " \
                          "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
-                         "and record_status = '%s' limit 1" % \
-                         (event_data["employee_id"], 1)
+                         "and record_status in ('1', '2', '3') limit 1" % \
+                         event_data["employee_id"]
 
             record = db_handle.search_DB(search_sql)
 
@@ -516,7 +712,6 @@ def test():
             return save_pic(record[0]["record_id"], event_data["open_id"], event_data["image_key"], db_handle)
 
         db_handle.db_close()
-
 
     return "success"
 
