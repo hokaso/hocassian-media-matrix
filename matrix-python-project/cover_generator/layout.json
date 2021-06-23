@@ -1,0 +1,669 @@
+{
+  "readme": "大致讲解一下，polarization是全局唯一可以作为定位的点，location是相对定位，前者决定整体组件纵轴的位置，后者根据前者坐标进行偏移，由字体延展的最大值来确定整体位置。",
+  "transparent_background": "background.png",
+  "model": {
+    "traditional": {
+      "polarization": {
+        "↖": {
+          "option": 0,
+          "position": [
+            44,
+            300
+          ]
+        },
+        "↙": {
+          "option": 0,
+          "position": [
+            44,
+            1000
+          ]
+        },
+        "↗": {
+          "option": 1,
+          "position": [
+            1036,
+            600
+          ]
+        },
+        "↘": {
+          "option": 1,
+          "position": [
+            1036,
+            1160
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "traditional_01.png",
+          "offset": [
+            75,
+            50
+          ]
+        },
+        {
+          "path": "traditional_02.png",
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "techbuddies": {
+      "polarization": {
+        "↖": {
+          "option": 0,
+          "position": [
+            44,
+            300
+          ]
+        },
+        "↙": {
+          "option": 0,
+          "position": [
+            44,
+            1000
+          ]
+        },
+        "↗": {
+          "option": 1,
+          "position": [
+            1036,
+            600
+          ]
+        },
+        "↘": {
+          "option": 1,
+          "position": [
+            1036,
+            1160
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "techbuddies_01.png",
+          "offset": [
+            70,
+            60
+          ]
+        },
+        {
+          "path": "techbuddies_02.png",
+          "offset": [
+            -50,
+            15
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "simplify": {
+      "polarization": {
+        "↖": {
+          "option": 0,
+          "position": [
+            44,
+            300
+          ]
+        },
+        "↙": {
+          "option": 0,
+          "position": [
+            44,
+            1000
+          ]
+        },
+        "↗": {
+          "option": 1,
+          "position": [
+            1036,
+            600
+          ]
+        },
+        "↘": {
+          "option": 1,
+          "position": [
+            1036,
+            1160
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "simplify_00.png",
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "path": "simplify_00.png",
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "simplicity": {
+      "polarization": {
+        "↖": {
+          "option": 0,
+          "position": [
+            -10,
+            300
+          ]
+        },
+        "↙": {
+          "option": 0,
+          "position": [
+            -10,
+            1000
+          ]
+        },
+        "↗": {
+          "option": 1,
+          "position": [
+            1030,
+            600
+          ]
+        },
+        "↘": {
+          "option": 1,
+          "position": [
+            1030,
+            1160
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "simplicity_00.png",
+          "offset": [
+            70,
+            37
+          ]
+        },
+        {
+          "path": "simplify_00.png",
+          "offset": [
+            -10,
+            -10
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(50, 50, 50, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(50, 50, 50, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "humorous": {
+      "polarization": {
+        "↑": {
+          "option": -1,
+          "position": [
+            540,
+            360
+          ]
+        },
+        "↓": {
+          "option": -1,
+          "position": [
+            540,
+            1080
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "humorous_00.png",
+          "offset": [
+            50,
+            50
+          ],
+          "location": [
+            850,
+            290
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "classical": {
+      "polarization": {
+        "↑": {
+          "option": -1,
+          "position": [
+            540,
+            360
+          ]
+        },
+        "↓": {
+          "option": -1,
+          "position": [
+            540,
+            1080
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "classical_00.png",
+          "offset": [
+            60,
+            50
+          ],
+          "location": [
+            750,
+            240
+          ]
+        },
+        {
+          "path": "classical_00.png",
+          "offset": [
+            100,
+            80
+          ],
+          "location": [
+            750,
+            220
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 90,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5
+      }
+    },
+    "vertical": {
+      "polarization": {
+        "↑": {
+          "option": -1,
+          "position": [
+            540,
+            360
+          ]
+        },
+        "↓": {
+          "option": -1,
+          "position": [
+            540,
+            1080
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "vertical_00.png",
+          "offset": [
+            65,
+            15
+          ],
+          "location": [
+            750,
+            240
+          ]
+        },
+        {
+          "path": "vertical_00.png",
+          "offset": [
+            0,
+            -15
+          ],
+          "location": [
+            750,
+            220
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 60,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 40,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 3,
+        "shadow_offset_y": 3
+      }
+    },
+    "focus": {
+      "polarization": {
+        "↑": {
+          "option": -1,
+          "position": [
+            540,
+            360
+          ]
+        },
+        "↓": {
+          "option": -1,
+          "position": [
+            540,
+            1080
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "focus_00.png",
+          "offset": [
+            15,
+            0
+          ],
+          "location": [
+            750,
+            240
+          ]
+        },
+        {
+          "path": "focus_00.png",
+          "offset": [
+            25,
+            0
+          ],
+          "location": [
+            750,
+            220
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 100,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 50,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5,
+        "line_offset": 10
+      }
+    },
+    "fresh": {
+      "polarization": {
+        "↑": {
+          "option": -1,
+          "position": [
+            540,
+            360
+          ]
+        },
+        "↓": {
+          "option": -1,
+          "position": [
+            540,
+            1080
+          ]
+        },
+        "○": {
+          "option": -1,
+          "position": [
+            540,
+            720
+          ]
+        }
+      },
+      "component": [
+        {
+          "path": "fresh_00.png",
+          "offset": [
+            10,
+            20
+          ],
+          "location": [
+            750,
+            240
+          ]
+        },
+        {
+          "path": "fresh_00.png",
+          "offset": [
+            25,
+            20
+          ],
+          "location": [
+            750,
+            220
+          ]
+        }
+      ],
+      "text": [
+        {
+          "size": 80,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        },
+        {
+          "size": 50,
+          "color": "(255, 255, 255, 255)",
+          "ttf": "",
+          "location": [],
+          "frame": []
+        }
+      ],
+      "other": {
+        "space": 1.2,
+        "open_shaow": true,
+        "shadow": "(70, 70, 70, 85)",
+        "shadow_offset_x": 5,
+        "shadow_offset_y": 5,
+        "line_offset": -6
+      }
+    }
+  }
+}

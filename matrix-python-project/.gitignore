@@ -6,3 +6,7 @@ utils/test.py
 material_process/config.json
 pretrained_models/
 key.txt
+**/test.py
+**/test.png
+**/test.jpg
+**/transparent_title.png
