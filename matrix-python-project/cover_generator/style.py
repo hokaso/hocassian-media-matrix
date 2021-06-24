@@ -16,7 +16,7 @@ from cover_generator.typesetting.model.six import Six
 
 class Style(object):
 
-    def __init__(self):
+    def __init__(self, image_path):
 
         self.image_map = {
             # 0: self.break_out,
@@ -45,7 +45,11 @@ class Style(object):
         # "model_mark": "当前子模板最优摆放的得分，从所有子模板里选择得分最高的前三名来渲染展示"
         self.rank_dict = []
 
-        self.image_path = "images"
+        # self.image_path = image_path if image_path else self.image_path = "images"
+        if image_path:
+            self.image_path = image_path
+        else:
+            self.image_path = "images"
 
         image_ext = ['.jpg', '.png', '.jpeg', '.bmp']
         self.image_list = []
@@ -143,6 +147,4 @@ class Style(object):
         print("用时:" + str(end - start))
         print(self.rank_dict)
 
-if __name__ == "__main__":
-    m = Style()
-    m.run()
+

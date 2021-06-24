@@ -7,6 +7,7 @@ from gevent import pywsgi
 sys.path.append(os.getcwd())
 from utils.snow_id import SnowId
 from db.database_handler import InstantDB
+from cover_generator.main import Main
 
 # from snow_id import SnowId
 
@@ -456,6 +457,93 @@ def send_check_msg(open_id):
     return send_msg_card(note)
 
 
+def send_over_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "生成次数已达到上限！请输入「0」复位，开始新的生成流程~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def send_pic_msg(open_id, count, image_key):
+
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": false
+            },
+            "header": {
+                "template": "green",
+                "title": {
+                    "tag": "plain_text",
+                    "content": "生成结果"
+                }
+            },
+            "elements": [
+                {
+                    'tag': 'img',
+                    'img_key': image_key[0],
+                    'alt': {
+                        'tag': 'plain_text',
+                        'content': '1'
+                    }
+                },
+                {
+                    'tag': 'img',
+                    'img_key': image_key[1],
+                    'alt': {
+                        'tag': 'plain_text',
+                        'content': '2'
+                    }
+                },
+                {
+                    'tag': 'img',
+                    'img_key': image_key[2],
+                    'alt': {
+                        'tag': 'plain_text',
+                        'content': '3'
+                    }
+                },
+                {
+                    'tag': 'div',
+                    'text': {
+                        'tag': 'plain_text',
+                        'content': '本次生成结果如上，你还可生成' + str(count) + '次（输入「4」继续生成）~'
+                    },
+                },
+                {
+                    "tag": "note",
+                    "elements": [
+                        {
+                            "tag": "plain_text",
+                            "content": "※ 5分钟后操作记录将清除，若需要再次生成需重新上传图片\n※ 若对当前结果满意，可直接输入「0」复位，开始新的生成流程"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
 def save_pic(record_id, open_id, pic_key, handler):
     access_token = get_tenant_access_token()
 
@@ -506,6 +594,29 @@ def save_pic(record_id, open_id, pic_key, handler):
     send_pic_count_msg(open_id, rsg[0]["record_pic_count"] + 1)
 
     return "success"
+
+
+def upload_pic(pic_path):
+    with open(pic_path, 'rb') as f:
+        image = f.read()
+    print(pic_path)
+    upload_pic_url = 'https://open.feishu.cn/open-apis/image/v4/put/'
+    access_token = self.get_tenant_access_token()
+    upload_pic_headers = {
+        "Authorization": "Bearer " + access_token
+    }
+    upload_pic_data = {
+        "image_type": "message"
+    }
+    upload_pic_files = {
+        "image": image
+    }
+    upload_pic_req = requests.post(url=upload_pic_url, headers=upload_pic_headers, files=upload_pic_files, data=upload_pic_data, stream=True)
+    upload_pic_req.raise_for_status()
+    receive_img_data = upload_pic_req.json()
+    receive_img_key = receive_img_data["data"]["image_key"]
+    print(receive_img_key)
+    return receive_img_key
 
 
 app = Flask(__name__, static_folder='', static_url_path='')
@@ -578,6 +689,7 @@ def test():
                                  event_data["employee_id"]
 
                     if db_handle.search_DB(search_sql):
+                        db_handle.db_close()
                         return send_repeat_msg(event_data["open_id"])
 
                     # 没有记录，才创建新记录
@@ -592,9 +704,10 @@ def test():
 
                     traceback.print_exc()
                     print(e)
+                    db_handle.db_close()
                     return send_fail_msg(event_data["open_id"], str(e) + traceback.format_exc())
 
-                return send_upload_pic_msg(event_data["open_id"])
+                _return = send_upload_pic_msg(event_data["open_id"])
 
             elif event_data["text"] == "2":
 
@@ -607,6 +720,7 @@ def test():
                 record = db_handle.search_DB(search_sql)
 
                 if record is None:
+                    db_handle.db_close()
                     return send_init_msg(event_data["open_id"])
 
                 # 更新状态
@@ -626,13 +740,14 @@ def test():
                 record = db_handle.search_DB(search_sql)
 
                 if record is None:
+                    db_handle.db_close()
                     return send_init_msg(event_data["open_id"])
 
                 # 更新状态
                 update_secord_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (3, record[0]["record_id"])
                 db_handle.modify_DB(update_secord_sql)
 
-                return send_secord_msg(event_data["open_id"])
+                _return = send_secord_msg(event_data["open_id"])
 
             elif event_data["text"] == "4":
 
@@ -645,6 +760,7 @@ def test():
                 record = db_handle.search_DB(search_sql)
 
                 if record is None:
+                    db_handle.db_close()
                     return send_init_msg(event_data["open_id"])
 
                 # 检查各项信息是否为空，如果为空则提醒用户输入
@@ -658,11 +774,32 @@ def test():
                 check = db_handle.search_DB(check_sql)
 
                 if check is None:
+                    db_handle.db_close()
                     return send_check_msg(event_data["open_id"])
 
+                if check[0]["record_changes"] <= 0:
+                    db_handle.db_close()
+                    return send_over_msg(event_data["open_id"])
+
                 # 调隔壁的函数进行渲染
+                try:
+                    image_list = Main().run(str(check[0]["record_id"]), check[0]["record_first_title"], check[0]["record_secord_title"])
+                    image_key_list = []
+                    for ikey in image_list:
+                        image_key_list.append(upload_pic(ikey))
 
+                    _return = send_pic_msg(event_data["open_id"], check[0]["record_changes"], image_key_list)
 
+                    # 改变生成次数
+                    count_sql = "update gen_pic set record_changes=record_changes-'1' where record_id = '%s'" % check[0]["record_id"]
+                    handler.modify_DB(count_sql)
+
+                except Exception as e:
+
+                    traceback.print_exc()
+                    print(e)
+                    db_handle.db_close()
+                    return send_fail_msg(event_data["open_id"], str(e) + traceback.format_exc())
 
             else:
                 # 除非是状态2和状态3，其他的一律当乱输处理
@@ -684,16 +821,14 @@ def test():
 
                         update_first_sql = "update gen_pic set record_first_title = '%s' where record_id = '%s'" % (event_data["text"][:7], record[0]["record_id"])
                         db_handle.modify_DB(update_first_sql)
-                        return send_first_note_msg(event_data["open_id"], event_data["text"][:7])
+                        _return = send_first_note_msg(event_data["open_id"], event_data["text"][:7])
 
 
                     else:
 
                         update_secord_sql = "update gen_pic set record_secord_title = '%s' where record_id = '%s'" % (event_data["text"][:11], record[0]["record_id"])
                         db_handle.modify_DB(update_secord_sql)
-                        return send_secord_note_msg(event_data["open_id"], event_data["text"][:11])
-
-
+                        _return = send_secord_note_msg(event_data["open_id"], event_data["text"][:11])
 
         # 如果输入的是图片，首先查找当前用户是否在5分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
         elif event_data["msg_type"] == "image":
@@ -709,9 +844,14 @@ def test():
                 return send_init_msg(event_data["open_id"])
 
             # 1 接收图片 2 把图片信息写入库
-            return save_pic(record[0]["record_id"], event_data["open_id"], event_data["image_key"], db_handle)
+            _return = save_pic(record[0]["record_id"], event_data["open_id"], event_data["image_key"], db_handle)
+
+        else:
+            return send_init_msg(event_data["open_id"])
 
         db_handle.db_close()
+
+        return _return
 
     return "success"
 
