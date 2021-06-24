@@ -552,7 +552,9 @@ def save_pic(record_id, open_id, pic_key, handler):
 
     # 创建文件夹并存入
     if not os.path.exists(str(record_id)):
-        os.makedirs(record_id)
+        os.makedirs(str(record_id))
+        os.makedirs(str(record_id) + "_temp")
+        os.makedirs(str(record_id) + "_fin")
 
     # 当超过16张的时候直接返回（16张图片时提示无法继续输入）
     select_count_sql = "select record_pic_count from gen_pic where record_id = '%s'" % record_id
@@ -783,6 +785,8 @@ def test():
 
                 # 调隔壁的函数进行渲染
                 try:
+
+
                     image_list = Main().run(str(check[0]["record_id"]), check[0]["record_first_title"], check[0]["record_secord_title"])
                     image_key_list = []
                     for ikey in image_list:
