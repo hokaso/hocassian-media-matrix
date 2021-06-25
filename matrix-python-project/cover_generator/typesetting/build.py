@@ -7,7 +7,7 @@ sys.path.append(os.getcwd())
 class Build(object):
 
     def __init__(self):
-        self.url = "images/"
+        self.url = "cover_generator/images/"
 
     # 传回来的应该是一个PIL的图片对象
     def build_up(self, image, rate, area):
@@ -21,5 +21,5 @@ class Build(object):
 
     @staticmethod
     def save(tb):
-        tb.save("render/" + str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
+        tb.save("cover_generator/render/" + str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
 
