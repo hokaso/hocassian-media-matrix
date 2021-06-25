@@ -10,12 +10,12 @@ class Structure(object):
         self.first_title = None
         self.secord_title = None
 
-        self.font_path = "font"
+        self.font_path = "cover_generator/font"
 
-        with open("layout.json", 'r') as f0:
+        with open("cover_generator/layout.json", 'r') as f0:
             self.layout_config = json.loads(f0.read())
 
-        self.tb = Image.open(self.layout_config["transparent_background"])
+        self.tb = Image.open("cover_generator/" + self.layout_config["transparent_background"])
 
         # 「4+1」模型：0传统、1简约、2科技、3简洁
         # 「3中」模型：4诙谐、5古典、6纵横、7聚焦、8清新
@@ -55,8 +55,8 @@ class Structure(object):
 
         # 随机字体
         current_font = self.random_font()
-        first_title_font = ImageFont.truetype("font/" + current_font, size=config["text"][0]["size"])
-        secord_title_font = ImageFont.truetype("font/" + current_font, size=config["text"][1]["size"])
+        first_title_font = ImageFont.truetype("cover_generator/font/" + current_font, size=config["text"][0]["size"])
+        secord_title_font = ImageFont.truetype("cover_generator/font/" + current_font, size=config["text"][1]["size"])
 
         # 计算文字相对位置
         first_title_size = draw.textsize(self.first_title, font=first_title_font)
@@ -145,7 +145,7 @@ class Structure(object):
         # 定右组件动左组件
         elif config["polarization"][current_location]["option"] == 1:
 
-            component_02 = Image.open("components/" + config["component"][1]["path"])
+            component_02 = Image.open("cover_generator/components/" + config["component"][1]["path"])
 
             component_02_position_x = config["polarization"][current_location]["position"][0] - component_02.width
             component_02_position_y = config["polarization"][current_location]["position"][1] - component_02.height
@@ -228,7 +228,7 @@ class Structure(object):
 
         # 加载组件
         for ikey in component_position:
-            component_temp = Image.open("components/" + config["component"][ikey[2]]["path"])
+            component_temp = Image.open("cover_generator/components/" + config["component"][ikey[2]]["path"])
             self.tb.paste(component_temp, (int(ikey[0]), int(ikey[1])))
 
         draw.text((first_title_position_x + config["other"]["shadow_offset_x"], first_title_position_y + config["other"]["shadow_offset_y"]), self.first_title, font=first_title_font, fill=shadow)
@@ -267,7 +267,7 @@ class Structure(object):
         # init
         config = self.layout_config["model"]["humorous"]
         draw, first_title_font, secord_title_font, first_title_size, secord_title_size = self.model_init(config)
-        component = Image.open("components/" + config["component"][0]["path"])
+        component = Image.open("cover_generator/components/" + config["component"][0]["path"])
 
         # 以最长组件来对齐
         max_size = max(first_title_size[0], secord_title_size[0], component.width)
@@ -297,7 +297,7 @@ class Structure(object):
         # init
         config = self.layout_config["model"]["classical"]
         draw, first_title_font, secord_title_font, first_title_size, secord_title_size = self.model_init(config)
-        component = Image.open("components/" + config["component"][0]["path"])
+        component = Image.open("cover_generator/components/" + config["component"][0]["path"])
 
         component_01_location_x = 0
         component_01_location_y = 0
@@ -326,7 +326,7 @@ class Structure(object):
         # init
         config = self.layout_config["model"]["vertical"]
         draw, first_title_font, secord_title_font, first_title_size, secord_title_size = self.model_init(config)
-        component = Image.open("components/" + config["component"][0]["path"])
+        component = Image.open("cover_generator/components/" + config["component"][0]["path"])
 
         # 以最长组件来对齐
         max_size = max(first_title_size[0] + secord_title_size[0] + 50, component.width)
@@ -353,7 +353,7 @@ class Structure(object):
         # init
         config = self.layout_config["model"]["focus"]
         draw, first_title_font, secord_title_font, first_title_size, secord_title_size = self.model_init(config)
-        component = Image.open("components/" + config["component"][0]["path"])
+        component = Image.open("cover_generator/components/" + config["component"][0]["path"])
 
         # 行间距
         line_space = first_title_size[1] * config["other"]["space"]
@@ -388,7 +388,7 @@ class Structure(object):
         # init
         config = self.layout_config["model"]["fresh"]
         draw, first_title_font, secord_title_font, first_title_size, secord_title_size = self.model_init(config)
-        component = Image.open("components/" + config["component"][0]["path"])
+        component = Image.open("cover_generator/components/" + config["component"][0]["path"])
 
         # 行间距
         line_space = first_title_size[1] * config["other"]["space"]
