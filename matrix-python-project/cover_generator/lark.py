@@ -1,6 +1,6 @@
 # 请按需导入，将不需要的删去以提升性能
 from flask import Flask, request, abort, jsonify, render_template
-import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback
+import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback, imghdr
 from Crypto.Cipher import AES
 from gevent import pywsgi
 
@@ -57,13 +57,13 @@ def get_tenant_access_token():
     }
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(body))
+        rsp_body = requests.post(url, headers=headers, data=json.dumps(body))
     except Exception as e:
         print(e.read().decode())
         return ""
 
-    rsp_body = response.read().decode('utf-8')
-    rsp_dict = json.loads(rsp_body)
+    # rsp_body = response.read().decode('utf-8')
+    rsp_dict = rsp_body.json()
     code = rsp_dict.get("code", -1)
 
     if code != 0:
@@ -87,13 +87,13 @@ def send_msg_card(body):
     }
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(body))
+        rsp_body = requests.post(url, headers=headers, data=json.dumps(body))
     except Exception as e:
         print(e.read().decode())
         return "fail"
 
-    rsp_body = response.read().decode('utf-8')
-    rsp_dict = json.loads(rsp_body)
+    # rsp_body = response.read().decode('utf-8')
+    rsp_dict = rsp_body.json()
     code = rsp_dict.get("code", -1)
 
     if code != 0:
@@ -109,7 +109,7 @@ def send_init_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -132,7 +132,7 @@ def send_tip_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -175,7 +175,7 @@ def send_fail_msg(open_id, report):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -205,7 +205,7 @@ def send_create_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "header": {
                 "template": "green",
@@ -256,7 +256,7 @@ def send_repeat_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -279,7 +279,7 @@ def send_upload_pic_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -302,7 +302,7 @@ def send_pic_count_msg(open_id, count):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -325,14 +325,14 @@ def send_first_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
                     "tag": "div",
                     "text": {
                         "tag": "plain_text",
-                        "content": "请输入主标题（在5分钟内完成）~"
+                        "content": "请输入主标题（7字以内，超出自动截取前7字，在5分钟内完成）~"
                     }
                 }
             ]
@@ -348,14 +348,14 @@ def send_secord_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
                     "tag": "div",
                     "text": {
                         "tag": "plain_text",
-                        "content": "请输入副标题（在5分钟内完成）~"
+                        "content": "请输入副标题（11字以内，超出自动截取前11字，在5分钟内完成）~"
                     }
                 }
             ]
@@ -371,7 +371,7 @@ def send_first_note_msg(open_id, first_title):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -394,7 +394,7 @@ def send_secord_note_msg(open_id, secord_title):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -417,7 +417,7 @@ def send_out_of_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -440,7 +440,7 @@ def send_check_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -463,7 +463,7 @@ def send_over_msg(open_id):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "elements": [
                 {
@@ -487,7 +487,7 @@ def send_pic_msg(open_id, count, image_key):
         "msg_type": "interactive",
         'card': {
             "config": {
-                "wide_screen_mode": false
+                "wide_screen_mode": False
             },
             "header": {
                 "template": "green",
@@ -551,10 +551,10 @@ def save_pic(record_id, open_id, pic_key, handler):
         return "fail"
 
     # 创建文件夹并存入
-    if not os.path.exists(str(record_id)):
-        os.makedirs(str(record_id))
-        os.makedirs(str(record_id) + "_temp")
-        os.makedirs(str(record_id) + "_fin")
+    if not os.path.exists("cover_generator/" + str(record_id)):
+        os.makedirs("cover_generator/" + str(record_id))
+        os.makedirs("cover_generator/" + str(record_id) + "_temp")
+        os.makedirs("cover_generator/" + str(record_id) + "_fin")
 
     # 当超过16张的时候直接返回（16张图片时提示无法继续输入）
     select_count_sql = "select record_pic_count from gen_pic where record_id = '%s'" % record_id
@@ -573,14 +573,14 @@ def save_pic(record_id, open_id, pic_key, handler):
         # 从飞书服务器拉取用户发送的图片
         raw_pic = requests.get(search_pic_url, headers=get_pic_headers)
         pic_name = str(SnowId(1, 2, 0).get_id())[1:] + '.jpg'
-        with open(str(record_id) + "/" + pic_name, 'wb') as fp:
+        with open("cover_generator/" + str(record_id) + "/" + pic_name, 'wb') as fp:
             fp.write(raw_pic.content)
 
         # 把这个图片的后缀改为其真实的格式（飞书API的缺陷，无法确定真实格式，只能本地检测）
-        real_rex = imghdr.what(str(record_id) + "/" + pic_name)
-        (new_pic_name, extension) = path.splitext(pic_name)
+        real_rex = imghdr.what("cover_generator/" + str(record_id) + "/" + pic_name)
+        new_pic_name = os.path.splitext(pic_name)[0]
         search_pic_new_fullname = new_pic_name + '.' + real_rex
-        rename(str(record_id) + "/" + pic_name, str(record_id) + "/" + search_pic_new_fullname)
+        os.rename("cover_generator/" + str(record_id) + "/" + pic_name, "cover_generator/" + str(record_id) + "/" + search_pic_new_fullname)
 
     except Exception as e:
 
@@ -697,9 +697,9 @@ def test():
                     # 没有记录，才创建新记录
                     record_created_by = event_data["employee_id"]
                     record_created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-                    create_sql = "INSERT INTO gen_pic(record_created_by, record_created_at, record_status) VALUES" \
-                                 "('%s', '%s', '%s')" % \
-                                 (record_created_by, record_created_at, "1")
+                    create_sql = "INSERT INTO gen_pic(record_pic_count, record_created_by, record_created_at, record_status, record_changes) VALUES" \
+                                 "('%s', '%s', '%s', '%s', '%s')" % \
+                                 (0, record_created_by, record_created_at, "1", 5)
                     db_handle.modify_DB(create_sql)
 
                 except Exception as e:
@@ -791,6 +791,7 @@ def test():
                     image_key_list = []
                     for ikey in image_list:
                         image_key_list.append(upload_pic(ikey))
+                        os.remove(ikey)
 
                     _return = send_pic_msg(event_data["open_id"], check[0]["record_changes"], image_key_list)
 
@@ -813,8 +814,9 @@ def test():
                              event_data["employee_id"]
 
                 record = db_handle.search_DB(search_sql)
+                print(record)
 
-                if record is None:
+                if not record:
 
                     return send_tip_msg(event_data["open_id"])
 
@@ -846,6 +848,8 @@ def test():
 
             if record is None:
                 return send_init_msg(event_data["open_id"])
+
+            print(record[0]["record_id"])
 
             # 1 接收图片 2 把图片信息写入库
             _return = save_pic(record[0]["record_id"], event_data["open_id"], event_data["image_key"], db_handle)

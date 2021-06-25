@@ -10,7 +10,7 @@ sys.path.append(os.getcwd())
 
 class Two(object):
 
-    def __init__(self):
+    def __init__(self, folder_key):
         self.image_list = None
         self.rank_model = None
         self.tb = None
@@ -25,6 +25,8 @@ class Two(object):
             2: self.vertical_build,
             3: self.windows_build
         }
+
+        self._build = Build(folder_key, folder_key + "_temp")
 
     def horizontal(self, image_list):
         return More(image_list, self.model[0]["unit_detail"], "21").main()
@@ -49,13 +51,13 @@ class Two(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[0]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[0]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2]
@@ -64,20 +66,20 @@ class Two(object):
         # 保存
         self.tb.paste(pic_list[0], (0, 0))
         self.tb.paste(pic_list[1], (0, 720))
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def vertical_build(self):
         # 贴第一张图
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[1]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[1]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2]
@@ -86,20 +88,20 @@ class Two(object):
         # 保存
         self.tb.paste(pic_list[0], (0, 0))
         self.tb.paste(pic_list[1], (540, 0))
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def windows_build(self):
         # 贴第一张图
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[2]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[2]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2]
@@ -110,4 +112,4 @@ class Two(object):
         self.tb.paste(pic_list[1], (540, 0))
         self.tb.paste(pic_list[1], (0, 720))
         self.tb.paste(pic_list[0], (540, 720))
-        Build().save(self.tb)
+        self._build.save(self.tb)

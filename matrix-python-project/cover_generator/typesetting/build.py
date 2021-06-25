@@ -6,8 +6,11 @@ sys.path.append(os.getcwd())
 
 class Build(object):
 
-    def __init__(self):
-        self.url = "cover_generator/images/"
+    # origin：原图文件夹
+    # render：拼图文件夹
+    def __init__(self, origin, render):
+        self.url = "cover_generator/"+ origin +"/"
+        self.render = "cover_generator/" + render +"/"
 
     # 传回来的应该是一个PIL的图片对象
     def build_up(self, image, rate, area):
@@ -19,7 +22,6 @@ class Build(object):
 
         return pic
 
-    @staticmethod
-    def save(tb):
-        tb.save("cover_generator/render/" + str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
+    def save(self, tb):
+        tb.save(self.render + str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
 
