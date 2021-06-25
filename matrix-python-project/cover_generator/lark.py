@@ -1,6 +1,6 @@
 # 请按需导入，将不需要的删去以提升性能
 from flask import Flask, request, abort, jsonify, render_template
-import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback, imghdr
+import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback, imghdr, shutil
 from Crypto.Cipher import AES
 from gevent import pywsgi
 
@@ -480,8 +480,53 @@ def send_over_msg(open_id):
     return send_msg_card(note)
 
 
-def send_pic_msg(open_id, count, image_key):
+def send_wait_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": False
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "已收到指令，正在生成中~"
+                    }
+                }
+            ]
+        }
+    }
 
+    return send_msg_card(note)
+
+
+def send_clear_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": False
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "流程已清理完成~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
+def send_pic_msg(open_id, count, image_key):
     note = {
         "open_id": open_id,
         "msg_type": "interactive",
@@ -525,7 +570,7 @@ def send_pic_msg(open_id, count, image_key):
                     'tag': 'div',
                     'text': {
                         'tag': 'plain_text',
-                        'content': '本次生成结果如上，你还可生成' + str(count) + '次（输入「4」继续生成）~'
+                        'content': '本次生成结果如上，你还可生成' + str(count - 1) + '次（输入「4」继续生成）~'
                     },
                 },
                 {
@@ -601,9 +646,8 @@ def save_pic(record_id, open_id, pic_key, handler):
 def upload_pic(pic_path):
     with open(pic_path, 'rb') as f:
         image = f.read()
-    print(pic_path)
     upload_pic_url = 'https://open.feishu.cn/open-apis/image/v4/put/'
-    access_token = self.get_tenant_access_token()
+    access_token = get_tenant_access_token()
     upload_pic_headers = {
         "Authorization": "Bearer " + access_token
     }
@@ -617,7 +661,7 @@ def upload_pic(pic_path):
     upload_pic_req.raise_for_status()
     receive_img_data = upload_pic_req.json()
     receive_img_key = receive_img_data["data"]["image_key"]
-    print(receive_img_key)
+    # print(receive_img_key)
     return receive_img_key
 
 
@@ -661,12 +705,13 @@ def test():
 
     # type = p2p_chat_create 首次创建会话
     # type = message 对方发消息
+    open_id = event_data["open_id"]
 
     # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
     if event_data["type"] == "p2p_chat_create":
 
-        send_create_msg(event_data["open_id"])
-        return send_init_msg(event_data["open_id"])
+        send_create_msg(open_id)
+        return send_init_msg(open_id)
 
     # 如果输入的是普通文字或图片
     elif event_data["type"] == "message":
@@ -674,7 +719,7 @@ def test():
         # 其他类型的回复，仅回复提示
         if event_data["msg_type"] not in ["text", "image"]:
             print("unknown msg_type =", event_data)
-            return send_tip_msg(event_data["open_id"])
+            return send_tip_msg(open_id)
 
         db_handle = InstantDB().get_connect()
 
@@ -686,13 +731,13 @@ def test():
                 try:
                     # 先查找5分钟内有没有
                     search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                                 "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE) " \
+                                 "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE) " \
                                  "and record_status in ('1', '2', '3') limit 1" % \
                                  event_data["employee_id"]
 
                     if db_handle.search_DB(search_sql):
                         db_handle.db_close()
-                        return send_repeat_msg(event_data["open_id"])
+                        return send_repeat_msg(open_id)
 
                     # 没有记录，才创建新记录
                     record_created_by = event_data["employee_id"]
@@ -707,67 +752,69 @@ def test():
                     traceback.print_exc()
                     print(e)
                     db_handle.db_close()
-                    return send_fail_msg(event_data["open_id"], str(e) + traceback.format_exc())
+                    return send_fail_msg(open_id, str(e) + traceback.format_exc())
 
-                _return = send_upload_pic_msg(event_data["open_id"])
+                _return = send_upload_pic_msg(open_id)
 
             elif event_data["text"] == "2":
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
                 record = db_handle.search_DB(search_sql)
 
-                if record is None:
+                if not record:
                     db_handle.db_close()
-                    return send_init_msg(event_data["open_id"])
+                    return send_init_msg(open_id)
 
                 # 更新状态
                 update_first_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (2, record[0]["record_id"])
                 db_handle.modify_DB(update_first_sql)
 
-                return send_first_msg(event_data["open_id"])
+                return send_first_msg(open_id)
 
             elif event_data["text"] == "3":
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
                 record = db_handle.search_DB(search_sql)
 
-                if record is None:
+                if not record:
                     db_handle.db_close()
-                    return send_init_msg(event_data["open_id"])
+                    return send_init_msg(open_id)
 
                 # 更新状态
                 update_secord_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (3, record[0]["record_id"])
                 db_handle.modify_DB(update_secord_sql)
 
-                _return = send_secord_msg(event_data["open_id"])
+                _return = send_secord_msg(open_id)
 
             elif event_data["text"] == "4":
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
-                             "and record_status in ('1', '2', '3') limit 1" % \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
                 record = db_handle.search_DB(search_sql)
 
-                if record is None:
+                # print(record)
+
+                if not record:
                     db_handle.db_close()
-                    return send_init_msg(event_data["open_id"])
+                    return send_init_msg(open_id)
 
                 # 检查各项信息是否为空，如果为空则提醒用户输入
                 check_sql = "select * from gen_pic where record_created_by = '%s' " \
-                            "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                            "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
                             "and record_pic_count != 0 " \
                             "and record_first_title is not null " \
                             "and record_secord_title is not null limit 1" % \
@@ -775,17 +822,19 @@ def test():
 
                 check = db_handle.search_DB(check_sql)
 
-                if check is None:
+                if not check:
                     db_handle.db_close()
-                    return send_check_msg(event_data["open_id"])
+                    return send_check_msg(open_id)
 
                 if check[0]["record_changes"] <= 0:
                     db_handle.db_close()
-                    return send_over_msg(event_data["open_id"])
+                    return send_over_msg(open_id)
+
+                # 到这里说明要开始生成了，先发个消息让用户稍安勿躁
+                send_wait_msg(open_id)
 
                 # 调隔壁的函数进行渲染
                 try:
-
 
                     image_list = Main().run(str(check[0]["record_id"]), check[0]["record_first_title"], check[0]["record_secord_title"])
                     image_key_list = []
@@ -793,32 +842,57 @@ def test():
                         image_key_list.append(upload_pic(ikey))
                         os.remove(ikey)
 
-                    _return = send_pic_msg(event_data["open_id"], check[0]["record_changes"], image_key_list)
+                    _return = send_pic_msg(open_id, check[0]["record_changes"], image_key_list)
 
                     # 改变生成次数
                     count_sql = "update gen_pic set record_changes=record_changes-'1' where record_id = '%s'" % check[0]["record_id"]
-                    handler.modify_DB(count_sql)
+                    db_handle.modify_DB(count_sql)
 
                 except Exception as e:
 
                     traceback.print_exc()
                     print(e)
                     db_handle.db_close()
-                    return send_fail_msg(event_data["open_id"], str(e) + traceback.format_exc())
+                    return send_fail_msg(open_id, str(e) + traceback.format_exc())
+
+            elif event_data["text"] == "0":
+
+                # 没有创建得先创建
+                search_sql = "select * from gen_pic where record_created_by = '%s' " \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_status in ('2', '3')" % \
+                             event_data["employee_id"]
+
+                record = db_handle.search_DB(search_sql)
+
+                if not record:
+                    db_handle.db_close()
+                    return send_init_msg(open_id)
+
+                # 清除当前用户的所有未完成的流程
+                update_secord_sql = "update gen_pic set record_status = '%s' where record_status in ('1', '2', '3') and record_created_by = '%s'" % (5, event_data["employee_id"])
+                db_handle.modify_DB(update_secord_sql)
+
+                # 删除用户数据
+                for ikey in record:
+                    shutil.rmtree("cover_generator/" + str(ikey["record_id"]))
+                    shutil.rmtree("cover_generator/" + str(ikey["record_id"]) + "_temp")
+                    shutil.rmtree("cover_generator/" + str(ikey["record_id"]) + "_fin")
+
+                _return = send_clear_msg(open_id)
 
             else:
                 # 除非是状态2和状态3，其他的一律当乱输处理
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
                              "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
                 record = db_handle.search_DB(search_sql)
-                print(record)
 
                 if not record:
 
-                    return send_tip_msg(event_data["open_id"])
+                    return send_tip_msg(open_id)
 
                 else:
 
@@ -827,35 +901,35 @@ def test():
 
                         update_first_sql = "update gen_pic set record_first_title = '%s' where record_id = '%s'" % (event_data["text"][:7], record[0]["record_id"])
                         db_handle.modify_DB(update_first_sql)
-                        _return = send_first_note_msg(event_data["open_id"], event_data["text"][:7])
+                        _return = send_first_note_msg(open_id, event_data["text"][:7])
 
 
                     else:
 
                         update_secord_sql = "update gen_pic set record_secord_title = '%s' where record_id = '%s'" % (event_data["text"][:11], record[0]["record_id"])
                         db_handle.modify_DB(update_secord_sql)
-                        _return = send_secord_note_msg(event_data["open_id"], event_data["text"][:11])
+                        _return = send_secord_note_msg(open_id, event_data["text"][:11])
 
         # 如果输入的是图片，首先查找当前用户是否在5分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
         elif event_data["msg_type"] == "image":
 
             search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                         "and record_created_at <= DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                         "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
                          "and record_status in ('1', '2', '3') limit 1" % \
                          event_data["employee_id"]
 
             record = db_handle.search_DB(search_sql)
 
-            if record is None:
-                return send_init_msg(event_data["open_id"])
+            if not record:
+                return send_init_msg(open_id)
 
             print(record[0]["record_id"])
 
             # 1 接收图片 2 把图片信息写入库
-            _return = save_pic(record[0]["record_id"], event_data["open_id"], event_data["image_key"], db_handle)
+            _return = save_pic(record[0]["record_id"], open_id, event_data["image_key"], db_handle)
 
         else:
-            return send_init_msg(event_data["open_id"])
+            return send_init_msg(open_id)
 
         db_handle.db_close()
 
