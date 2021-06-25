@@ -236,7 +236,7 @@ class Structure(object):
         draw.text((secord_title_position_x + config["other"]["shadow_offset_x"], secord_title_position_y + config["other"]["shadow_offset_y"]), self.secord_title, font=secord_title_font, fill=shadow)
         draw.text((secord_title_position_x, secord_title_position_y), self.secord_title, font=secord_title_font, fill=secord_title_color)
 
-        self.tb.save('transparent_title.png', quality=100)
+        self.tb.save('cover_generator/transparent_title.png', quality=100)
 
     def traditional(self):
 
