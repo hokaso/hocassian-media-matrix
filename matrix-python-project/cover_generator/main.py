@@ -26,13 +26,13 @@ class Main(object):
         for root, dirs, files in os.walk(self.image_path):
             for file in files:
                 if os.path.splitext(file)[-1] in image_ext:
-                    image = Image.open("render/" + file)
+                    image = Image.open("cover_generator/render/" + file)
                     Structure().run(self.test_title, self.test_secord_title)
                     title = Image.open("transparent_title.png")
                     r, g, b, a = title.split()
                     image.paste(title, (0, 0), mask=a)
-                    image.save("fin/" + str(SnowId(1, 2, 0).get_id())[1:] + '.png', quality=100)
-                    os.remove("render/" + file)
+                    image.save("cover_generator/fin/" + str(SnowId(1, 2, 0).get_id())[1:] + '.png', quality=100)
+                    os.remove("cover_generator/render/" + file)
 
 
     @staticmethod

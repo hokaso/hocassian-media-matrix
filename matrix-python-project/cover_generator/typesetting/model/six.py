@@ -16,7 +16,7 @@ class Six(object):
         self.rank_model = None
         self.tb = None
 
-        with open("typesetting/style.json", 'r') as f0:
+        with open("cover_generator/typesetting/style.json", 'r') as f0:
             style_config = json.loads(f0.read())
 
         self.model = style_config["six"]

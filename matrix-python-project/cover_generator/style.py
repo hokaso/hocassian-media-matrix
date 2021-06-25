@@ -49,7 +49,7 @@ class Style(object):
         if image_path:
             self.image_path = image_path
         else:
-            self.image_path = "images"
+            self.image_path = "cover_generator/images"
 
         image_ext = ['.jpg', '.png', '.jpeg', '.bmp']
         self.image_list = []
@@ -58,7 +58,7 @@ class Style(object):
             for file in files:
                 if os.path.splitext(file)[-1] in image_ext:
                     self.image_count += 1
-                    image = Image.open("images/" + file)
+                    image = Image.open("cover_generator/images/" + file)
 
                     self.image_info = {
                         "filename": file,
