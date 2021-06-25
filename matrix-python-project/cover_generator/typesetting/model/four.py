@@ -10,7 +10,7 @@ sys.path.append(os.getcwd())
 
 class Four(object):
 
-    def __init__(self):
+    def __init__(self, folder_key):
 
         self.image_list = None
         self.rank_model = None
@@ -32,6 +32,8 @@ class Four(object):
             8: self.windows_vertical_build,
             9: self.windows_horizontal_build,
         }
+
+        self._build = Build(folder_key, folder_key + "_temp")
 
     def quadruple_vertical(self, image_list):
         return More(image_list, self.model[0]["unit_detail"], "41").main()
@@ -73,25 +75,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[0]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[0]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[0]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[0]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3]
@@ -112,7 +114,7 @@ class Four(object):
             self.tb.paste(pic_list[2], (540, 960))
             self.tb.paste(pic_4, (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def quadruple_horizontal_build(self):
 
@@ -120,25 +122,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[1]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[1]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[1]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[1]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3]
@@ -176,7 +178,7 @@ class Four(object):
             self.tb.paste(pic_list[2], (720, 720))
             self.tb.paste(pic_4, (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def chairs_build(self):
 
@@ -184,25 +186,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[2]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[2]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[2]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[2]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_2, pic_3]
@@ -250,7 +252,7 @@ class Four(object):
             self.tb.paste(pic_list[0], (720, 0))
             self.tb.paste(pic_4, (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def chairs_spin_build(self):
 
@@ -258,25 +260,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[3]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[3]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[3]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[3]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_3, pic_4]
@@ -325,7 +327,7 @@ class Four(object):
             self.tb.paste(pic_list[1], (0, 480))
             self.tb.paste(pic_list[0], (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def h2v2_build(self):
 
@@ -333,25 +335,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[4]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[4]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[4]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[4]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -380,7 +382,7 @@ class Four(object):
             self.tb.paste(pic_list_2[0], (0, 0))
             self.tb.paste(pic_list_2[1], (720, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def h2v2_spin_build(self):
 
@@ -388,25 +390,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[5]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[5]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[5]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[5]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -453,7 +455,7 @@ class Four(object):
             self.tb.paste(pic_list_2[0], (0, 480))
             self.tb.paste(pic_list_2[1], (540, 480))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def windows_build(self):
 
@@ -461,25 +463,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[6]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[6]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[6]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[6]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3, pic_4]
@@ -490,7 +492,7 @@ class Four(object):
         self.tb.paste(pic_list[2], (0, 720))
         self.tb.paste(pic_list[3], (540, 720))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def windows_vertical_build(self):
 
@@ -498,25 +500,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[7]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[7]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[7]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[7]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -540,7 +542,7 @@ class Four(object):
             self.tb.paste(pic_list_2[0], (0, 0))
             self.tb.paste(pic_list_2[1], (720, 720))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def windows_horizontal_build(self):
 
@@ -548,25 +550,25 @@ class Four(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[8]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[8]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[8]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[8]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -590,4 +592,4 @@ class Four(object):
             self.tb.paste(pic_list_2[0], (0, 0))
             self.tb.paste(pic_list_2[1], (540, 360))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)

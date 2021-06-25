@@ -10,7 +10,7 @@ sys.path.append(os.getcwd())
 
 class Six(object):
 
-    def __init__(self):
+    def __init__(self, folder_key):
 
         self.image_list = None
         self.rank_model = None
@@ -30,6 +30,8 @@ class Six(object):
             6: self.offset_horizontal_big_build,
             7: self.arround_build,
         }
+
+        self._build = Build(folder_key, folder_key + "_temp")
 
     def align_vertical(self, image_list):
         return More(image_list, self.model[0]["unit_detail"], "61").main()
@@ -65,37 +67,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[0]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[0]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[0]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[0]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[0]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[0]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3, pic_4, pic_5, pic_6]
@@ -108,7 +110,7 @@ class Six(object):
         self.tb.paste(pic_list[4], (360, 720))
         self.tb.paste(pic_list[5], (720, 720))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def align_horizontal_build(self):
 
@@ -116,37 +118,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[1]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[1]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[1]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[1]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[1]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[1]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3, pic_4, pic_5, pic_6]
@@ -159,7 +161,7 @@ class Six(object):
         self.tb.paste(pic_list[4], (0, 960))
         self.tb.paste(pic_list[5], (540, 960))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def offset_vertical_small_build(self):
 
@@ -167,37 +169,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[2]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[2]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[2]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[2]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[2]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[2]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -260,7 +262,7 @@ class Six(object):
                 self.tb.paste(pic_list_3[0], (0, 0))
                 self.tb.paste(pic_list_3[1], (540, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def offset_horizontal_small_build(self):
 
@@ -268,37 +270,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[3]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[3]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[3]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[3]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[3]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[3]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2]
@@ -361,7 +363,7 @@ class Six(object):
                 self.tb.paste(pic_list_3[0], (0, 0))
                 self.tb.paste(pic_list_3[1], (0, 720))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def offset_vertical_big_build(self):
 
@@ -369,37 +371,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[4]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[4]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[4]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[4]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[4]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[4]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2, pic_3]
@@ -445,7 +447,7 @@ class Six(object):
                 self.tb.paste(pic_list_2[0], (540, 360))
                 self.tb.paste(pic_6, (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def offset_horizontal_big_build(self):
 
@@ -453,37 +455,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[5]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[5]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[5]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[5]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[5]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[5]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list_1 = [pic_1, pic_2, pic_3]
@@ -529,7 +531,7 @@ class Six(object):
                 self.tb.paste(pic_list_2[0], (270, 720))
                 self.tb.paste(pic_6, (0, 0))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
 
     def arround_build(self):
 
@@ -537,37 +539,37 @@ class Six(object):
         image = self.image_list[self.rank_model["model_match"][0][1]]
         model = self.model[6]["unit_detail"][0]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_1 = Build().build_up(image["filename"], rate, area)
+        pic_1 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第二张图
         image = self.image_list[self.rank_model["model_match"][1][1]]
         model = self.model[6]["unit_detail"][1]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_2 = Build().build_up(image["filename"], rate, area)
+        pic_2 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第三张图
         image = self.image_list[self.rank_model["model_match"][2][1]]
         model = self.model[6]["unit_detail"][2]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_3 = Build().build_up(image["filename"], rate, area)
+        pic_3 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第四张图
         image = self.image_list[self.rank_model["model_match"][3][1]]
         model = self.model[6]["unit_detail"][3]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_4 = Build().build_up(image["filename"], rate, area)
+        pic_4 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第五张图
         image = self.image_list[self.rank_model["model_match"][4][1]]
         model = self.model[6]["unit_detail"][4]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_5 = Build().build_up(image["filename"], rate, area)
+        pic_5 = self._build.build_up(image["filename"], rate, area)
 
         # 贴第六张图
         image = self.image_list[self.rank_model["model_match"][5][1]]
         model = self.model[6]["unit_detail"][5]
         rate, area = Mark(image["width"], image["height"], model["width"], model["height"]).crop()
-        pic_6 = Build().build_up(image["filename"], rate, area)
+        pic_6 = self._build.build_up(image["filename"], rate, area)
 
         # 随机对相同宽高的图片进行shuffle
         pic_list = [pic_1, pic_2, pic_3, pic_4, pic_5]
@@ -610,4 +612,4 @@ class Six(object):
                 self.tb.paste(pic_list[4], (0, 0))
                 self.tb.paste(pic_6, (0, 480))
 
-        Build().save(self.tb)
+        self._build.save(self.tb)
