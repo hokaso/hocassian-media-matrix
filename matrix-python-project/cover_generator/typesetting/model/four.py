@@ -62,7 +62,7 @@ class Four(object):
 
     def build(self, image_list, model):
 
-        self.tb = Image.open("background.jpg")
+        self.tb = Image.open("cover_generator/background.jpg")
         self.image_list = image_list
         self.rank_model = model
         self.func_map[int(model["model_id"][1])]()

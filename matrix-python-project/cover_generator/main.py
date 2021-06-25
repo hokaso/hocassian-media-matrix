@@ -28,7 +28,7 @@ class Main(object):
                 if os.path.splitext(file)[-1] in image_ext:
                     image = Image.open("cover_generator/render/" + file)
                     Structure().run(self.test_title, self.test_secord_title)
-                    title = Image.open("transparent_title.png")
+                    title = Image.open("cover_generator/transparent_title.png")
                     r, g, b, a = title.split()
                     image.paste(title, (0, 0), mask=a)
                     image.save("cover_generator/fin/" + str(SnowId(1, 2, 0).get_id())[1:] + '.png', quality=100)
