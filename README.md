@@ -8,7 +8,7 @@
 ![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
 
 <p>
-  <a href="https://app.gitbook.com/@hocassian/s/matrix">文檔</a> •
+  <a href="https://hocassian.gitbook.io/matrix">文檔</a> •
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
   <a href="https://material.hocassian.com">素材矩陣示例站</a> •
   <a href="https://video.hocassian.com">視頻矩陣示例站</a> •
@@ -207,10 +207,6 @@
 ❎ 分發主體文章、圖片、音樂、視頻作品到各大媒體平台，持續吸引不同平台相關領域的愛好者；
 
 ❎ 自動化分發降低重複勞動，使成員的注意力集中在創作輸出上；
-
-## 加入方式
-
-（部署流程待編寫……）
 
 ## 免責聲明
 
