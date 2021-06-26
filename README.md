@@ -7,7 +7,7 @@
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
 ![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
 
-<p align="center">
+<p>
   <a href="https://app.gitbook.com/@hocassian/s/matrix">文檔</a> •
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
   <a href="https://material.hocassian.com">素材矩陣示例站</a> •
