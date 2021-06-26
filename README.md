@@ -12,7 +12,7 @@
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
   <a href="https://material.hocassian.com">素材矩陣示例站</a> •
   <a href="https://video.hocassian.com">視頻矩陣示例站</a> •
-  <a href="https://github.com/hokaso/hocassian-people-neo4j">人脈矩陣demo</a> •
+  <a href="https://github.com/hokaso/hocassian-people-neo4j">人脈矩陣demo</a>
 </p>
 
 
