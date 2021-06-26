@@ -11,11 +11,13 @@ from cover_generator.main import Main
 
 # from snow_id import SnowId
 
-APP_ID = "cli_a0581ffbc4bb9013"
-APP_SECRET = "YqVwQbrPDIY3SU1Yu3ZjVhEpPzwV1YUn"
-APP_VERIFICATION_TOKEN = "Q9uk44RvaiBz3J2z82u4kbLxBfoLzDAU"
-APP_ENCRYPT_KEY = "0VszfiITgtm5POiw9LNkwfrZXwkFmJjJ"
+with open("coven_generator/config.json", 'r') as f0:
+    info = json.loads(f0.read())
 
+APP_ID =info["APP_ID"]
+APP_SECRET = info["APP_SECRET"]
+APP_VERIFICATION_TOKEN = info["APP_VERIFICATION_TOKEN"]
+APP_ENCRYPT_KEY = info["APP_ENCRYPT_KEY"]
 
 class AESCipher(object):
 
