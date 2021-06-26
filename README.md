@@ -8,7 +8,7 @@
 ![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
 
 <p>
-  <a href="https://app.gitbook.com/@hocassian/s/matrix">文檔</a> •
+  <a href="https://hocassian.gitbook.io/matrix">文檔</a> •
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
   <a href="https://material.hocassian.com">素材矩陣示例站</a> •
   <a href="https://video.hocassian.com">視頻矩陣示例站</a> •
