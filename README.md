@@ -7,6 +7,14 @@
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
 ![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
 
+<p align="center">
+  <a href="https://app.gitbook.com/@hocassian/s/matrix">文檔</a> •
+  <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
+  <a href="https://material.hocassian.com">素材矩陣示例站</a> •
+  <a href="https://video.hocassian.com">視頻矩陣示例站</a> •
+  <a href="https://github.com/hokaso/hocassian-people-neo4j">人脈矩陣demo</a> •
+</p>
+
 
 > 自媒體大航海時代，五大矩陣領航
 
@@ -229,4 +237,4 @@ b站&YouTube&西瓜視頻知名up主，精通拍攝、剪輯、特效、調色�
 
 網易音樂人/業餘攝影師/資深危機公關/NGO組織成員（曾）/中國左派青年，以上就是我的個人履歷了，人生有無數種可能，人生有無限的精彩，人生沒有盡頭，所以這份簡歷還會不斷更新。一個人只要足夠的愛自己，尊重自己內心的聲音，就算是真正的活著。
 
-![](https://op.hocassian.com/static/img/logo.3515057d.png)
+![](https://github.com/hokaso/hocassian-media-matrix/blob/master/video-front-end/src/assets/info.png)
