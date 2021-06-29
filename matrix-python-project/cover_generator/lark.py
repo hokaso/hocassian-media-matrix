@@ -1,5 +1,5 @@
 # 请按需导入，将不需要的删去以提升性能
-from flask import Flask, request, abort, jsonify, render_template
+from flask import Flask, request
 import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback, imghdr, shutil
 from Crypto.Cipher import AES
 from gevent import pywsgi
@@ -9,15 +9,14 @@ from utils.snow_id import SnowId
 from db.database_handler import InstantDB
 from cover_generator.main import Main
 
-# from snow_id import SnowId
-
 with open("coven_generator/config.json", 'r') as f0:
     info = json.loads(f0.read())
 
-APP_ID =info["APP_ID"]
+APP_ID = info["APP_ID"]
 APP_SECRET = info["APP_SECRET"]
 APP_VERIFICATION_TOKEN = info["APP_VERIFICATION_TOKEN"]
 APP_ENCRYPT_KEY = info["APP_ENCRYPT_KEY"]
+
 
 class AESCipher(object):
 
