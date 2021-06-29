@@ -112,14 +112,16 @@ class Style(object):
 
     def render(self):
         self.rank_dict.sort(key=lambda x: x["model_mark"])
-        adoption = int(len(self.rank_dict) / 1.5)
-        # adoption = len(self.rank_dict)
 
         # 测试程序
+        # assert adoption > 3
+        # adoption = len(self.rank_dict)
         # for ikey in range(adoption):
         #     self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
         # 实际程序
+        adoption = int(len(self.rank_dict) / 1.5)
+        assert adoption > 3
         temp = []
         while len(temp) < 3:
             index = random.randint(0, adoption)
