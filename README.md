@@ -7,6 +7,9 @@
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
 ![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
 
+![](https://hocassian.cn/wp-content/uploads/2021/07/u3198728381467207184fm55app54fJPEG.jpeg)
+> 不忘初心，牢記使命！簡體中文與繁體中文在人民群眾中享有同等地位！
+
 <p>
   <a href="https://hocassian.gitbook.io/matrix">文檔</a> •
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
@@ -15,7 +18,6 @@
   <a href="https://video.hocassian.com">視頻矩陣示例站</a> •
   <a href="https://github.com/hokaso/hocassian-people-neo4j">人脈矩陣demo</a>
 </p>
-
 
 > 自媒體大航海時代，五大矩陣領航
 
