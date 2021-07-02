@@ -727,7 +727,10 @@ def test():
 
     # type = p2p_chat_create 首次创建会话
     # type = message 对方发消息
-    open_id = event_data["open_id"]
+    if "open_id" in event_data:
+        open_id = event_data["open_id"]
+    else:
+        open_id = event_data["user"]["open_id"]
 
     # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
     if event_data["type"] == "p2p_chat_create":
