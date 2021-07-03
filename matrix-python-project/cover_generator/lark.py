@@ -60,8 +60,8 @@ def get_tenant_access_token():
     try:
         rsp_body = requests.post(url, headers=headers, data=json.dumps(body))
     except Exception as e:
-        print(e.read().decode())
-        return ""
+        print(e)
+        return "fail"
 
     # rsp_body = response.read().decode('utf-8')
     rsp_dict = rsp_body.json()
@@ -159,7 +159,7 @@ def send_tip_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交处理之前，可随时新增图片"
+                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符"
                         }
                     ]
                 }
@@ -239,7 +239,7 @@ def send_create_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交渲染处理之前，可随时新增图片"
+                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交渲染处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符"
                         }
                     ]
                 }
@@ -645,6 +645,8 @@ def save_pic(record_id, open_id, pic_key, handler):
 
         # 把这个图片的后缀改为其真实的格式（飞书API的缺陷，无法确定真实格式，只能本地检测）
         real_rex = imghdr.what("cover_generator/" + str(record_id) + "/" + pic_name)
+        if not real_rex:
+            real_rex = ".jpg"
         new_pic_name = os.path.splitext(pic_name)[0]
         search_pic_new_fullname = new_pic_name + '.' + real_rex
         os.rename("cover_generator/" + str(record_id) + "/" + pic_name, "cover_generator/" + str(record_id) + "/" + search_pic_new_fullname)

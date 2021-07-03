@@ -16,18 +16,20 @@ class Operator(object):
         rsg = self.db_handle.search_DB(pick_sql)
         id_list = [i["record_id"] for i in rsg]
 
+        print(id_list)
+
         # 删除用户数据
         for ikey in id_list:
 
             try:
-                shutil.rmtree("cover_generator/" + str(ikey["record_id"]))
-                shutil.rmtree("cover_generator/" + str(ikey["record_id"]) + "_temp")
-                shutil.rmtree("cover_generator/" + str(ikey["record_id"]) + "_fin")
+                shutil.rmtree("cover_generator/" + str(ikey))
+                shutil.rmtree("cover_generator/" + str(ikey) + "_temp")
+                shutil.rmtree("cover_generator/" + str(ikey) + "_fin")
             except Exception as e:
                 print(e)
 
-            update_secord_sql = "update gen_pic set record_status = '4' where record_id = '%s'" % ikey
-            self.db_handle.modify_DB(update_secord_sql)
+            update_sql = "update gen_pic set record_status = '4' where record_id = '%s'" % ikey
+            self.db_handle.modify_DB(update_sql)
 
 if __name__ == '__main__':
     p = Operator().main
@@ -36,3 +38,6 @@ if __name__ == '__main__':
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+# if __name__ == '__main__':
+#     Operator().main()
