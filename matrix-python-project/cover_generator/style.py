@@ -69,57 +69,59 @@ class Style(object):
                     self.image_list.append(self.image_info)
 
     def one(self):
-        self.rank_dict.append(One(self.image_path).windows(self.image_list))
-        self.rank_dict.append(One(self.image_path).single(self.image_list))
+        self.rank_dict.append(One(self.image_path).windows( self.image_list))
+        self.rank_dict.append(One(self.image_path).single(  self.image_list))
 
     def two(self):
-        self.rank_dict.append(Two(self.image_path).horizontal(self.image_list))
-        self.rank_dict.append(Two(self.image_path).vertical(self.image_list))
-        self.rank_dict.append(Two(self.image_path).windows(self.image_list))
+        self.rank_dict.append(Two(self.image_path).horizontal( self.image_list))
+        self.rank_dict.append(Two(self.image_path).vertical(   self.image_list))
+        self.rank_dict.append(Two(self.image_path).windows(    self.image_list))
 
     def three(self):
-        self.rank_dict.append(Three(self.image_path).horizontal(self.image_list))
-        self.rank_dict.append(Three(self.image_path).vertical(self.image_list))
-        self.rank_dict.append(Three(self.image_path).triple_vertical(self.image_list))
-        self.rank_dict.append(Three(self.image_path).triple_horizontal(self.image_list))
+        self.rank_dict.append(Three(self.image_path).horizontal(        self.image_list))
+        self.rank_dict.append(Three(self.image_path).vertical(          self.image_list))
+        self.rank_dict.append(Three(self.image_path).triple_vertical(   self.image_list))
+        self.rank_dict.append(Three(self.image_path).triple_horizontal( self.image_list))
 
     def four(self):
-        self.rank_dict.append(Four(self.image_path).quadruple_vertical(self.image_list))
-        self.rank_dict.append(Four(self.image_path).quadruple_horizontal(self.image_list))
-        self.rank_dict.append(Four(self.image_path).chairs(self.image_list))
-        self.rank_dict.append(Four(self.image_path).chairs_spin(self.image_list))
-        self.rank_dict.append(Four(self.image_path).h2v2(self.image_list))
-        self.rank_dict.append(Four(self.image_path).h2v2_spin(self.image_list))
-        self.rank_dict.append(Four(self.image_path).windows(self.image_list))
-        self.rank_dict.append(Four(self.image_path).windows_vertical(self.image_list))
-        self.rank_dict.append(Four(self.image_path).windows_horizontal(self.image_list))
+        self.rank_dict.append(Four(self.image_path).quadruple_vertical(   self.image_list))
+        self.rank_dict.append(Four(self.image_path).quadruple_horizontal( self.image_list))
+        self.rank_dict.append(Four(self.image_path).chairs(               self.image_list))
+        self.rank_dict.append(Four(self.image_path).chairs_spin(          self.image_list))
+        self.rank_dict.append(Four(self.image_path).h2v2(                 self.image_list))
+        self.rank_dict.append(Four(self.image_path).h2v2_spin(            self.image_list))
+        self.rank_dict.append(Four(self.image_path).windows(              self.image_list))
+        self.rank_dict.append(Four(self.image_path).windows_vertical(     self.image_list))
+        self.rank_dict.append(Four(self.image_path).windows_horizontal(   self.image_list))
 
     def five(self):
-        self.rank_dict.append(Five(self.image_path).offset_vertical(self.image_list))
-        self.rank_dict.append(Five(self.image_path).offset_horizontal(self.image_list))
-        self.rank_dict.append(Five(self.image_path).align_vertical(self.image_list))
-        self.rank_dict.append(Five(self.image_path).align_horizontal(self.image_list))
-        self.rank_dict.append(Five(self.image_path).mirror(self.image_list))
+        self.rank_dict.append(Five(self.image_path).offset_vertical(   self.image_list))
+        self.rank_dict.append(Five(self.image_path).offset_horizontal( self.image_list))
+        self.rank_dict.append(Five(self.image_path).align_vertical(    self.image_list))
+        self.rank_dict.append(Five(self.image_path).align_horizontal(  self.image_list))
+        self.rank_dict.append(Five(self.image_path).mirror(            self.image_list))
 
     def six(self):
-        self.rank_dict.append(Six(self.image_path).align_vertical(self.image_list))
-        self.rank_dict.append(Six(self.image_path).align_horizontal(self.image_list))
-        self.rank_dict.append(Six(self.image_path).offset_vertical_small(self.image_list))
-        self.rank_dict.append(Six(self.image_path).offset_horizontal_small(self.image_list))
-        self.rank_dict.append(Six(self.image_path).offset_vertical_big(self.image_list))
-        self.rank_dict.append(Six(self.image_path).offset_horizontal_big(self.image_list))
-        self.rank_dict.append(Six(self.image_path).arround(self.image_list))
+        self.rank_dict.append(Six(self.image_path).align_vertical(          self.image_list))
+        self.rank_dict.append(Six(self.image_path).align_horizontal(        self.image_list))
+        self.rank_dict.append(Six(self.image_path).offset_vertical_small(   self.image_list))
+        self.rank_dict.append(Six(self.image_path).offset_horizontal_small( self.image_list))
+        self.rank_dict.append(Six(self.image_path).offset_vertical_big(     self.image_list))
+        self.rank_dict.append(Six(self.image_path).offset_horizontal_big(   self.image_list))
+        self.rank_dict.append(Six(self.image_path).arround(                 self.image_list))
 
     def render(self):
         self.rank_dict.sort(key=lambda x: x["model_mark"])
-        adoption = int(len(self.rank_dict) / 1.5)
-        # adoption = len(self.rank_dict)
 
         # 测试程序
+        # assert adoption > 3
+        # adoption = len(self.rank_dict)
         # for ikey in range(adoption):
         #     self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
         # 实际程序
+        adoption = int(len(self.rank_dict) / 1.5)
+        assert adoption > 3
         temp = []
         while len(temp) < 3:
             index = random.randint(0, adoption)

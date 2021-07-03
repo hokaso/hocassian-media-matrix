@@ -33,11 +33,11 @@ class ImageMaster(object):
         # self.password     = info["remote_prod"]["password"]
         # self.virtual_host = info["remote_prod"]["virtual_host"]
 
-        self.app_id = info["imagex"]["app_id"]
+        self.app_id     = info["imagex"]["app_id"]
         self.app_secret = info["imagex"]["app_secret"]
         self.service_id = info["imagex"]["service_id"]
-        self.prefix = info["imagex"]["prefix"]
-        self.suffix = info["imagex"]["suffix"]
+        self.prefix     = info["imagex"]["prefix"]
+        self.suffix     = info["imagex"]["suffix"]
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.db_handle = InstantDB().get_connect()

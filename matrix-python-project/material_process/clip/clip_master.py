@@ -22,25 +22,29 @@ class ClipMaster(object):
     def __init__(self):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            # info = json.loads(f0.read())
+            info = json.load(f0)
 
         # self.ip           = info["local_dev"]["ip"]
         # self.port         = info["local_dev"]["port"]
         # self.account      = info["local_dev"]["account"]
         # self.password     = info["local_dev"]["password"]
         # self.virtual_host = info["local_dev"]["virtual_host"]
+        # self.__dict__ = {**self.__dict__, **info[local_dev]}
 
         self.ip           = info["local_prod"]["ip"]
         self.port         = info["local_prod"]["port"]
         self.account      = info["local_prod"]["account"]
         self.password     = info["local_prod"]["password"]
         self.virtual_host = info["local_prod"]["virtual_host"]
+        # self.__dict__ = {**self.__dict__, **info[local_prod]}
 
         # self.ip           = info["remote_prod"]["ip"]
         # self.port         = info["remote_prod"]["port"]
         # self.account      = info["remote_prod"]["account"]
         # self.password     = info["remote_prod"]["password"]
         # self.virtual_host = info["remote_prod"]["virtual_host"]
+        # self.__dict__ = {**self.__dict__, **info[remote_prod]}
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.send_url = info["send_url"]
@@ -62,20 +66,19 @@ class ClipMaster(object):
         )
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host=self.ip,
-                port=self.port,
-                virtual_host=self.virtual_host,
-                credentials=credentials
+                host         = self.ip,
+                port         = self.port,
+                virtual_host = self.virtual_host,
+                credentials  = credentials
             )
         )
         channel = connection.channel()
 
         # 创建临时队列，队列名传空字符，consumer关闭后，队列自动删除
         channel.queue_declare(queue='clipOptionalQueue', durable=True)
-
         channel.exchange_declare(exchange='clipOptionalExchange', durable=True, exchange_type='direct')
-        # 绑定exchange和队列  exchange 使我们能够确切地指定消息应该到哪个队列去
 
+        # 绑定exchange和队列  exchange 使我们能够确切地指定消息应该到哪个队列去
         channel.queue_bind(exchange='clipOptionalExchange', queue='clipOptionalQueue',
                            routing_key='clipOptionalRouting')
 
