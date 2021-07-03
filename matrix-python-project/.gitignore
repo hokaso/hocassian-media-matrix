@@ -4,6 +4,7 @@ db/config.json
 sync_ytb_video/config.json
 utils/test.py
 material_process/config.json
+cover_generator/config.json
 pretrained_models/
 key.txt
 **/test.py
@@ -15,3 +16,5 @@ key.txt
 **/images
 **/render
 **/lark.json
+**/temp_input
+**/temp_output

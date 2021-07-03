@@ -9,8 +9,8 @@ from utils.snow_id import SnowId
 from db.database_handler import InstantDB
 from cover_generator.main import Main
 
-with open("coven_generator/config.json", 'r') as f0:
-    info = json.loads(f0.read())
+with open("cover_generator/config.json", 'r') as f0:
+    info = json.load(f0)
 
 APP_ID = info["APP_ID"]
 APP_SECRET = info["APP_SECRET"]
@@ -480,6 +480,27 @@ def send_over_msg(open_id):
 
     return send_msg_card(note)
 
+def send_unfill_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": False
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "请上传2张或以上的图片~"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
 
 def send_wait_msg(open_id):
     note = {
@@ -706,7 +727,10 @@ def test():
 
     # type = p2p_chat_create 首次创建会话
     # type = message 对方发消息
-    open_id = event_data["open_id"]
+    if "open_id" in event_data:
+        open_id = event_data["open_id"]
+    else:
+        open_id = event_data["user"]["open_id"]
 
     # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
     if event_data["type"] == "p2p_chat_create":
@@ -830,6 +854,10 @@ def test():
                 if check[0]["record_changes"] <= 0:
                     db_handle.db_close()
                     return send_over_msg(open_id)
+
+                if check[0]["record_pic_count"] <= 1:
+                    db_handle.db_close()
+                    return send_unfill_msg(open_id)
 
                 # 到这里说明要开始生成了，先发个消息让用户稍安勿躁
                 send_wait_msg(open_id)
