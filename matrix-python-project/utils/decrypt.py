@@ -12,7 +12,7 @@ def add_to_16(value):
 
     return str.encode(value)
 
-
+# 解密方法
 def decrypt():
 
     with open("../key.txt", 'r') as f:
