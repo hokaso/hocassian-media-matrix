@@ -121,6 +121,10 @@ class Style(object):
 
         # 实际程序
         adoption = int(len(self.rank_dict) / 1.5)
+
+        if adoption <= 3:
+            adoption = int(len(self.rank_dict))
+        print(self.rank_dict)
         assert adoption > 3
         temp = []
         while len(temp) < 3:
