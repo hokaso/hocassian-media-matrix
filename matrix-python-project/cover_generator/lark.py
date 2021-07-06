@@ -159,7 +159,7 @@ def send_tip_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符\n※ 暂不支持gif动图与部分冷门格式"
+                            "content": "※ 请在10分钟内完成上传，超时自动复位\n※ 在提交处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符\n※ 暂不支持gif动图与部分冷门格式"
                         }
                     ]
                 }
@@ -239,7 +239,7 @@ def send_create_msg(open_id):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 请在5分钟内完成上传，超时自动复位\n※ 在提交渲染处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符\n※ 暂不支持gif动图与部分冷门格式"
+                            "content": "※ 请在10分钟内完成上传，超时自动复位\n※ 在提交渲染处理之前，可随时新增图片\n※ 暂不支持繁体中文和其他生僻字符\n※ 暂不支持gif动图与部分冷门格式"
                         }
                     ]
                 }
@@ -287,7 +287,7 @@ def send_upload_pic_msg(open_id):
                     "tag": "div",
                     "text": {
                         "tag": "plain_text",
-                        "content": "请开始上传你的图片（在5分钟内完成）~"
+                        "content": "请开始上传你的图片（在10分钟内完成）~"
                     }
                 }
             ]
@@ -333,7 +333,7 @@ def send_first_msg(open_id):
                     "tag": "div",
                     "text": {
                         "tag": "plain_text",
-                        "content": "请输入主标题（7字以内，超出自动截取前7字，在5分钟内完成）~"
+                        "content": "请输入主标题（7字以内，超出自动截取前7字，在10分钟内完成）~"
                     }
                 }
             ]
@@ -356,7 +356,7 @@ def send_secord_msg(open_id):
                     "tag": "div",
                     "text": {
                         "tag": "plain_text",
-                        "content": "请输入副标题（11字以内，超出自动截取前11字，在5分钟内完成）~"
+                        "content": "请输入副标题（11字以内，超出自动截取前11字，在10分钟内完成）~"
                     }
                 }
             ]
@@ -600,7 +600,7 @@ def send_pic_msg(open_id, count, image_key):
                     "elements": [
                         {
                             "tag": "plain_text",
-                            "content": "※ 5分钟后操作记录将清除，若需要再次生成需重新上传图片\n※ 若对当前结果满意，可直接输入「0」复位，开始新的生成流程"
+                            "content": "※ 10分钟后操作记录将清除，若需要再次生成需重新上传图片\n※ 若对当前结果满意，可直接输入「0」复位，开始新的生成流程"
                         }
                     ]
                 }
@@ -626,7 +626,7 @@ def save_pic(record_id, open_id, pic_key, handler):
     # 当超过16张的时候直接返回（16张图片时提示无法继续输入）
     select_count_sql = "select record_pic_count from gen_pic where record_id = '%s'" % record_id
     rsg = handler.search_DB(select_count_sql)
-    if rsg[0]["record_pic_count"] > 16:
+    if rsg[0]["record_pic_count"] >= 16:
         return send_out_of_msg(open_id)
 
     # 飞书API相关接口和交互参数
@@ -756,9 +756,9 @@ def test():
             if event_data["text"] == "1":
 
                 try:
-                    # 先查找5分钟内有没有
+                    # 先查找10分钟内有没有
                     search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                                 "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE) " \
+                                 "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE) " \
                                  "and record_status in ('1', '2', '3') limit 1" % \
                                  event_data["employee_id"]
 
@@ -787,7 +787,7 @@ def test():
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
@@ -807,7 +807,7 @@ def test():
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
@@ -827,7 +827,7 @@ def test():
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                              "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
@@ -841,7 +841,7 @@ def test():
 
                 # 检查各项信息是否为空，如果为空则提醒用户输入
                 check_sql = "select * from gen_pic where record_created_by = '%s' " \
-                            "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                            "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                             "and record_pic_count != 0 " \
                             "and record_first_title is not null " \
                             "and record_secord_title is not null limit 1" % \
@@ -890,7 +890,7 @@ def test():
 
                 # 没有创建得先创建
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                              "and record_status in ('2', '3')" % \
                              event_data["employee_id"]
 
@@ -915,7 +915,7 @@ def test():
             else:
                 # 除非是状态2和状态3，其他的一律当乱输处理
                 search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                              "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
@@ -941,11 +941,11 @@ def test():
                         db_handle.modify_DB(update_secord_sql)
                         _return = send_secord_note_msg(open_id, event_data["text"][:11])
 
-        # 如果输入的是图片，首先查找当前用户是否在5分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
+        # 如果输入的是图片，首先查找当前用户是否在10分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
         elif event_data["msg_type"] == "image":
 
             search_sql = "select * from gen_pic where record_created_by = '%s' " \
-                         "and record_created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)" \
+                         "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                          "and record_status in ('1', '2', '3') limit 1" % \
                          event_data["employee_id"]
 
@@ -954,7 +954,7 @@ def test():
             if not record:
                 return send_init_msg(open_id)
 
-            print(record[0]["record_id"])
+            # print(record[0]["record_id"])
 
             # 1 接收图片 2 把图片信息写入库
             _return = save_pic(record[0]["record_id"], open_id, event_data["image_key"], db_handle)
