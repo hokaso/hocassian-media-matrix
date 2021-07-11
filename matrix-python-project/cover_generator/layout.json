@@ -309,7 +309,7 @@
       "other": {
         "space": 1.2,
         "open_shaow": true,
-        "shadow": "(70, 70, 70, 85)",
+        "shadow": "(70, 70, 70, 35)",
         "shadow_offset_x": 5,
         "shadow_offset_y": 5
       }
