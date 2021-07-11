@@ -711,7 +711,7 @@ def test():
 
     # 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
     if data["token"] != APP_VERIFICATION_TOKEN:
-        print("verification token not match, token =", token)
+        print("verification token not match, token =", data["token"])
         return "illegal"
 
     # 注册机器人验证

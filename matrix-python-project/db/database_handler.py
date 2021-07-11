@@ -80,13 +80,13 @@ class InstantDB(object):
             info = json.loads(f0.read())
 
         # 本地生產
-        self.db_handle = DatabaseHandler(
-            info["local_prod"]["ip"],
-            info["local_prod"]["account"],
-            info["local_prod"]["password"],
-            info["local_prod"]["database"],
-            info["local_prod"]["port"]
-        )
+        # self.db_handle = DatabaseHandler(
+        #     info["local_prod"]["ip"],
+        #     info["local_prod"]["account"],
+        #     info["local_prod"]["password"],
+        #     info["local_prod"]["database"],
+        #     info["local_prod"]["port"]
+        # )
 
         # 遠程生產
         # self.db_handle = DatabaseHandler(
@@ -98,13 +98,13 @@ class InstantDB(object):
         # )
 
         # 本地開發
-        # self.db_handle = DatabaseHandler(
-        #     info["local_dev"]["ip"],
-        #     info["local_dev"]["account"],
-        #     info["local_dev"]["password"],
-        #     info["local_dev"]["database"],
-        #     info["local_dev"]["port"]
-        # )
+        self.db_handle = DatabaseHandler(
+            info["local_dev"]["ip"],
+            info["local_dev"]["account"],
+            info["local_dev"]["password"],
+            info["local_dev"]["database"],
+            info["local_dev"]["port"]
+        )
 
     def get_connect(self):
         return self.db_handle
