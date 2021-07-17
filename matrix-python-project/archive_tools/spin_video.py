@@ -1,11 +1,17 @@
-import os, cv2
+import os, cv2, shutil, shlex, subprocess, json, traceback
 
 
-class RateVideo(object):
+class SpinVideo(object):
 
     def __init__(self):
-        self.path_input = "./temp_input"
-        self.path_output = "./temp_output"
+        self.path_input = "F://影视/2020下/视频/temp_input/"
+        self.path_output = "F://影视/2020下/视频/temp_output/"
+        self.path_complete = "F://影视/2020下/视频/complete/"
+
+        # for root, dirs, files in os.walk(self.path_output):
+        #     exist_file_list = files
+        #
+        # self.exist_file_list = [i for i in exist_file_list]
 
     def main(self):
 
@@ -13,51 +19,72 @@ class RateVideo(object):
         for root, dirs, files in os.walk(self.path_input):
             # 遍历所有文件
             for file in files:
-                # 如果后缀名为 .mp4
-                filename, extension = os.path.splitext(file)
-                if extension == '.mp4':
+                try:
+                    filename, extension = os.path.splitext(file)
+
+                    # 采集原始素材信息
+                    catch_set = f'./ffprobe -of json -select_streams v -show_streams "{self.path_input + file}"'
+                    catch_json = subprocess.run(shlex.split(catch_set), capture_output=True, encoding='utf-8',
+                                                errors='ignore')
+                    origin_info = json.loads(catch_json.stdout)
+
+                    # 为何不判断素材后缀？因为如果这不是一个视频素材，这一步就会直接报错走人
+                    assert origin_info['streams'][0]['height']
+
                     spin_set_list = [
                         "ffmpeg -i ",
+                        "\"",
                         self.path_input,
-                        "/",
                         file,
+                        "\"",
                         " -metadata:s:v rotate=\"0\" -codec copy -y ",
+                        "\"",
                         self.path_output,
-                        "/",
                         filename,
                         ".mp4"
+                        "\"",
                     ]
                     spin_set =  "".join(spin_set_list)
+
                     # 首次执行
                     os.system(spin_set)
 
+                    # 删除源文件
+                    shutil.move(self.path_input + file, self.path_complete + file)
+
                     # 存在需要二次执行的个体
-                    capture = cv2.VideoCapture(self.path_output + "/" + filename + ".mp4")
+                    capture = cv2.VideoCapture(self.path_output + filename + ".mp4")
                     width = capture.get(3)
                     height = capture.get(4)
                     capture.release()
                     if width <= height:
                         sec_spin_set_list = [
                             "ffmpeg -i ",
+                            "\"",
                             self.path_output,
-                            "/",
                             filename,
                             ".mp4",
+                            "\"",
                             " -metadata:s:v rotate=\"90\" -codec copy -y ",
+                            "\"",
                             self.path_output,
-                            "/",
                             filename,
                             "_",
                             ".mp4"
+                            "\"",
                         ]
                         sec_spin_set = "".join(sec_spin_set_list)
                         os.system(sec_spin_set)
-                        os.remove(self.path_output + "/" + filename + ".mp4")
+                        os.remove(self.path_output + filename + ".mp4")
+                        os.rename(self.path_output + filename + "_" + ".mp4", self.path_output + filename + ".mp4")
+                except Exception as e:
+                    traceback.print_exc()
+                    print(e)
 
 
 if __name__ == "__main__":
-    rv = RateVideo()
-    rv.main()
+    sv = SpinVideo()
+    sv.main()
 
 
 
