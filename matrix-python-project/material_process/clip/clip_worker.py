@@ -69,6 +69,9 @@ class ClipWorker(object):
                     catch_json = subprocess.run(shlex.split(catch_set), capture_output=True, encoding='utf-8',
                                                 errors='ignore')
                     origin_info = json.loads(catch_json.stdout)
+
+                    # 为何不判断素材后缀？因为如果这不是一个视频素材，这一步就会直接报错走人
+                    assert origin_info['streams'][0]['height']
                     origin_height = origin_info['streams'][0]['height']
                     origin_width = origin_info['streams'][0]['width']
                     prop = origin_width / 640
