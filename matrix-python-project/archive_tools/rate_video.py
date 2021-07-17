@@ -25,7 +25,6 @@ class RateVideo(object):
                         self.path_output,
                         "/",
                         filename,
-                        "_",
                         ".mp4"
                     ]
                     rate_set =  "".join(rate_set_list)
