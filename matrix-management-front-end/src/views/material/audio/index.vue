@@ -150,13 +150,13 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="音频情感标签" align="center" prop="audioEmotion" min-width="100px">
-        <template slot-scope="scope">
-          <el-tag class="mini-tag" v-for="ikey in scope.row.audioEmotion" :key="ikey" type="success">
-            {{ikey}}
-          </el-tag>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="音频情感标签" align="center" prop="audioEmotion" min-width="100px">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-tag class="mini-tag" v-for="ikey in scope.row.audioEmotion" :key="ikey" type="success">-->
+<!--            {{ikey}}-->
+<!--          </el-tag>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="音频素材版权" align="center" prop="isCopyright" :formatter="isCopyrightFormat">
         <template slot-scope="scope">
           <div class="tag-up">
