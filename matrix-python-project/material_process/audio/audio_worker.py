@@ -1,4 +1,5 @@
 import requests, time, sys, os, time, json, pymysql, traceback, shutil
+
 sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
 from db.database_handler import InstantDB
@@ -7,8 +8,10 @@ from tenacity import retry, wait_fixed
 # SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7969
 
+
 class ServerManager(BaseManager):
     pass
+
 
 class AudioWorker(object):
 
@@ -36,7 +39,8 @@ class AudioWorker(object):
                 try:
                     shutil.copyfile(self.local_path + instruction_set["file_path"], instruction_set["file_path"])
                     self.optional(instruction_set["file_path"])
-                    update_sql = "UPDATE mat_audio set audio_status = '0', is_show = '1' where audio_id = '%s'" % instruction_set["audio_id"]
+                    update_sql = "UPDATE mat_audio set audio_status = '0', is_show = '1' where audio_id = '%s'" % \
+                                 instruction_set["audio_id"]
                     self.db_handle.modify_DB(update_sql)
                     os.remove(instruction_set["file_path"])
                 except Exception as e:
@@ -44,7 +48,7 @@ class AudioWorker(object):
                     print(e)
 
     def optional(self, path):
-        off_vocal_set = "spleeter separate -p spleeter:2stems -o output \""+ path +"\""
+        off_vocal_set = "spleeter separate -p spleeter:2stems -o output \"" + path + "\""
         os.system(off_vocal_set)
         audio_handle_set_list = [
             "./ffmpeg -i \"",
@@ -59,6 +63,7 @@ class AudioWorker(object):
         audio_handle_set = "".join(audio_handle_set_list)
         os.system(audio_handle_set)
         shutil.rmtree("output")
+
 
 if __name__ == '__main__':
     aw = AudioWorker(SERVER_PORT)
