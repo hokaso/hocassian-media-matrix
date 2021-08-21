@@ -6,7 +6,7 @@ from db.database_handler import InstantDB
 from PIL import Image
 from utils.snow_id import SnowId
 from tenacity import retry, wait_random
-import json, pymysql, time
+import json, pymysql, time, traceback
 
 
 class VideoDownload(object):
@@ -36,93 +36,99 @@ class VideoDownload(object):
 
         os.system("sudo pip3 install --upgrade youtube-dl")
 
-        uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel where channel_id = 2"
+        uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
 
         uncatch_channel = self.db_handle.search_DB(uncatch_channel_sql)
 
-        for j in uncatch_channel:
+        try:
 
-            # sql_map = {}
-            select_all_sql = "SELECT video_ytb_id, video_status from bus_video where video_author = '%s'" % str(
-                j["channel_id"])
-            all_video = self.db_handle.search_DB(select_all_sql)
-            if all_video:
-                all_video_list = [i["video_ytb_id"] for i in all_video]
+            for j in uncatch_channel:
 
-            else:
-                all_video_list = []
+                # sql_map = {}
+                select_all_sql = "SELECT video_ytb_id, video_status from bus_video where video_author = '%s'" % str(
+                    j["channel_id"])
+                all_video = self.db_handle.search_DB(select_all_sql)
+                if all_video:
+                    all_video_list = [i["video_ytb_id"] for i in all_video]
 
-            ydl = YoutubeDL(self.ydl_opts)
-            ydl.add_default_info_extractors()
-            info = ydl.extract_info(j["channel_url"], download=False)
+                else:
+                    all_video_list = []
 
-            # 测试使用
-            with open("full_info.json", 'w') as fp:
-                json.dump(info, fp)
-            with open("full_info.json", 'r') as f0:
-                info = json.load(f0)
+                ydl = YoutubeDL(self.ydl_opts)
+                ydl.add_default_info_extractors()
+                info = ydl.extract_info(j["channel_url"], download=False)
 
-            for i in info["entries"]:
+                # 测试使用
+                with open("full_info.json", 'w') as fp:
+                    json.dump(info, fp)
+                with open("full_info.json", 'r') as f0:
+                    info = json.load(f0)
 
-                if i:
-                    if "id" in i:
-                        if i["id"] not in all_video_list:
-                            video_status = "2"
+                for i in info["entries"]:
+
+                    if i:
+                        if "id" in i:
+                            if i["id"] not in all_video_list:
+                                video_status = "2"
+                            else:
+                                video_status = "-1"
+
+                            video_ytb_id = pymysql.escape_string(i["id"])
                         else:
-                            video_status = "-1"
-
-                        video_ytb_id = pymysql.escape_string(i["id"])
+                            continue
                     else:
                         continue
-                else:
-                    continue
-                if "webpage_url" in i:
-                    video_url = pymysql.escape_string(i["webpage_url"])
-                else:
-                    continue
-                if "title" in i:
-                    video_title = pymysql.escape_string(i["title"])
-                else:
-                    video_title = ""
-                if "description" in i:
-                    video_profile = pymysql.escape_string(i["description"])
-                else:
-                    video_profile = ""
-                if "upload_date" in i:
-                    timeArray = time.strptime(i["upload_date"], "%Y%m%d")
-                    video_publish = time.strftime("%Y-%m-%d", timeArray)
-                else:
-                    video_publish = "1970-01-02"
+                    if "webpage_url" in i:
+                        video_url = pymysql.escape_string(i["webpage_url"])
+                    else:
+                        continue
+                    if "title" in i:
+                        video_title = pymysql.escape_string(i["title"])
+                    else:
+                        video_title = ""
+                    if "description" in i:
+                        video_profile = pymysql.escape_string(i["description"])
+                    else:
+                        video_profile = ""
+                    if "upload_date" in i:
+                        timeArray = time.strptime(i["upload_date"], "%Y%m%d")
+                        video_publish = time.strftime("%Y-%m-%d", timeArray)
+                    else:
+                        video_publish = "1970-01-02"
 
-                video_class = ""
-                if "categories" in i and "tags" in i:
-                    if i["categories"] is not None and i["tags"] is not None:
-                        _video_class = i["categories"] + i["tags"]
-                        video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
-                    elif i["categories"] is None and i["tags"] is not None:
-                        _video_class = i["tags"]
-                        video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
-                    elif i["categories"] is not None and i["tags"] is None:
-                        _video_class = i["categories"]
-                        video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                    video_class = ""
+                    if "categories" in i and "tags" in i:
+                        if i["categories"] is not None and i["tags"] is not None:
+                            _video_class = i["categories"] + i["tags"]
+                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                        elif i["categories"] is None and i["tags"] is not None:
+                            _video_class = i["tags"]
+                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                        elif i["categories"] is not None and i["tags"] is None:
+                            _video_class = i["categories"]
+                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
 
-                if video_status == "2":
+                    if video_status == "2":
 
-                    insert_video_sql = "INSERT INTO bus_video(video_ytb_id ,video_title, video_profile, video_url," \
-                                       " video_status, video_class, video_author, video_publish) VALUES " \
-                                       "('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-                                       (video_ytb_id, video_title, video_profile, video_url, video_status, video_class,
-                                        str(j["channel_id"]), video_publish)
+                        insert_video_sql = "INSERT INTO bus_video(video_ytb_id ,video_title, video_profile, video_url," \
+                                           " video_status, video_class, video_author, video_publish) VALUES " \
+                                           "('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
+                                           (video_ytb_id, video_title, video_profile, video_url, video_status, video_class,
+                                            str(j["channel_id"]), video_publish)
 
-                    self.db_handle.modify_DB(insert_video_sql)
+                        self.db_handle.modify_DB(insert_video_sql)
 
-                else:
-                    update_video_sql = "UPDATE bus_video set video_title = '%s', video_profile = '%s', video_url = '%s'," \
-                                       " video_class = '%s', video_author = '%s', video_publish = '%s' where video_ytb_id = '%s'" % \
-                                       (video_title, video_profile, video_url, video_class, str(j["channel_id"]),
-                                        video_publish, video_ytb_id)
+                    else:
+                        update_video_sql = "UPDATE bus_video set video_title = '%s', video_profile = '%s', video_url = '%s'," \
+                                           " video_class = '%s', video_author = '%s', video_publish = '%s' where video_ytb_id = '%s'" % \
+                                           (video_title, video_profile, video_url, video_class, str(j["channel_id"]),
+                                            video_publish, video_ytb_id)
 
-                    self.db_handle.modify_DB(update_video_sql)
+                        self.db_handle.modify_DB(update_video_sql)
+
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
 
         self.video_dl()
 
