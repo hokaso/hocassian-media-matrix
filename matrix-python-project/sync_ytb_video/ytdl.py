@@ -36,7 +36,7 @@ class VideoDownload(object):
 
         os.system("sudo pip3 install --upgrade youtube-dl")
 
-        uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
+        uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel where channel_id = 2"
 
         uncatch_channel = self.db_handle.search_DB(uncatch_channel_sql)
 
@@ -57,10 +57,10 @@ class VideoDownload(object):
             info = ydl.extract_info(j["channel_url"], download=False)
 
             # 测试使用
-            # with open("full_info.json", 'w') as fp:
-            #     json.dump(info, fp)
-            # with open("full_info.json", 'r') as f0:
-            #     info = json.loads(f0.read())
+            with open("full_info.json", 'w') as fp:
+                json.dump(info, fp)
+            with open("full_info.json", 'r') as f0:
+                info = json.load(f0)
 
             for i in info["entries"]:
 
@@ -126,6 +126,7 @@ class VideoDownload(object):
 
         self.video_dl()
 
+    # 把建立视频索引和下载视频的操作进行隔离，确保即便当前cron job出错，下一个生命周期也能兜底
     @retry(wait=wait_random(min=3600, max=7200))
     def video_dl(self):
 
