@@ -1,17 +1,14 @@
 import os, cv2, shutil, shlex, subprocess, json, traceback
 
 
+# 把所有的视频旋转为更长的那一条边为宽，比较窄的边为高
 class SpinVideo(object):
 
     def __init__(self):
-        self.path_input = "F://影视/2020下/视频/temp_input/"
-        self.path_output = "F://影视/2020下/视频/temp_output/"
-        self.path_complete = "F://影视/2020下/视频/complete/"
 
-        # for root, dirs, files in os.walk(self.path_output):
-        #     exist_file_list = files
-        #
-        # self.exist_file_list = [i for i in exist_file_list]
+        self.path_input = "./temp_input"
+        self.path_output = "./temp_output"
+        self.path_complete = "./complete"
 
     def main(self):
 
