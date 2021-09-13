@@ -88,6 +88,13 @@ class SnowId(object):
             timestamp = self._gen_timestamp()
         return timestamp
 
+# Hocassian Snow Id Standard
+class HSIS(object):
+
+    @staticmethod
+    def main():
+        return str(SnowId(1, 2, 0).get_id())[1:]
+
 
 if __name__ == '__main__':
     print(str(SnowId(1, 2, 0).get_id())[1:])

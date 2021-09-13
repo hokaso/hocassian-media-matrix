@@ -26,6 +26,7 @@ class AudioWorker(object):
         self.off_vocal_url = current + "/matrix/material/audio_music/audio_off_vocal/"
         self.task_queue = None
 
+    # TODO：记得加上重试三次退出的代码，然后清除redis缓存
     @retry(wait=wait_fixed(5))
     def start(self):
         self.server_manager.connect()

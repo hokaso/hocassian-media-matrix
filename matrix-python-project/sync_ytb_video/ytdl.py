@@ -4,7 +4,7 @@ import os, sys
 sys.path.append(os.getcwd())
 from db.database_handler import InstantDB
 from PIL import Image
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 from tenacity import retry, wait_random
 import json, pymysql, time, traceback
 
@@ -143,7 +143,7 @@ class VideoDownload(object):
 
         for t in dl_url:
             ydlk.extract_info(t["video_url"], download=True)
-            after_name = str(SnowId(1, 2, 0).get_id())[1:]
+            after_name = HSIS.main()
             os.rename(self.file_path + t["video_ytb_id"] + ".mp4", self.file_path + after_name + ".mp4")
             os.rename(self.file_path + t["video_ytb_id"] + ".info.json", self.file_path + after_name + ".json")
 

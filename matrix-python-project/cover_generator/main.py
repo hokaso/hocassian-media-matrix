@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 from cover_generator.structure import Structure
 from cover_generator.style import Style
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 
 
 class Main(object):
@@ -29,7 +29,7 @@ class Main(object):
                     title = Image.open("cover_generator/transparent_title.png")
                     r, g, b, a = title.split()
                     image.paste(title, (0, 0), mask=a)
-                    image.save("cover_generator/0_fin/" + str(SnowId(1, 2, 0).get_id())[1:] + '.png', quality=100)
+                    image.save("cover_generator/0_fin/" + HSIS.main() + '.png', quality=100)
                     os.remove("cover_generator/0_temp/" + file)
 
 
@@ -47,7 +47,7 @@ class Main(object):
                     title = Image.open("cover_generator/transparent_title.png")
                     r, g, b, a = title.split()
                     image.paste(title, (0, 0), mask=a)
-                    new_image_name = "cover_generator/" + record_id + "_fin/" + str(SnowId(1, 2, 0).get_id())[1:] + '.png'
+                    new_image_name = "cover_generator/" + record_id + "_fin/" + HSIS.main() + '.png'
                     image.save(new_image_name, quality=100)
                     image_list.append(new_image_name)
                     os.remove("cover_generator/" + record_id + "_temp/" + file)

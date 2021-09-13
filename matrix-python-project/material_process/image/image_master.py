@@ -2,7 +2,7 @@ import sys, os, time, json, shutil, pymysql, pika, requests, traceback
 sys.path.append(os.getcwd())
 from db.database_handler import InstantDB
 from db.redis_handler import InstantRedis
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 from tenacity import retry, wait_fixed
 from PIL import Image
 from volcengine.imagex.ImageXService import ImageXService
@@ -132,7 +132,7 @@ class ImageMaster(object):
             for root, dirs, files in os.walk(self.origin_path):
                 for file in files:
                     counting += 1
-                    after_name = str(SnowId(1, 2, 0).get_id())[1:]
+                    after_name = HSIS.main()
 
                     # 查看后缀
                     image_ext = file.split('.')[-1]

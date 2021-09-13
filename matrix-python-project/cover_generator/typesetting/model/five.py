@@ -3,7 +3,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from cover_generator.typesetting.more import More
 from cover_generator.typesetting.mark import Mark
 from cover_generator.typesetting.build import Build
-from utils.snow_id import SnowId
 
 sys.path.append(os.getcwd())
 

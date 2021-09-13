@@ -1,6 +1,6 @@
 import sys, os, time, json, random, copy, traceback
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 
 sys.path.append(os.getcwd())
 
@@ -30,11 +30,12 @@ class Build(object):
             print(e)
             raise
 
-        # pic.save(str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
+        # 测试
+        # pic.save('test.jpg', quality=100)
         return pic
 
     def save(self, tb):
-        tb.save(self.render + str(SnowId(1, 2, 0).get_id())[1:] + '.jpg', quality=100)
+        tb.save(self.render + HSIS.main() + '.jpg', quality=100)
 
     @staticmethod
     def png_trans_background_to_white(pic):

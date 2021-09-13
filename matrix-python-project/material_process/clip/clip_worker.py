@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 import time, json, pymysql
 from datetime import datetime
 from multiprocessing.managers import BaseManager
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 from db.database_handler import InstantDB
 import shlex, subprocess, traceback
 from tenacity import retry, wait_fixed
@@ -41,6 +41,7 @@ class ClipWorker(object):
         self.info = _info["threads"]
         self.threads = None
 
+    # TODO：记得加上重试三次退出的代码，然后清除redis缓存
     @retry(wait=wait_fixed(5))
     def start(self):
         self.server_manager.connect()
@@ -119,7 +120,7 @@ class ClipWorker(object):
                         after_rate = 30
 
                     # 生成素材新文件名
-                    after_name = str(SnowId(1, 2, 0).get_id())[1:]
+                    after_name = HSIS.main()
 
                     # 将原始素材信息保存至meta.json中
                     with open(self.meta_info_path + after_name + ".json", 'w') as fp:
