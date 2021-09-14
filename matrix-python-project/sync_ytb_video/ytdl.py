@@ -2,7 +2,7 @@ from youtube_dl import YoutubeDL
 import os, sys
 
 sys.path.append(os.getcwd())
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from PIL import Image
 from utils.snow_id import HSIS
 from tenacity import retry, wait_random
@@ -12,10 +12,10 @@ import json, pymysql, time, traceback
 class VideoDownload(object):
 
     def __init__(self):
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
 
         with open(os.getcwd() + "/sync_ytb_video/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            info = json.load(f0)
 
         self.ydl_opts = {
             'ignoreerrors': True,
@@ -38,7 +38,7 @@ class VideoDownload(object):
 
         uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
 
-        uncatch_channel = self.db_handle.search_DB(uncatch_channel_sql)
+        uncatch_channel = self.db_handle.search(uncatch_channel_sql)
 
         try:
 
@@ -47,7 +47,7 @@ class VideoDownload(object):
                 # sql_map = {}
                 select_all_sql = "SELECT video_ytb_id, video_status from bus_video where video_author = '%s'" % str(
                     j["channel_id"])
-                all_video = self.db_handle.search_DB(select_all_sql)
+                all_video = self.db_handle.search(select_all_sql)
                 if all_video:
                     all_video_list = [i["video_ytb_id"] for i in all_video]
 
@@ -116,7 +116,7 @@ class VideoDownload(object):
                                            (video_ytb_id, video_title, video_profile, video_url, video_status, video_class,
                                             str(j["channel_id"]), video_publish)
 
-                        self.db_handle.modify_DB(insert_video_sql)
+                        self.db_handle.modify(insert_video_sql)
 
                     else:
                         update_video_sql = "UPDATE bus_video set video_title = '%s', video_profile = '%s', video_url = '%s'," \
@@ -124,7 +124,7 @@ class VideoDownload(object):
                                            (video_title, video_profile, video_url, video_class, str(j["channel_id"]),
                                             video_publish, video_ytb_id)
 
-                        self.db_handle.modify_DB(update_video_sql)
+                        self.db_handle.modify(update_video_sql)
 
         except Exception as e:
             traceback.print_exc()
@@ -139,7 +139,7 @@ class VideoDownload(object):
         ydlk = YoutubeDL(self.ydl_opts)
         ydlk.add_default_info_extractors()
         dl_sql = "select video_ytb_id, video_url from bus_video where video_pic IS NULL or video_pic ='' ORDER BY RAND()"
-        dl_url = self.db_handle.search_DB(dl_sql)
+        dl_url = self.db_handle.search(dl_sql)
 
         for t in dl_url:
             ydlk.extract_info(t["video_url"], download=True)
@@ -165,7 +165,7 @@ class VideoDownload(object):
             update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s' where video_ytb_id = '%s'" % \
                                (after_name + ".mp4", after_name + ".json", after_name + ".jpg", "0", "1",
                                 t["video_ytb_id"])
-            self.db_handle.modify_DB(update_video_sql)
+            self.db_handle.modify(update_video_sql)
 
 
 if __name__ == '__main__':

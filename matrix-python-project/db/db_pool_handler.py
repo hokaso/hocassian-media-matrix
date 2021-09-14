@@ -3,14 +3,13 @@ from dbutils.pooled_db import PooledDB
 
 # 初始化日志模块
 import logging, platform, traceback
-log_dir = "bytedance/jira/bot/ticket_card.log"
-if platform.system() == "Darwin":
-    log_dir = "../ticket_card.log"
-logging.basicConfig(filename=log_dir, level=logging.INFO)
+log_location = "./logs/database.log"
+logging.basicConfig(filename=log_location, level=logging.INFO)
 
 class DBPoolHandler(object):
 
     def __init__(self, host, port, user, password, database):
+
         self.POOL = PooledDB(
 
             # 使用连接数据库的模块
@@ -50,21 +49,15 @@ class DBPoolHandler(object):
         )
 
     def __new__(cls, *args, **kw):
-        """
-        启用单例模式
-        :param args:
-        :param kw:
-        :return:
-        """
+
+        # 启用单例模式
         if not hasattr(cls, '_instance'):
             cls._instance = object.__new__(cls)
         return cls._instance
 
     def connect(self):
-        """
-        启动连接
-        :return:
-        """
+
+        # 启动连接
         conn = self.POOL.connection()
         cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
         self.ping(conn)
@@ -72,51 +65,57 @@ class DBPoolHandler(object):
 
     @staticmethod
     def ping(conn):
+
         conn.ping(reconnect=True)
 
     @staticmethod
     def connect_close(conn, cursor):
-        """
-        关闭连接
-        :param conn:
-        :param cursor:
-        :return:
-        """
+
+        # 关闭连接
         cursor.close()
         conn.close()
 
     def search(self, sql, *args):
-        """
-        批量查询
-        :param sql:
-        :param args:
-        :return:
-        """
 
+        # 批量查询
         conn, cursor = self.connect()
-        cursor.execute(sql, *args)
-        # record = cursor.fetchone()
-        record_list = cursor.fetchall()
-        self.connect_close(conn, cursor)
-        return record_list
+        record = None
+
+        try:
+            cursor.execute(sql)
+            # 如果只查单个用fetchone()
+            record = cursor.fetchall()
+            self.connect_close(conn, cursor)
+        except Exception as e:
+            traceback.print_exc()
+            # 记录错误
+            logging.error("执行「" + str(sql) + "」时出现错误，具体原因为「" + str(e) + "」，详细原因为：\n" + traceback.format_exc())
+        finally:
+            return record
 
     def modify(self, sql, *args):
-        """
-        插入数据
-        :param sql:
-        :param args:
-        :return:
-        """
+
+        # 增删改操作
         conn, cursor = self.connect()
-        row = cursor.execute(sql, *args)
-        conn.commit()
-        self.connect_close(conn, cursor)
-        return row
+        effect_row = None
 
+        try:
+            effect_row = cursor.execute(sql)
+            conn.commit()
+            self.connect_close(conn, cursor)
+        except Exception as e:
+            traceback.print_exc()
+            # 发生错误时回滚
+            conn.rollback()
+            # 记录错误
+            logging.error("执行「" + str(sql) + "」时出现错误，具体原因为「" + str(e) + "」，详细原因为：\n" + traceback.format_exc())
+        finally:
+            return effect_row
 
-class InstantDB(object):
+class InstantDBPool(object):
 
     def __init__(self):
+
         with open(os.getcwd() + "/db/config.json", 'r') as f0:
             info = json.load(f0)
 
@@ -148,4 +147,5 @@ class InstantDB(object):
             )
 
     def get_connect(self):
+
         return self.db_handle

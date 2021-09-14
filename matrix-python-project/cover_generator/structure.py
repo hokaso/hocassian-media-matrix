@@ -13,7 +13,7 @@ class Structure(object):
         self.font_path = "cover_generator/font"
 
         with open("cover_generator/layout.json", 'r') as f0:
-            self.layout_config = json.loads(f0.read())
+            self.layout_config = json.load(f0)
 
         self.tb = Image.open("cover_generator/" + self.layout_config["transparent_background"])
 

@@ -13,7 +13,7 @@ class ImageMaster(object):
     def __init__(self):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            info = json.load(f0)
 
         # self.ip           = info["local_dev"]["ip"]
         # self.port         = info["local_dev"]["port"]

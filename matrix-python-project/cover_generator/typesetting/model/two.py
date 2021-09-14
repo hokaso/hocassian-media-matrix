@@ -16,7 +16,7 @@ class Two(object):
         self.tb = None
 
         with open("cover_generator/typesetting/style.json", 'r') as f0:
-            style_config = json.loads(f0.read())
+            style_config = json.load(f0)
 
         self.model = style_config["two"]
 

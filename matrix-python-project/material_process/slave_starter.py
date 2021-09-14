@@ -8,7 +8,7 @@ from material_process.image.image_master import ImageMaster
 from multiprocessing import Process
 
 with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-    info = json.loads(f0.read())
+    info = json.load(f0)
 
 SERVER_IP = info["master_ip"]
 

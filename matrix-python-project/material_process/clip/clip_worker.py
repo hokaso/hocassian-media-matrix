@@ -24,7 +24,7 @@ class ClipWorker(object):
     def __init__(self, SERVER_IP):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-            _info = json.loads(f0.read())
+            _info = json.load(f0)
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.origin_path = current + "/matrix/material/video_clip_temp/"
