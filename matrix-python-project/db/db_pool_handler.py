@@ -1,6 +1,12 @@
 import pymysql
 from dbutils.pooled_db import PooledDB
 
+# 初始化日志模块
+import logging, platform, traceback
+log_dir = "bytedance/jira/bot/ticket_card.log"
+if platform.system() == "Darwin":
+    log_dir = "../ticket_card.log"
+logging.basicConfig(filename=log_dir, level=logging.INFO)
 
 class DBPoolHandler(object):
 
