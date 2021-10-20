@@ -23,6 +23,7 @@
     <SongCard
       :list="musicList"
       :total="page.total"
+      :pageSize="page.size"
       :pageShow="pageShow"
       :showAccompany="queryParams.audioType === '1'"
       :showCopyRight="getToken() !== '' && getToken() !== undefined"
@@ -54,7 +55,7 @@ export default {
       musicList: [],
       page: {
         num: 1,
-        size: 18,
+        size: 36,
         total: 0
       },
       inputValue: '',
@@ -210,8 +211,8 @@ export default {
       this.getMemberMusicList(true);
     },
     /**
-     * @param {number} 当前索引值
-     * @param {boolean} 是否为伴奏
+     * @param index 当前索引
+     * @param isAccompany 是否伴奏
      */
     getPlayListIndex(index, isAccompany) {
       this.isAccompany = isAccompany;

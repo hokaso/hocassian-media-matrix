@@ -101,7 +101,7 @@
         const { rows } = await musicList({
           audioName: '',
           pageNum: 1,
-          pageSize: 18,
+          pageSize: 36,
         });
         this.musicList = rows.map(item => ({
           ...item,
