@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 import shlex, subprocess
 from multiprocessing import JoinableQueue
 from multiprocessing.managers import BaseManager
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 from db.database_handler import InstantDB
 from db.redis_handler import InstantRedis
 from tenacity import retry, wait_fixed
@@ -22,7 +22,7 @@ class AudioMaster(object):
     def __init__(self):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            info = json.load(f0)
 
         # self.ip           = info["local_dev"]["ip"]
         # self.port         = info["local_dev"]["port"]
@@ -45,6 +45,7 @@ class AudioMaster(object):
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.send_url = info["send_url"]
         self.aa = AudioAnalyze()
+
         # 队列相关
         self.db_handle = InstantDB().get_connect()
         self.redis_handle = InstantRedis().get_redis_connect()
@@ -52,6 +53,7 @@ class AudioMaster(object):
         ServerManager.register("get_task_queue", callable=lambda: self.task_queue)
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.server_manager.start()
+
         # 本地路径
         self.origin_path = current + "/matrix/material/audio_music_temp/"
         self.final_path = current + "/matrix/material/audio_music/"
@@ -140,7 +142,7 @@ class AudioMaster(object):
                     counting += 1
                     try:
                         # 生成素材新文件名
-                        after_name = str(SnowId(1, 2, 0).get_id())[1:]
+                        after_name = HSIS.main()
 
                         # 读取文件名获取歌曲和歌手信息（存在获取不到的情况），规则为名称在前作者名在后，通过「 - 」连接
                         audio_info = file.split(" - ")

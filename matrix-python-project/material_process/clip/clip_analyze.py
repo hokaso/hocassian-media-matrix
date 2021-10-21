@@ -11,7 +11,7 @@ class ClipAnalyze(object):
     def __init__(self):
 
         with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            info = json.load(f0)
 
         self.azure_url = info["azure"]["url"]
         self.local_pic_url = info["azure"]["clip_pic_url"]
@@ -75,7 +75,6 @@ class ClipAnalyze(object):
                         image_mark += image_mark_info["AestheticScore"]
                     self.analyze_json["tencent_mark"].append(image_mark_info)
 
-            # print(tag_set)
         except TencentCloudSDKException as err:
             print(err)
         return tag_set, round(image_mark/3, 2)

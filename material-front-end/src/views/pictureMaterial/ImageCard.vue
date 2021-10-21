@@ -4,7 +4,7 @@
       v-for="(img, index) in list"
       :key="img.imageId"
       class="img-block"
-      :style="{width: img.width*300/img.height + 'px', 'flex-grow': img.width*300/img.height}">
+      :style="{width: (img.width*300/img.height)/1.5 + 'px', height: '66.6%', 'flex-grow': (img.width*300/img.height)}">
       <el-image
         :src="img.url"
         fit="fill"
@@ -15,7 +15,7 @@
       <img
         v-show="showCopyRight"
         class="icon"
-        :src="img.isCopyright === '0' ? require('@/assets/images/copyright.png') : require('@/assets/images/no-copyright.png')" />
+        :src="img.isCopyright === '0' ? require('@/assets/images/copyright.png') : require('@/assets/images/no-copyright.png')"  alt=""/>
     </div>
   </div>
 </template>

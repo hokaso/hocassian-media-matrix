@@ -127,7 +127,7 @@ export default {
     },
     async getMemberImageList(isResetPage = false) {
       if (isResetPage) {
-        this.pageParams.page = 1; 
+        this.pageParams.page = 1;
         this.list = [];
         this.urlList = [];
       }

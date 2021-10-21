@@ -10,7 +10,7 @@
         :style="{ 'background-image': `url(${item.url})`}"
         class="scroll__card"
         :class="setClass(item.activeIndex)"
-        @click="handleActive(item.activeIndex)" />
+        @click="handleActive(item.activeIndex)"></div>
       <!-- <i
         class="iconfont icon-fanhui scroll__icon left"
         @click="prev()" />
@@ -23,7 +23,7 @@
         v-for="item in imgList"
         :key="item.activeIndex"
         :class="{ 'active': activeIndex === item.activeIndex }"
-        @mouseover="handleActive(item.activeIndex)" />
+        @mouseover="handleActive(item.activeIndex)"></li>
     </ul>
   </section>
 </template>

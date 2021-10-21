@@ -5,7 +5,7 @@ from Crypto.Cipher import AES
 from gevent import pywsgi
 
 sys.path.append(os.getcwd())
-from utils.snow_id import SnowId
+from utils.snow_id import HSIS
 from db.database_handler import InstantDB
 from cover_generator.main import Main
 
@@ -435,6 +435,29 @@ def send_out_of_msg(open_id):
     return send_msg_card(note)
 
 
+def send_gif_msg(open_id):
+    note = {
+        "open_id": open_id,
+        "msg_type": "interactive",
+        'card': {
+            "config": {
+                "wide_screen_mode": False
+            },
+            "elements": [
+                {
+                    "tag": "div",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "请不要上传gif图片😅！"
+                    }
+                }
+            ]
+        }
+    }
+
+    return send_msg_card(note)
+
+
 def send_check_msg(open_id):
     note = {
         "open_id": open_id,
@@ -480,6 +503,7 @@ def send_over_msg(open_id):
 
     return send_msg_card(note)
 
+
 def send_unfill_msg(open_id):
     note = {
         "open_id": open_id,
@@ -501,6 +525,7 @@ def send_unfill_msg(open_id):
     }
 
     return send_msg_card(note)
+
 
 def send_wait_msg(open_id):
     note = {
@@ -639,7 +664,7 @@ def save_pic(record_id, open_id, pic_key, handler):
 
         # 从飞书服务器拉取用户发送的图片
         raw_pic = requests.get(search_pic_url, headers=get_pic_headers)
-        pic_name = str(SnowId(1, 2, 0).get_id())[1:] + '.jpg'
+        pic_name = HSIS.main() + '.jpg'
         with open("cover_generator/" + str(record_id) + "/" + pic_name, 'wb') as fp:
             fp.write(raw_pic.content)
 
@@ -647,6 +672,10 @@ def save_pic(record_id, open_id, pic_key, handler):
         real_rex = imghdr.what("cover_generator/" + str(record_id) + "/" + pic_name)
         if not real_rex:
             real_rex = "png"
+        elif real_rex == "gif":
+            # 删除图片并返回提示
+            os.remove("cover_generator/" + str(record_id) + "/" + pic_name)
+            return send_gif_msg(open_id)
         new_pic_name = os.path.splitext(pic_name)[0]
         search_pic_new_fullname = new_pic_name + '.' + real_rex
         os.rename("cover_generator/" + str(record_id) + "/" + pic_name, "cover_generator/" + str(record_id) + "/" + search_pic_new_fullname)
@@ -691,6 +720,7 @@ def upload_pic(pic_path):
 
 app = Flask(__name__, static_folder='', static_url_path='')
 
+# TODO：未来可新增两个接口，一个传图片，一个调用处理trigger，实现http也可以接入服务
 
 @app.route('/', methods=['POST'])
 def test():
@@ -853,10 +883,12 @@ def test():
                     db_handle.db_close()
                     return send_check_msg(open_id)
 
+                # 剩余生成次数必须大于0
                 if check[0]["record_changes"] <= 0:
                     db_handle.db_close()
                     return send_over_msg(open_id)
 
+                # 图片必须大于一张
                 if check[0]["record_pic_count"] <= 1:
                     db_handle.db_close()
                     return send_unfill_msg(open_id)
@@ -871,6 +903,7 @@ def test():
                     image_key_list = []
                     for ikey in image_list:
                         image_key_list.append(upload_pic(ikey))
+                        # 上传后直接删除本地文件
                         os.remove(ikey)
 
                     _return = send_pic_msg(open_id, check[0]["record_changes"], image_key_list)

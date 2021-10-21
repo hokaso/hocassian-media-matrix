@@ -37,7 +37,7 @@
     </div>
     <AudioPlay
       v-if="canPlay"
-      :playList="musicList"   
+      :playList="musicList"
       :currentIndex.sync="currentIndex"
       :isAccompany="isAccompany" />
   </div>
@@ -101,7 +101,7 @@
         const { rows } = await musicList({
           audioName: '',
           pageNum: 1,
-          pageSize: 18,
+          pageSize: 36,
         });
         this.musicList = rows.map(item => ({
           ...item,
@@ -114,8 +114,8 @@
         return data;
       },
       /**
-       * @param {number} 当前索引值
-       * @param {boolean} 是否为伴奏
+       * @param index 当前索引值
+       * @param isAccompany 是否为伴奏
        */
       getPlayListIndex(index, isAccompany) {
         this.canPlay = false;
@@ -133,7 +133,7 @@
         const { rows, total } = await imageList({
           imageTag: '',
           pageNum: 1,
-          pageSize: 8,
+          pageSize: 10,
         });
         this.imageList = rows.map((item) => {
           item.url = process.env.VUE_APP_BASE_API + `/profile/image/${item.imagePath}_mini.jpg`;

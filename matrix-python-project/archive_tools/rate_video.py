@@ -1,6 +1,9 @@
 import os, shutil, shlex, subprocess, json, traceback
 
+RATE_VALUE = 30
+CRF_VALUE = 20
 
+# 把所有视频转成统一的帧数
 class RateVideo(object):
 
     def __init__(self):
@@ -27,14 +30,17 @@ class RateVideo(object):
                     assert origin_info['streams'][0]['height']
 
                     rate_set_list = [
-                        "ffmpeg -r 30 -i ",
+                        "ffmpeg -r ",
+                        str(RATE_VALUE),
+                        " -i ",
                         "\"",
                         self.path_input,
                         "/",
                         file,
                         "\"",
-                        " -crf 20 ",
-                        "\"",
+                        " -crf ",
+                        str(CRF_VALUE),
+                        " \"",
                         self.path_output,
                         "/",
                         filename,

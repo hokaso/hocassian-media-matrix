@@ -77,7 +77,7 @@ class InstantDB(object):
         # 初始化数据库
 
         with open(os.getcwd() + "/db/config.json", 'r') as f0:
-            info = json.loads(f0.read())
+            info = json.load(f0)
 
         # 本地生產
         # self.db_handle = DatabaseHandler(

@@ -33,6 +33,7 @@
           :src="item.isCopyright === '0' ? require('@/assets/images/copyright.png') : require('@/assets/images/no-copyright.png')"/>
       </div>
     </div>
+    <!--    這個分頁組件應該是靠list大小和total算出來一共有多少頁……雖然我不是前端開發但我依舊大受震撼……-->
     <el-pagination
       v-show="needPage"
       @current-change="$emit('handleCurrentChange', $event)"
@@ -253,7 +254,7 @@
 
     methods: {
       copy(e, text) {
-        const clipboard = new Clipboard(e.target, { text: () => text });
+        const clipboard = new Clipboard(e.target, {text: () => text});
         clipboard.on("success", e => {
           this.$message.success(text + ' 已复制到剪贴板！')
 
@@ -327,9 +328,9 @@
       list: {
         handler(nv) {
           // debugger
-           this.syncList = nv.map(item => ({
-             ...item,
-             materialTag: JSON.parse(item.materialTag),
+          this.syncList = nv.map(item => ({
+              ...item,
+              materialTag: JSON.parse(item.materialTag),
             })
           );
         },
@@ -397,7 +398,7 @@
     margin: 10px 0 30px 0;
   }
 
-  .pic-video__form{
+  .pic-video__form {
 
 
   }
@@ -427,9 +428,10 @@
     }
   }
 
-  .pic-video__show{
+  .pic-video__show {
     width: 100%;
     display: flex;
+
     .pic {
       /*display: inline-block;*/
       /*position: relative;*/
@@ -445,6 +447,7 @@
     display: flex;
     margin-bottom: 20px;
   }
+
   /*.button-new-tag {*/
   /*  margin: 5px;*/
   /*  height: 32px;*/

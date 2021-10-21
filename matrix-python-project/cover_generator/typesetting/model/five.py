@@ -3,7 +3,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from cover_generator.typesetting.more import More
 from cover_generator.typesetting.mark import Mark
 from cover_generator.typesetting.build import Build
-from utils.snow_id import SnowId
 
 sys.path.append(os.getcwd())
 
@@ -17,7 +16,7 @@ class Five(object):
         self.tb = None
 
         with open("cover_generator/typesetting/style.json", 'r') as f0:
-            style_config = json.loads(f0.read())
+            style_config = json.load(f0)
 
         self.model = style_config["five"]
 

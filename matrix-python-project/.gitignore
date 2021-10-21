@@ -1,5 +1,6 @@
 .idea
 /files/
+**/nico_config.json
 db/config.json
 sync_ytb_video/config.json
 utils/test.py
@@ -15,6 +16,6 @@ key.txt
 **/font
 **/images
 **/render
-cover_generator/config.json
 **/temp_input
 **/temp_output
+**/logs

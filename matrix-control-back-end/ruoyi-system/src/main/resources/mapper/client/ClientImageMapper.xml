@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select image_path from mat_image
         where is_copyright = ${"0"} and is_show = ${"0"} and image_type = ${"0"}
         order by image_id desc
-        limit 20
+        limit 40
     </select>
 
     <select id="selectImageKeywords" resultType="string">

@@ -35,7 +35,7 @@
             <img
               v-show="showCopyRight"
               class="card-image__icon"
-              :src="item.isCopyright === '0' ? require('@/assets/images/copyright.png') : require('@/assets/images/no-copyright.png')" />
+              :src="item.isCopyright === '0' ? require('@/assets/images/copyright.png') : require('@/assets/images/no-copyright.png')"  alt=""/>
             <div
               class="play-icon__container"
               :class="{'actived': item.canShow}">
@@ -65,7 +65,7 @@
         @current-change="$emit('handleCurrentChange', $event)"
         :current-page="currentPage"
         layout="total, prev, pager, next, jumper"
-        :page-size="18"
+        :page-size="pageSize"
         :total="total"
         class="card__page">
       </el-pagination>
@@ -114,6 +114,10 @@ export default {
       type: Boolean,
       default: false
     },
+    pageSize: {
+      type: Number,
+      default: 0
+    }
   },
   components: { PlayIcon },
   data() {
@@ -148,7 +152,7 @@ export default {
   .card__container {
     width: 1260px;
     margin: auto;
-    height: 280px;
+    height: 560px;
     .card-image__block {
       margin: 10px;
       display: inline-block;
