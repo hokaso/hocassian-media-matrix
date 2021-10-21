@@ -233,7 +233,47 @@
 <table>
     <tr>
         <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/history.png"/></td>
-        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/honor.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/honor_01.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/honor_02.jpg"/></td>
+    </tr>
+</table>
+
+## 矩陣預覽圖
+
+<table>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/1.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/2.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/3.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/4.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/5.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/6.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/7.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/8.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/9.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/10.jpg"/></td>
     </tr>
 </table>
 
