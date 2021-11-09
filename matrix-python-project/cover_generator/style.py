@@ -119,37 +119,46 @@ class Style(object):
         # for ikey in range(adoption):
         #     self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
-        # 实际程序
+        # 实际程序，这一步是为了筛选出所有备选方案中分数前三分之二的方案
         adoption = int(len(self.rank_dict) / 1.5)
 
+        # 如果这些方案不足3种，那么直接全给他整上，不需要筛选
         if adoption <= 3:
             adoption = int(len(self.rank_dict))
+
+        # 日志中打出全部方案
         print(self.rank_dict)
+
+        # 断言必须3种方案，否则会导致消息卡片渲染失败
         assert adoption > 3
+
+        # 不重样地随机选三种方案
         temp = []
         while len(temp) < 3:
             index = random.randint(0, adoption)
             if index not in temp:
                 temp.append(index)
 
+        # 把这些方案推出渲染
         for ikey in temp:
             self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
     def run(self):
 
         start = time.perf_counter()
-        _image_count = self.image_count
 
+        # 如果图片数量不足n张，那么置入图片数量超过n的模板将无法使用，所以需要做限制
+        _image_count = self.image_count
         if self.image_count > 6:
             _image_count = 6
 
         for i in range(_image_count):
             self.image_map[i+1]()
 
+        # 渲染封面图片
         self.render()
 
         end = time.perf_counter()
         print("用时:" + str(end - start))
-        print(self.rank_dict)
 
 
