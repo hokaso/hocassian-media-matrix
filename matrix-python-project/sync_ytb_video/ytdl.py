@@ -138,7 +138,7 @@ class VideoDownload(object):
         self.video_dl()
 
     # 把建立视频索引和下载视频的操作进行隔离，确保即便当前cron job出错，下一个生命周期也能兜底
-    @retry(wait=wait_random(min=3600, max=7200))
+    # @retry(wait=wait_random(min=3600, max=7200))
     def video_dl(self):
 
         ydlk = YoutubeDL(self.ydl_opts)
@@ -200,5 +200,5 @@ class VideoDownload(object):
 
 if __name__ == '__main__':
     video_download = VideoDownload()
-    video_download.run()
-    # video_download.video_dl()
+    # video_download.run()
+    video_download.video_dl()

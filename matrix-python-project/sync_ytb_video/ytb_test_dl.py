@@ -45,7 +45,7 @@ class EasyDownload(object):
     def dl_by_channel(self):
         ydl = YoutubeDL(ydl_opts)
         ydl.add_default_info_extractors()
-        info = ydl.extract_info(channel_url, download=True)
+        info = ydl.extract_info(channel_url, download=False)
 
         # 测试使用
         with open("full_info.json", 'w') as fp:
