@@ -20,7 +20,7 @@ TIMESTAMP_LEFT_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS
 # 序号循环掩码
 SEQUENCE_MASK = -1 ^ (-1 << SEQUENCE_BITS)
 
-# Twitter元年时间戳
+# 项目上线元年时间戳
 TWEPOCH = 1288834974657
 
 class SnowId(object):

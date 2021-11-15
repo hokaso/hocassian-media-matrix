@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, os, json
 from dbutils.pooled_db import PooledDB
 
 # 初始化日志模块
