@@ -4,6 +4,8 @@
 db/config.json
 sync_ytb_video/config.json
 utils/test.py
+auto_distribute/lark_config.json
+auto_distribute/thumbnail
 material_process/config.json
 cover_generator/config.json
 pretrained_models/

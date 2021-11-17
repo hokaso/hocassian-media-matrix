@@ -6,7 +6,7 @@ from db.db_pool_handler import InstantDBPool
 from PIL import Image
 from utils.snow_id import HSIS
 from tenacity import retry, wait_random
-import json, pymysql, time, traceback
+import json, pymysql, time, traceback, shutil
 
 
 class VideoDownload(object):
@@ -138,7 +138,7 @@ class VideoDownload(object):
         self.video_dl()
 
     # 把建立视频索引和下载视频的操作进行隔离，确保即便当前cron job出错，下一个生命周期也能兜底
-    # @retry(wait=wait_random(min=3600, max=7200))
+    @retry(wait=wait_random(min=3600, max=7200))
     def video_dl(self):
 
         ydlk = YoutubeDL(self.ydl_opts)
@@ -180,8 +180,12 @@ class VideoDownload(object):
                         has_sub = "1"
                         sub_name = file.split(".")
                         # 下表为1的值表示字幕语言（例如：zh-Hant）
-                        sub_list.append(sub_name[1])
-                        os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
+                        if sub_name[1] == "vtt":
+                            # 表示默认语言，直接vtt即可
+                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + ".vtt")
+                        else:
+                            sub_list.append(sub_name[1])
+                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
 
             if sub_list:
                 sub_list_fin = pymysql.escape_string(json.dumps(sub_list, ensure_ascii=False))
@@ -200,5 +204,5 @@ class VideoDownload(object):
 
 if __name__ == '__main__':
     video_download = VideoDownload()
-    # video_download.run()
-    video_download.video_dl()
+    video_download.run()
+    # video_download.video_dl()

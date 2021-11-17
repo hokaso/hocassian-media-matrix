@@ -4,7 +4,7 @@
 import sys, os, time, json
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
-import json, pymysql, time, traceback
+import pymysql, traceback
 
 
 class Trans(object):
@@ -13,7 +13,7 @@ class Trans(object):
 
         self.db_handle = InstantDBPool().get_connect()
         self.file_path = "/home/hocassian/matrix/music_collection/audio/"
-        print(self)
+        # print(self)
 
     def music2mp3(self):
 

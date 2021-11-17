@@ -31,8 +31,6 @@ class Style(object):
             # 9: self.nine
         }
 
-        self.image_path = image_path
-
         self.build_map = {
             1: One(image_path),
             2: Two(image_path),
@@ -44,7 +42,7 @@ class Style(object):
 
         # "model_id": "模板编号，从左往右数第一位是父模板编号，第二位是子模板编号",
         # "model_match": "具体模板的拼接方式，比如子模板中的第一个方格存放第五张图片，具体的最优摆放路径和得分已由KM算法得出",
-        # "model_mark": "当前子模板最优摆放的得分，从所有子模板里选择得分最高的前三名来渲染展示"
+        # "model_mark": "当前子模板最优摆放的得分，从所有子模板里选择得分最高（裁切素材量最低）的前三名来渲染展示"
         self.rank_dict = []
 
         # self.image_path = image_path if image_path else self.image_path = "images"
@@ -111,7 +109,9 @@ class Style(object):
         self.rank_dict.append(Six(self.image_path).arround(                 self.image_list))
 
     def render(self):
-        self.rank_dict.sort(key=lambda x: x["model_mark"])
+
+        # 确实需要升序（由小到大）排列，选裁切量最小的
+        self.rank_dict.sort(key=lambda x: x["model_mark"], reverse=False)
 
         # 测试程序
         # assert adoption > 3
