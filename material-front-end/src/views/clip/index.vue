@@ -22,6 +22,7 @@
       :list="list"
       :width="300"
       :total="total"
+      :pageSize="page.size"
       :rowIndex="4"
       :needPage="true"
       :showVideoInfo="true"
