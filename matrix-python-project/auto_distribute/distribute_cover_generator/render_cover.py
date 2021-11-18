@@ -6,14 +6,27 @@ from PIL import Image
 
 class RenderCover(object):
 
-    def main(self, thumbnail, fin_keywords_list):
+    def __init__(self):
 
-        # 生成背景板
-        self.thumbnail2cover(thumbnail)
-        # 生成文字层
+        current = os.getcwd()
+        self.gen_pic_path = current + "/auto_distribute/distribute_cover_generator/"
+        self.gen_font_path = ""
+
+    def main(self, thumbnail, fin_keywords_list, flow_id):
+
+        # 生成背景板（例如：1_cover_background.png）
+        cover_bg = self.thumbnail2cover(thumbnail)
+        # cover_bg.save(os.path.join(self.gen_pic_path, str(flow_id) + '_cover_background.jpg'), quality=100)
+
+        # 生成文字层（例如：1_cover_structure.png）
+        structure_bg = self.render_structure(fin_keywords_list)
 
         # 贴合，合成封面图
-
+        r, g, b, a = structure_bg.split()
+        cover_bg.paste(structure_bg, (0, 0), mask=a)
+        current_pic_path = os.path.join(self.gen_pic_path, str(flow_id) + '_cover.jpg')
+        cover_bg.save(current_pic_path, quality=100)
+        return current_pic_path
 
     # 封面图标准：1920*1080，边边角角之类的通过背后叠一层模糊图层来解决
     @staticmethod
@@ -54,3 +67,20 @@ class RenderCover(object):
         # 这两步是用来转换的
         bg = Image.new("RGB", img.size, (255, 255, 255))
         bg.paste(img)
+
+        return bg
+
+
+    # 传入3个关键字，并渲染出对应封面结构图
+    def render_structure(self, fin_keywords_list):
+
+        # TODO 准备好文字层的底层模板
+
+        bg = Image.open(self.gen_pic_path + "background.png")
+
+
+        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个
+
+        # 随机三个形容关键字（免版权、4K、高清、可商用、HLG、10bit、60fps）
+
+        return bg

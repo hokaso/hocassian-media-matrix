@@ -31,18 +31,10 @@ class Render(object):
         while True:
             instruction_set = self.task_queue.get()
 
-
-
-            # 查找这些记录中得分最高的前三分之一，random一个作为封面
-
-
-            # 生成封面图的文字模板，方便叠加
-
-
-            #
-
-            # 将首尾两个素材渲染成淡入淡出，然后整体结合
-
+            # 查库，将所有素材记录取出，如果时间长度大于1秒，说明可以淡入淡出，如果可以就处理，不行就算了。
+            select_current_music_detail_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio " \
+                                              "WHERE audio_id = '%s' LIMIT 1" % instruction_set["music_id"]
+            _current_music_detail = db_handle.search(select_current_music_detail_sql)
 
              # 叠加音频轨道
 

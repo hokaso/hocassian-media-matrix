@@ -29,6 +29,8 @@ executor = ThreadPoolExecutor(4)
 SERVER_IP = '0.0.0.0'
 SERVER_PORT = 7967
 
+current_cover_pic_path = os.getcwd().replace("/prod/matrix-python-project", "") + "/matrix/material/video_clip/clip_slot/"
+
 class ServerManager(BaseManager):
     pass
 
@@ -74,14 +76,18 @@ def cover_generator(instruction_set):
         if current_music_detail["audio_time"] > duration_counter:
             raw_tag_list = json.loads(ikey["material_tag"])
             all_tags = all_tags + copy.deepcopy(raw_tag_list)
-            render_clips_list.append(ikey)
+
+            # 把material_time换成timestamp，方便后期计数
+            current_duration = tools_handle.string2timestamp(ikey["material_time"])
+            ikey["material_time"] = current_duration
+            render_clips_list.append(copy.deepcopy(ikey))
             render_clips_thumbnail["pic_path"] = ikey["material_path"] + "_1.jpg"
             render_clips_thumbnail["mark"] = float(ikey["material_mark"])
             render_clips_thumbnail_list.append(copy.deepcopy(render_clips_thumbnail))
         else:
             break
 
-        current_duration = tools_handle.string2timestamp(ikey["material_time"])
+        # 如果素材长度超过10s，就算它10s，反正最后渲染的时候也只展示中间的10s
         if current_duration > 10:
             current_duration = 10
         duration_counter = current_duration + duration_counter
@@ -101,7 +107,7 @@ def cover_generator(instruction_set):
     for distinct_tag in keywords_set:
         keywords_time["tag"] = distinct_tag
         keywords_time["times"] = all_tags.count(distinct_tag)
-        keywords_list.append(keywords_time)
+        keywords_list.append(copy.deepcopy(keywords_time))
 
     # 记得断言，列表长度必须为10，否则退出；
     # TODO 这里感觉以后得加一个消息提醒，就是如果条件不满足，就提示用户检查tag，重新等待流程开始
@@ -124,23 +130,31 @@ def cover_generator(instruction_set):
     # 从备选封面列表里抽前三分之一作为新的封面列表
     render_clips_thumbnail_list.sort(key=lambda x: x["mark"], reverse=True)
     adoption = int(len(render_clips_thumbnail_list) / 3)
-    thumbnail_list = render_clips_thumbnail_list[:adoption]
+    _thumbnail_list = render_clips_thumbnail_list[:adoption]
+    thumbnail_list = [ i["pic_path"] for i in _thumbnail_list ]
 
     # 随机一张图片作为封面图
     index = random.randint(0, adoption)
 
     # 放入渲染器，开始生成
-    render_cover.main(thumbnail_list[index], fin_keywords_list)
+    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], fin_keywords_list, instruction_set["flow_id"])
+
+    # 生成完毕后，发送新卡片展示此封面，如果用户不满意，重新生成
+    msg_handle.send_cover_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, fin_keywords_list)
 
 
+def cover_generator_refresh(instruction_set):
 
+    thumbnail_list = instruction_set["thumbnail_list"]
 
+    # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
+    index = random.randint(0, len(thumbnail_list))
 
+    # 放入渲染器，开始生成
+    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], instruction_set["keywords"], instruction_set["flow_id"])
 
-
-
-
-
+    # 生成完毕后，更新卡片展示此封面，如果用户不满意，重新生成
+    msg_handle.send_cover_refresh_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, instruction_set["keywords"], instruction_set["token"], instruction_set["open_id"])
 
 def random_music():
 
@@ -206,7 +220,6 @@ def flow():
                     "flow_id": flow_data["action"]["value"]["flow_id"],
                     "music_id": flow_data["action"]["value"]["music_id"]
                 }
-                # task_queue.put(instruction_set)
 
                 # 抛一个生成封面图的任务给子线程，等待任务执行完毕后，再发一张卡片给用户，询问用户是否满意素材
                 executor.submit(cover_generator, instruction_set)
@@ -217,7 +230,7 @@ def flow():
                 traceback.print_exc()
                 print(e)
 
-            return msg_handle.send_music_continue_msg()
+            return msg_handle.send_continue_music_msg()
 
         else:
 
@@ -240,6 +253,45 @@ def flow():
                 flow_data["action"]["value"]["count"]
             )
 
+    elif flow_data["action"]["value"]["flow_type"] == "choose_cover":
+
+        # 选定当前
+        if flow_data["action"]["value"]["choose_cover"] == "1":
+
+            instruction_set = {
+                "flow_id": flow_data["action"]["value"]["flow_id"]
+            }
+
+            # 修改流程状态
+            update_to_render_sql = "update flow_distribute set status = '%s', cover_pic = '%s' where id = '%s' and status = '%s'" % \
+                                   ("3", flow_data["action"]["value"]["cover_pic"], flow_data["action"]["value"]["flow_id"], "2")
+
+            try:
+                db_handle.modify(update_to_render_sql)
+
+                # 说明一下，为啥有些任务用子进程，有些任务用队列：如果耗时比较短的（比如图片处理）可以用子进程，不会说长期占用大量运算资源；
+                # 但如果是视频渲染的话，是一个长时间占用大量资源的任务，所以需要队列，逐个完成，保证系统稳定性；
+                task_queue.put(instruction_set)
+
+            except Exception as e:
+                # 做一个幂等，由于数据库自带锁所以能够确保一致性~
+                print("也许是手抽了~")
+                traceback.print_exc()
+                print(e)
+
+        else:
+
+            # 抛一个生成封面图的任务给子线程，等待任务执行完毕后，更新当前卡片，询问用户是否满意素材
+            instruction_set = {
+                "flow_id": flow_data["action"]["value"]["flow_id"],
+                "thumbnail_list": flow_data["action"]["value"]["thumbnail_list"],
+                "keywords": flow_data["action"]["value"]["keywords"],
+                "token": flow_data["token"],
+                "open_id": flow_data["open_id"]
+            }
+
+            executor.submit(cover_generator_refresh, instruction_set)
+            return msg_handle.send_cover_wait_msg()
 
 if __name__ == '__main__':
     app.debug = True
