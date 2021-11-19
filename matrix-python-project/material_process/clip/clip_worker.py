@@ -8,6 +8,7 @@ from utils.snow_id import HSIS
 from db.database_handler import InstantDB
 import shlex, subprocess, traceback
 from tenacity import retry, wait_fixed
+from utils.tools import Tools
 from PIL import Image
 from material_process.clip.clip_analyze import ClipAnalyze
 
@@ -33,6 +34,7 @@ class ClipWorker(object):
         self.preview_path = current + "/matrix/material/video_clip/preview/"
         self.meta_info_path = current + "/matrix/material/video_clip/meta_info/"
         self.clip_slot_path = current + "/matrix/material/video_clip/clip_slot/"
+        self.tools_handle = Tools()
         ServerManager.register("get_task_queue")
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.task_queue = None
@@ -143,6 +145,8 @@ class ClipWorker(object):
                     import_set = "".join(import_set_list)
                     os.system(import_set)
 
+                    self.tools_handle.assert_file_exist(self.final_path + after_name + ".mp4")
+
                     # 确定素材色域，此处必须使用https://johnvansickle.com/ffmpeg/静态编译好的pkg，可以下载到根目录下以./的方式引用
                     if "color_primaries" in origin_info['streams'][0] and origin_info['streams'][0]['color_primaries'] == 'bt2020':
                         import_preview_set_list = [
@@ -179,6 +183,8 @@ class ClipWorker(object):
                         import_preview_set = "".join(import_preview_set_list)
 
                     os.system(import_preview_set)
+
+                    self.tools_handle.assert_file_exist(self.preview_path + after_name + ".mp4")
 
                     # 采集处理完成的素材的信息
                     catch_set = f'./ffprobe -of json -select_streams v -show_streams "{self.final_path + after_name + ".mp4"}"'
@@ -247,6 +253,9 @@ class ClipWorker(object):
                     ]
                     crop_set = "".join(crop_set_list)
                     os.system(crop_set)
+
+                    self.tools_handle.assert_file_exist(self.raw_path + instruction_set["file_path"] + ".mp4")
+
                     crop_preview_set_list = [
                         "./ffmpeg -threads ",
                         self.threads,
@@ -265,6 +274,8 @@ class ClipWorker(object):
                     ]
                     crop_preview_set = "".join(crop_preview_set_list)
                     os.system(crop_preview_set)
+
+                    self.tools_handle.assert_file_exist(self.preview_path + instruction_set["file_path"] + "_temp.mp4")
 
                     # 删除旧的，将新的改回原名称
                     os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
@@ -307,6 +318,8 @@ class ClipWorker(object):
                         slot_set = "".join(slot_set_list)
                         os.system(slot_set)
 
+                        self.tools_handle.assert_file_exist(self.clip_slot_path + instruction_set["file_path"] + "_" + str(count) + ".jpg")
+
                     # 识别素材图，返回标签（调用隔壁类的方法）
                     pic_tag_set, pic_mark, pic_meta = self.az.tag_pic(image_url_list)
                     pic_tag_list = list(pic_tag_set)
@@ -327,6 +340,8 @@ class ClipWorker(object):
                     ]
                     slot_title_set = "".join(slot_title_set_list)
                     os.system(slot_title_set)
+
+                    self.tools_handle.assert_file_exist(self.clip_slot_path + instruction_set["file_path"] + "_cover_temp.jpg")
 
                     # 压缩尺寸
                     target = Image.open(self.clip_slot_path + instruction_set["file_path"] + "_cover_temp" + ".jpg")

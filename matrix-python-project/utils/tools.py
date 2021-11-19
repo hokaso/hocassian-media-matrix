@@ -14,3 +14,6 @@ class Tools(object):
 
         return duration_timestamp
 
+    @staticmethod
+    def assert_file_exist(file_path):
+        assert os.path.isfile(file_path)

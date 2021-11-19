@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, random
 
 sys.path.append(os.getcwd())
 import time, json, pymysql
@@ -8,8 +8,7 @@ class RenderCover(object):
 
     def __init__(self):
 
-        current = os.getcwd()
-        self.gen_pic_path = current + "/auto_distribute/distribute_cover_generator/"
+        self.gen_pic_path = "auto_distribute/distribute_cover_generator/"
         self.gen_font_path = ""
 
     def main(self, thumbnail, fin_keywords_list, flow_id):
@@ -24,7 +23,7 @@ class RenderCover(object):
         # 贴合，合成封面图
         r, g, b, a = structure_bg.split()
         cover_bg.paste(structure_bg, (0, 0), mask=a)
-        current_pic_path = os.path.join(self.gen_pic_path, str(flow_id) + '_cover.jpg')
+        current_pic_path = self.gen_pic_path + str(flow_id) + '_cover.jpg'
         cover_bg.save(current_pic_path, quality=100)
         return current_pic_path
 
@@ -77,9 +76,9 @@ class RenderCover(object):
         # TODO 准备好文字层的底层模板
 
         bg = Image.open(self.gen_pic_path + "background.png")
+        random.shuffle(fin_keywords_list)
 
-
-        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个
+        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个（）
 
         # 随机三个形容关键字（免版权、4K、高清、可商用、HLG、10bit、60fps）
 

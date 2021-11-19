@@ -1,7 +1,7 @@
-import sys, os, time, json, copy
+import sys, os, json, copy
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
-from auto_distribute.tools import Tools
+from utils.tools import Tools
 from auto_distribute.lark import Lark
 from auto_distribute.distribute_cover_generator.render_cover import RenderCover
 from multiprocessing import JoinableQueue
@@ -43,13 +43,13 @@ def cover_generator(instruction_set):
 
     # 获取音乐详细信息
     select_current_music_detail_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio " \
-                                      "WHERE audio_id = '%s' LIMIT 1" % instruction_set["music_id"]
+                                      "WHERE audio_path = '%s' LIMIT 1" % instruction_set["audio_path"]
     _current_music_detail = db_handle.search(select_current_music_detail_sql)
     current_music_detail = _current_music_detail[0]
     current_music_detail["audio_time"] = tools_handle.string2timestamp(current_music_detail["audio_time"])
 
     # 从第一个有效素材开始选，选择N个视频素材，直到N+1个视频素材大于音乐长度
-    select_all_active_clips = "select material_id, material_path, material_time, material_mark, material_tag from mat_clip " \
+    select_all_active_clips = "select material_id, material_path, material_size, material_time, material_mark, material_tag from mat_clip " \
                               "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s' order by material_id" % \
                               ("0", "0", "0")
     clip_records = db_handle.search_DB(select_all_active_clips)
@@ -161,7 +161,7 @@ def random_music():
     select_music_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio as t1 " \
                        "WHERE t1.audio_id>=(RAND()*(SELECT MAX(audio_id) FROM mat_audio))LIMIT 1"
     rand_music = db_handle.search(select_music_sql)
-    return rand_music
+    return rand_music[0]
 
 
 app = Flask(__name__, static_folder='', static_url_path='')
@@ -170,6 +170,8 @@ app = Flask(__name__, static_folder='', static_url_path='')
 def flow():
     flow_data = json.loads(request.data)
     print(flow_data)
+
+    # TODO 需要给测试写一个专用卡片，当聊天端输入特定字符时，触发本来应该定时触发的卡片，然后进行测试
 
     # 是否分发
     if flow_data["action"]["value"]["flow_type"] == "is_distributed":
@@ -191,7 +193,7 @@ def flow():
                 cur_music["audio_name"] + " - " + cur_music["audio_author"],
                 flow_data["action"]["value"]["flow_id"],
                 OUTER_URL + cur_music["audio_path"],
-                cur_music["audio_id"],
+                cur_music["audio_path"],
             )
 
             return msg_handle.send_continue_msg()
@@ -209,8 +211,8 @@ def flow():
         if flow_data["action"]["value"]["choose_music"] == "1":
 
             # 取出music_id存入对应流程记录，并更新状态
-            update_to_render_sql = "update flow_distribute set status = '%s', audio_id = '%s' where id = '%s' and status = '%s'" % \
-                                   ("2", flow_data["action"]["value"]["music_id"], flow_data["action"]["value"]["flow_id"], "1")
+            update_to_render_sql = "update flow_distribute set status = '%s', audio_path = '%s' where id = '%s' and status = '%s'" % \
+                                   ("2", flow_data["action"]["value"]["audio_path"], flow_data["action"]["value"]["flow_id"], "1")
 
             try:
                 db_handle.modify(update_to_render_sql)
@@ -218,7 +220,7 @@ def flow():
                 # 放入队列，用于执行素材收集操作（生成缩览图→通过缩览图生成封面→首尾淡入淡出渲染→合并预处理好的素材→加上音乐→分发）
                 instruction_set = {
                     "flow_id": flow_data["action"]["value"]["flow_id"],
-                    "music_id": flow_data["action"]["value"]["music_id"]
+                    "audio_path": flow_data["action"]["value"]["audio_path"]
                 }
 
                 # 抛一个生成封面图的任务给子线程，等待任务执行完毕后，再发一张卡片给用户，询问用户是否满意素材
@@ -249,7 +251,7 @@ def flow():
                 cur_music["audio_name"] + " - " + cur_music["audio_author"],
                 flow_data["action"]["value"]["flow_id"],
                 OUTER_URL + cur_music["audio_path"],
-                cur_music["audio_id"],
+                cur_music["audio_path"],
                 flow_data["action"]["value"]["count"]
             )
 

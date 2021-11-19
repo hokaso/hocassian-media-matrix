@@ -247,7 +247,7 @@ class Lark(object):
 
         return self.send_msg_card(note)
 
-    def send_music_msg(self, duration, music_name, flow_id, music_url, music_id):
+    def send_music_msg(self, duration, music_name, flow_id, music_url, audio_path):
         note = {
             # 未来可以做成多租户模式
             "open_id": CURRENT_USER_OPENID,
@@ -282,7 +282,7 @@ class Lark(object):
                                     "flow_type": "choose_music",
                                     "flow_id": flow_id,
                                     "choose_music": "1",
-                                    "music_id": music_id
+                                    "audio_path": audio_path
                                 },
                                 "type": "primary"
                             },
@@ -316,7 +316,7 @@ class Lark(object):
         return self.send_msg_card(note)
 
     @staticmethod
-    def send_music_refresh_msg(duration, music_name, flow_id, music_url, music_id, count):
+    def send_music_refresh_msg(duration, music_name, flow_id, music_url, audio_path, count):
         note = {
             "config": {
                 "wide_screen_mode": true
@@ -347,7 +347,7 @@ class Lark(object):
                                 "flow_type": "choose_music",
                                 "flow_id": flow_id,
                                 "choose_music": "1",
-                                "music_id": music_id
+                                "audio_path": audio_path
                             },
                             "type": "primary"
                         },

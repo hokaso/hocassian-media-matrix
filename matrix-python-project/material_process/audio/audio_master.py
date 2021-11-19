@@ -9,6 +9,7 @@ from db.database_handler import InstantDB
 from db.redis_handler import InstantRedis
 from tenacity import retry, wait_fixed
 from material_process.audio.audio_analzye import AudioAnalyze
+from utils.tools import Tools
 
 # 队列通讯端口
 SERVER_IP = '0.0.0.0'
@@ -45,6 +46,7 @@ class AudioMaster(object):
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.send_url = info["send_url"]
         self.aa = AudioAnalyze()
+        self.tools_handle = Tools()
 
         # 队列相关
         self.db_handle = InstantDB().get_connect()
@@ -161,6 +163,8 @@ class AudioMaster(object):
                         else:
                             audio_handle_set = "./ffmpeg -i \""+ self.origin_path + file +"\" -ab 320k " + self.final_path + after_name + ".mp3"
                             os.system(audio_handle_set)
+
+                            self.tools_handle.assert_file_exist(self.final_path + after_name + ".mp3")
 
                         audio_set, analyze_json = self.aa.run(self.final_path + after_name + ".mp3")
 

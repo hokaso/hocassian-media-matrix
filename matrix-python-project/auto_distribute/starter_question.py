@@ -1,10 +1,10 @@
-import sys, os, time, json
+import sys, os
+
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
-from auto_distribute.tools import Tools
+from utils.tools import Tools
 from auto_distribute.lark import Lark
 
-import pymysql, traceback
 
 class StarterQuestion(object):
 
