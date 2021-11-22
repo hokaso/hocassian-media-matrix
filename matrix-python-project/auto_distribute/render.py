@@ -5,6 +5,8 @@ from multiprocessing.managers import BaseManager
 from db.db_pool_handler import InstantDBPool
 from tenacity import retry, wait_fixed
 from utils.tools import Tools
+from auto_distribute.upload import Upload
+from utils.snow_id import HSIS
 
 # SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7967
@@ -29,6 +31,8 @@ class Render(object):
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.db_handle = InstantDB().get_connect()
         self.task_queue = None
+        self.upload = Upload()
+        self.store_path = current + "/matrix/distribute/"
 
     '''
     输入：
@@ -70,7 +74,7 @@ class Render(object):
             instruction_set = self.task_queue.get()
 
             # 查库，将所有素材记录取出，如果时间长度大于1秒，说明可以淡入淡出，如果可以就处理，不行就算了。
-            select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords FROM flow_distribute " \
+            select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords, adj_keywords FROM flow_distribute " \
                                              "WHERE id = '%s' LIMIT 1" % instruction_set["flow_id"]
             _current_flow_detail = db_handle.search(select_current_flow_detail_sql)
             current_flow_detail = _current_flow_detail[0]
@@ -264,8 +268,30 @@ class Render(object):
 
             self.tools_handle.assert_file_exist(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
 
+            # 到这一步，封面图和稿件本身都有了，开始准备分发（YouTube、Bilibili），同时把材料复制一份到仓库特定的文件夹，用来人肉分发（使用融媒宝分发各大平台）
+            write_title, write_info = self.upload.distribute(
+                instruction_set["flow_id"],
+                json.loads(current_flow_detail["keywords"]),
+                json.loads(current_flow_detail["adj_keywords"])
+            )
 
-    # def distribute(self):
+            after_name = HSIS.main()
+            shutil.copyfile(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4", self.store_path + after_name + ".mp4")
+            shutil.copyfile(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg", self.store_path + after_name + ".jpg")
+
+            with open(self.store_path + after_name + ".txt", "w+") as temp_txt_file:
+                temp_txt_file.writelines(write_title + "\n")
+                temp_txt_file.writelines(write_info + "\n")
+                temp_txt_file.writelines(current_flow_detail["keywords"] + "\n")
+                temp_txt_file.writelines(current_flow_detail["adj_keywords"] + "\n")
+
+            # TODO 测试通过，上线正式环境后，删除temp素材
+            # shutil.rmtree(current_clip_path)
+            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
+            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
+            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
+
+
 
 
 

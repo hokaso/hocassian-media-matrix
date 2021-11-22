@@ -8,19 +8,20 @@ class RenderCover(object):
 
     def __init__(self):
 
-        self.gen_pic_path = "auto_distribute/distribute_cover_generator/"
+        self.material_pic_path = "auto_distribute/distribute_cover_generator/"
+        self.gen_pic_path = "auto_distribute/"
         self.gen_font_path = ""
 
-    def main(self, thumbnail, fin_keywords_list, flow_id):
+    def main(self, thumbnail, fin_keywords_list, flow_id, adj_keywords):
 
         # 生成背景板（例如：1_cover_background.png）
         cover_bg = self.thumbnail2cover(thumbnail)
         # cover_bg.save(os.path.join(self.gen_pic_path, str(flow_id) + '_cover_background.jpg'), quality=100)
 
         # 生成文字层（例如：1_cover_structure.png）
-        structure_bg = self.render_structure(fin_keywords_list)
+        structure_bg = self.render_structure(fin_keywords_list, adj_keywords)
 
-        # 贴合，合成封面图
+        # 贴合，合成封面图（例如：1_cover.jpg；如果分发流程有其他要求，再根据对应流程生成相应格式）
         r, g, b, a = structure_bg.split()
         cover_bg.paste(structure_bg, (0, 0), mask=a)
         current_pic_path = self.gen_pic_path + str(flow_id) + '_cover.jpg'
@@ -71,15 +72,21 @@ class RenderCover(object):
 
 
     # 传入3个关键字，并渲染出对应封面结构图
-    def render_structure(self, fin_keywords_list):
+    def render_structure(self, fin_keywords_list, adj_keywords):
 
         # TODO 准备好文字层的底层模板
 
-        bg = Image.open(self.gen_pic_path + "background.png")
-        random.shuffle(fin_keywords_list)
+        bg = Image.open(self.material_pic_path + "background.png")
+        select_keywords_list = fin_keywords_list[:3]
+        random.shuffle(select_keywords_list)
 
-        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个（）
+        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个
+
 
         # 随机三个形容关键字（免版权、4K、高清、可商用、HLG、10bit、60fps）
+
+        # 根据create时间生成底部版权声明
+
+        # 贴合阴影背景（按需拉伸）
 
         return bg

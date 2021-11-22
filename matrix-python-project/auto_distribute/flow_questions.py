@@ -16,6 +16,7 @@ with open("auto_distribute/config.json", 'r') as f0:
 
 LOCAL_MUSIC_PATH = info["LOCAL_MUSIC_PATH"]
 OUTER_URL = info["OUTER_URL"]
+ADJ_KEYWORDS = info["ADJ_KEYWORDS"]
 
 db_handle = InstantDBPool().get_connect()
 msg_handle = Lark()
@@ -115,15 +116,21 @@ def cover_generator(instruction_set):
 
     # 整理出词频最高的10个，其中前3个印在封面图上，前3个写在标题里，至于tag写多少，视平台而定（反正存进一个list，灵活运用）
     keywords_list.sort(key=lambda x: x["times"], reverse=True)
-    fin_keywords_list = [ keywords_list[i]["tag"] for i in range(0,10) ]
+    _fin_keywords_list = [ i["tag"] for i in keywords_list ]
+    fin_keywords_list = _fin_keywords_list[:10]
 
     # shuffle选中素材
     random.shuffle(render_clips_list)
+    random.shuffle(ADJ_KEYWORDS)
+
+    # 随机三个形容关键字
+    adj_keywords = ADJ_KEYWORDS[:3]
 
     # 素材列表、素材时长、素材关键字存入数据库（此处不需要考虑幂等问题）
-    save_sql = "update flow_distribute set mat_list = '%s', duration = '%s', keywords = '%s' where id = '%s'" % \
+    save_sql = "update flow_distribute set mat_list = '%s', duration = '%s', keywords = '%s', adj_keywords = '%s' where id = '%s'" % \
                 (pymysql.escape_string(json.dumps(render_clips_list, ensure_ascii=False)), duration_counter,
-                 pymysql.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)), instruction_set["flow_id"])
+                 pymysql.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)),
+                 pymysql.escape_string(json.dumps(adj_keywords, ensure_ascii=False)), instruction_set["flow_id"])
 
     db_handle.modify(save_sql)
 
@@ -137,7 +144,7 @@ def cover_generator(instruction_set):
     index = random.randint(0, adoption)
 
     # 放入渲染器，开始生成
-    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], fin_keywords_list, instruction_set["flow_id"])
+    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], fin_keywords_list, instruction_set["flow_id"], adj_keywords)
 
     # 生成完毕后，发送新卡片展示此封面，如果用户不满意，重新生成
     msg_handle.send_cover_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, fin_keywords_list)
@@ -150,8 +157,12 @@ def cover_generator_refresh(instruction_set):
     # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
     index = random.randint(0, len(thumbnail_list))
 
+    # 随机三个形容关键字
+    random.shuffle(ADJ_KEYWORDS)
+    adj_keywords = ADJ_KEYWORDS[:3]
+
     # 放入渲染器，开始生成
-    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], instruction_set["keywords"], instruction_set["flow_id"])
+    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], instruction_set["keywords"], instruction_set["flow_id"], adj_keywords)
 
     # 生成完毕后，更新卡片展示此封面，如果用户不满意，重新生成
     msg_handle.send_cover_refresh_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, instruction_set["keywords"], instruction_set["token"], instruction_set["open_id"])
