@@ -4,10 +4,10 @@
 db/config.json
 sync_ytb_video/config.json
 utils/test.py
-auto_distribute/lark_config.json
-auto_distribute/distribute_config.json
-auto_distribute/config.json
-auto_distribute/thumbnail
+auto_distribute/config/lark_config.json
+auto_distribute/config/distribute_config.json
+auto_distribute/config/config.json
+auto_distribute/distribute_cover_generator/layout.json
 material_process/config.json
 cover_generator/config.json
 pretrained_models/
