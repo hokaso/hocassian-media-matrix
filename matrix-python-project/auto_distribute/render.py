@@ -295,3 +295,8 @@ class Render(object):
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
+
+if __name__ == '__main__':
+    SERVER_IP = '127.0.0.1'
+    rd = Render(SERVER_IP)
+    rd.start()
