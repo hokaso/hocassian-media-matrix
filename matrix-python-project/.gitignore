@@ -5,6 +5,7 @@ db/config.json
 sync_ytb_video/config.json
 utils/test.py
 auto_distribute/config/lark_config.json
+auto_distribute/config/client_secret.json
 auto_distribute/config/distribute_config.json
 auto_distribute/config/config.json
 auto_distribute/distribute_cover_generator/layout.json

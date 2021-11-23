@@ -4,13 +4,17 @@ sys.path.append(os.getcwd())
 import time, json, pymysql
 from PIL import Image
 
+
 class RenderCover(object):
 
     def __init__(self):
 
+        with open("auto_distribute/distribute_cover_generator/layout.json", 'r') as f0:
+            self.info = json.load(f0)
+
+        self.font_path = "auto_distribute/distribute_cover_generator/font/" + self.info["font"]
         self.material_pic_path = "auto_distribute/distribute_cover_generator/"
         self.gen_pic_path = "auto_distribute/"
-        self.gen_font_path = ""
 
     def main(self, thumbnail, fin_keywords_list, flow_id, adj_keywords):
 
@@ -70,23 +74,104 @@ class RenderCover(object):
 
         return bg
 
-
     # 传入3个关键字，并渲染出对应封面结构图
     def render_structure(self, fin_keywords_list, adj_keywords):
 
-        # TODO 准备好文字层的底层模板
+        # 准备好文字层的底层模板
+        bg = Image.open(self.material_pic_path + "material_01.png")
+        draw = ImageDraw.Draw(bg)
 
-        bg = Image.open(self.material_pic_path + "background.png")
+        # 取前三个tag渲染进封面图
         select_keywords_list = fin_keywords_list[:3]
         random.shuffle(select_keywords_list)
 
-        # 将tag关键字用「 / 」组合，总体长度不超过8个字符，如果超过，就只选两个
+        # 将tag关键字用「·」组合，总体长度不超过8个字符，如果超过，就只选两个
+        _render_tag = "·".join(select_keywords_list)
+        if len(_render_tag) > 10:
+            _render_tag = "·".join(select_keywords_list[:2])
 
+        render_tag = "「" + _render_tag + "」"
 
-        # 随机三个形容关键字（免版权、4K、高清、可商用、HLG、10bit、60fps）
+        # 将形容关键字用「 / 」组合
+        render_adj = " / ".join(adj_keywords)
 
         # 根据create时间生成底部版权声明
+        render_time = time.strftime('%Y.%m.%d', time.localtime())
 
-        # 贴合阴影背景（按需拉伸）
+        # 加载字体
+        tag_font = ImageFont.truetype(self.font_path, size=self.info["tag_size"])
+        adj_font = ImageFont.truetype(self.font_path, size=self.info["adj_size"])
+        time_font = ImageFont.truetype(self.font_path, size=self.info["time_size"])
+
+        tag_location = draw.textsize(render_tag, font=tag_font)
+        adj_location = draw.textsize(render_adj, font=adj_font)
+        # time_location = draw.textsize(render_time, font=time_font)
+
+        # 加载并按需拉伸阴影背景
+        shadow_bg = Image.open(self.material_pic_path + "material_02.png")
+        # shadow_w, shadow_h = shadow_bg.size
+
+        tag_shadow_bg_location = self.spread_shadow(tag_location)
+        tag_shadow_bg = shadow_bg.resize(tag_shadow_bg_location, Image.ANTIALIAS)
+
+        adj_shadow_bg_location = self.spread_shadow(adj_location)
+        adj_shadow_bg = shadow_bg.resize(adj_shadow_bg_location, Image.ANTIALIAS)
+
+        # 阴影贴合到structure上
+        tag_shadow_paste_x = (1080 - tag_shadow_bg_location[0]) / 2
+        tag_shadow_paste_y = self.info["tag_top"] - (tag_shadow_bg_location[1] - tag_location[1]) / 2
+        bg.paste(tag_shadow_bg, (tag_shadow_paste_x, tag_shadow_paste_y))
+
+        adj_shadow_paste_x = (1080 - adj_shadow_bg_location[0]) / 2
+        adj_shadow_paste_y = self.info["adj_top"] - (adj_shadow_bg_location[1] - adj_location[1]) / 2
+        bg.paste(adj_shadow_bg, (adj_shadow_paste_x, adj_shadow_paste_y))
+
+        # 文字贴合到structure上（包括文字阴影）
+        tag_paste_x = (1080 - tag_location[0]) / 2
+        tag_paste_y = self.info["tag_top"]
+
+        draw.text(
+            (tag_paste_x + self.info["tag_shadow_offset"][0], tag_paste_y + self.info["tag_shadow_offset"][1]),
+            render_tag,
+            font=tag_font,
+            fill=tuple(eval(self.info["tag_shadow_fill"]))
+        )
+        draw.text(
+            (tag_paste_x, tag_paste_y),
+            render_tag,
+            font=tag_font,
+            fill=tuple(eval(self.info["tag_color"]))
+        )
+
+        adj_paste_x = (1080 - adj_location[0]) / 2
+        adj_paste_y = self.info["adj_top"]
+
+        draw.text(
+            (adj_paste_x + self.info["adj_shadow_offset"][0], adj_paste_y + self.info["adj_shadow_offset"][1]),
+            render_adj,
+            font=adj_font,
+            fill=tuple(eval(self.info["adj_shadow_fill"]))
+        )
+        draw.text(
+            (adj_paste_x, adj_paste_y),
+            render_adj,
+            font=adj_font,
+            fill=tuple(eval(self.info["adj_color"]))
+        )
+
+        # 渲染时间
+        time_paste_x = self.info["time_location"][0]
+        time_paste_y = self.info["time_location"][1]
+
+        draw.text(
+            (time_paste_x, time_paste_y),
+            render_time,
+            font=time_font,
+            fill=tuple(eval(self.info["time_color"]))
+        )
 
         return bg
+
+    def spread_shadow(self, location):
+        new_location = (location[0] * self.info["shadow_spread_ratio"], location[1] * self.info["shadow_spread_ratio"])
+        return new_location

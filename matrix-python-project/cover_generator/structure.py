@@ -64,7 +64,20 @@ class Structure(object):
 
         return draw, first_title_font, secord_title_font, first_title_size, secord_title_size
 
-    def l_model(self, draw, config, first_title_location_x, first_title_location_y, component_location, secord_title_location_x, secord_title_location_y, first_title_font, secord_title_font, half_max_size, helf_height):
+    def l_model(
+            self,
+            draw,
+            config,
+            first_title_location_x,
+            first_title_location_y,
+            component_location,
+            secord_title_location_x,
+            secord_title_location_y,
+            first_title_font,
+            secord_title_font,
+            half_max_size,
+            helf_height
+    ):
 
         # 随机布局
         current_location = self.l_location()
