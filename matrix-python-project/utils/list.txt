@@ -1,3 +1,6 @@
+../auto_distribute/config.json
+../auto_distribute/distribute_config.json
+../auto_distribute/lark_config.json
 ../cover_generator/config.json
 ../material_process/config.json
 ../db/config.json
