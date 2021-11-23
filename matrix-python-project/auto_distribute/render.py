@@ -29,7 +29,6 @@ class Render(object):
         self.db_handle = InstantDBPool().get_connect()
         ServerManager.register("get_task_queue")
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
-        self.db_handle = InstantDB().get_connect()
         self.task_queue = None
         self.upload = Upload()
         self.store_path = current + "/matrix/distribute/"
@@ -207,7 +206,7 @@ class Render(object):
                     temp_last_clip_path,
                     ".mp4\" ",
                     "-vf fade=out:st=",
-                    str(end_time-1),
+                    str(end_time - 1),
                     ":d=1 -crf 20 \"",
                     current_clip_path,
                     temp_last_clip_path,
@@ -268,6 +267,12 @@ class Render(object):
 
             self.tools_handle.assert_file_exist(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
 
+            # 更新流程表状态
+            update_to_complete_render_sql = "update flow_distribute set status = '%s' where id = '%s' and status = '%s'" % \
+                                            ("4", instruction_set["flow_id"], "3")
+
+            self.db_handle.modify(update_to_complete_render_sql)
+
             # 到这一步，封面图和稿件本身都有了，开始准备分发（YouTube、Bilibili），同时把材料复制一份到仓库特定的文件夹，用来人肉分发（使用融媒宝分发各大平台）
             write_title, write_info = self.upload.distribute(
                 instruction_set["flow_id"],
@@ -290,10 +295,3 @@ class Render(object):
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
-
-
-
-
-
-            
-            

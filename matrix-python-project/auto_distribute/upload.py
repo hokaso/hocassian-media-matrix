@@ -1,11 +1,16 @@
 import sys, os, json, copy, random, time
+
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
 from youtube_upload import main
+from bilibiliuploader.bilibiliuploader import BilibiliUploader
+from bilibiliuploader.core import VideoPart
 
 WATCH_VIDEO_URL = "https://www.youtube.com/watch?v={id}"
 
+
 class AuthenticationError(Exception): pass
+
 
 class Upload(object):
 
@@ -47,39 +52,73 @@ class Upload(object):
         self.pic_path = self.current_path + str(flow_id) + "_cover.jpg"
         self.video_tags = self.info["EXTRA_TAGS"] + keywords
 
+        # 完成bilibili上传
+        bilibili_id = self.bilibili_upload()
+
         # 完成YouTube上传
-        self.youtube_upload()
+        youtube_id = self.youtube_upload()
 
-        return video_title, video_info
+        # 修改流程表记录
+        finish_flow_sql = "update flow_distribute set youtube_id = '%s', bilibili_id = '%s', status = '%s' where id = '%s' and status = '%s'" % \
+                          (youtube_id, bilibili_id, "5", flow_id, "4")
 
-
+        self.db_handle.modify(finish_flow_sql)
+        return self.video_title, self.video_info
 
     def youtube_upload(self):
+
+        # 设置环境变量
+        os.environ['http_proxy'] = self.info["YOUTUBE_HTTP_PROXY"]
+        os.environ['https_proxy'] = self.info["YOUTUBE_HTTPS_PROXY"]
 
         options = None
         options.title = self.video_title
         options.description = self.video_info
         options.tags = ",".join(self.video_tags)
-        options.client_secrets = self.current_path + ""
-        options.credentials_file = ""
-        options.thumb = ""
-        options.category = "Travel & Events"
-
-        video_path = ""
+        options.client_secrets = self.current_path + "config/client_secret.json"
+        options.credentials_file = self.current_path + "config/credentials_file.json"
+        options.thumb = self.pic_path
+        options.category = self.info["YOUTUBE_CATEGORY"]
 
         youtube = main.get_youtube_handler(options)
 
         if youtube:
 
-            video_id = main.upload_youtube_video(youtube, options, video_path, 0, 0)
+            video_id = main.upload_youtube_video(youtube, options, self.video_path, 0, 0)
             video_url = WATCH_VIDEO_URL.format(id=video_id)
             debug("Video URL: {0}".format(video_url))
 
             if options.thumb:
                 youtube.thumbnails().set(videoId=video_id, media_body=options.thumb).execute()
-            if options.playlist:
-                playlists.add_video_to_playlist(youtube, video_id,
-                                                title=lib.to_utf8(options.playlist), privacy=options.privacy)
+
             print(video_url + "\n")
         else:
             raise AuthenticationError("Cannot get youtube resource")
+
+        return video_id
+
+    def bilibili_upload(self):
+
+        uploader = BilibiliUploader()
+
+        # 登录
+        uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
+
+        # 处理视频文件
+        parts = [VideoPart(
+            path=self.video_path,
+            title=self.video_title,
+            desc=self.video_info
+        )]
+
+        # 上传
+        avid, bvid = uploader.upload(
+            parts=parts,
+            copyright=1,
+            title=self.video_title,
+            tid=self.info["BILIBILI_CATEGORY"],
+            tag=",".join(self.video_tags[:9]),
+            desc=self.video_info,
+        )
+
+        return avid + "-" + bvid

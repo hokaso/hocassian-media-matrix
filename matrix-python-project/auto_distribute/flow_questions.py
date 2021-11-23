@@ -1,4 +1,5 @@
 import sys, os, json, copy
+
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
 from utils.tools import Tools
@@ -32,16 +33,18 @@ SERVER_PORT = 7967
 
 current_cover_pic_path = os.getcwd().replace("/prod/matrix-python-project", "") + "/matrix/material/video_clip/clip_slot/"
 
+
 class ServerManager(BaseManager):
     pass
+
 
 task_queue = JoinableQueue()
 ServerManager.register("get_task_queue", callable=lambda: task_queue)
 server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
 server_manager.start()
 
-def cover_generator(instruction_set):
 
+def cover_generator(instruction_set):
     # 获取音乐详细信息
     select_current_music_detail_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio " \
                                       "WHERE audio_path = '%s' LIMIT 1" % instruction_set["audio_path"]
@@ -116,7 +119,7 @@ def cover_generator(instruction_set):
 
     # 整理出词频最高的10个，其中前3个印在封面图上，前3个写在标题里，至于tag写多少，视平台而定（反正存进一个list，灵活运用）
     keywords_list.sort(key=lambda x: x["times"], reverse=True)
-    _fin_keywords_list = [ i["tag"] for i in keywords_list ]
+    _fin_keywords_list = [i["tag"] for i in keywords_list]
     fin_keywords_list = _fin_keywords_list[:10]
 
     # shuffle选中素材
@@ -128,9 +131,9 @@ def cover_generator(instruction_set):
 
     # 素材列表、素材时长、素材关键字存入数据库（此处不需要考虑幂等问题）
     save_sql = "update flow_distribute set mat_list = '%s', duration = '%s', keywords = '%s', adj_keywords = '%s' where id = '%s'" % \
-                (pymysql.escape_string(json.dumps(render_clips_list, ensure_ascii=False)), duration_counter,
-                 pymysql.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)),
-                 pymysql.escape_string(json.dumps(adj_keywords, ensure_ascii=False)), instruction_set["flow_id"])
+               (pymysql.escape_string(json.dumps(render_clips_list, ensure_ascii=False)), duration_counter,
+                pymysql.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)),
+                pymysql.escape_string(json.dumps(adj_keywords, ensure_ascii=False)), instruction_set["flow_id"])
 
     db_handle.modify(save_sql)
 
@@ -138,7 +141,7 @@ def cover_generator(instruction_set):
     render_clips_thumbnail_list.sort(key=lambda x: x["mark"], reverse=True)
     adoption = int(len(render_clips_thumbnail_list) / 3)
     _thumbnail_list = render_clips_thumbnail_list[:adoption]
-    thumbnail_list = [ i["pic_path"] for i in _thumbnail_list ]
+    thumbnail_list = [i["pic_path"] for i in _thumbnail_list]
 
     # 随机一张图片作为封面图
     index = random.randint(0, adoption)
@@ -151,7 +154,6 @@ def cover_generator(instruction_set):
 
 
 def cover_generator_refresh(instruction_set):
-
     thumbnail_list = instruction_set["thumbnail_list"]
 
     # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
@@ -167,8 +169,8 @@ def cover_generator_refresh(instruction_set):
     # 生成完毕后，更新卡片展示此封面，如果用户不满意，重新生成
     msg_handle.send_cover_refresh_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, instruction_set["keywords"], instruction_set["token"], instruction_set["open_id"])
 
-def random_music():
 
+def random_music():
     select_music_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio as t1 " \
                        "WHERE t1.audio_id>=(RAND()*(SELECT MAX(audio_id) FROM mat_audio))LIMIT 1"
     rand_music = db_handle.search(select_music_sql)
@@ -176,6 +178,7 @@ def random_music():
 
 
 app = Flask(__name__, static_folder='', static_url_path='')
+
 
 @app.route('/', methods=['POST'])
 def flow():
@@ -305,6 +308,7 @@ def flow():
 
             executor.submit(cover_generator_refresh, instruction_set)
             return msg_handle.send_cover_wait_msg()
+
 
 if __name__ == '__main__':
     app.debug = True
