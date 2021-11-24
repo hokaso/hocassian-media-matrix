@@ -51,7 +51,9 @@ class ClipWorker(object):
         while True:
 
             try:
-                instruction_set = self.task_queue.get(block=False)
+                instruction_set = self.task_queue.get()
+                if instruction_set is None:
+                    continue
             except Exception as e:
                 print(e)
                 print("等待任务中")

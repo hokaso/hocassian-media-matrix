@@ -12,6 +12,9 @@ WATCH_VIDEO_URL = "https://www.youtube.com/watch?v={id}"
 class AuthenticationError(Exception): pass
 
 
+class Options(object): pass
+
+
 class Upload(object):
 
     def __init__(self):
@@ -71,14 +74,23 @@ class Upload(object):
         os.environ['http_proxy'] = self.info["YOUTUBE_HTTP_PROXY"]
         os.environ['https_proxy'] = self.info["YOUTUBE_HTTPS_PROXY"]
 
-        options = None
-        options.title = self.video_title
-        options.description = self.video_info
-        options.tags = ",".join(self.video_tags)
-        options.client_secrets = self.current_path + "config/client_secret.json"
-        options.credentials_file = self.current_path + "config/credentials_file.json"
-        options.thumb = self.pic_path
-        options.category = self.info["YOUTUBE_CATEGORY"]
+        options = Options()
+        setattr(options, 'title', self.video_title)
+        setattr(options, 'description', self.video_info)
+        setattr(options, 'tags', ",".join(self.video_tags))
+        setattr(options, 'client_secrets', self.current_path + "config/client_secret.json")
+        setattr(options, 'credentials_file', self.current_path + "config/credentials_file.json")
+        setattr(options, 'thumb', self.pic_path)
+        setattr(options, 'category', self.info["YOUTUBE_CATEGORY"])
+        setattr(options, 'title', self.video_title)
+
+        # options.title = self.video_title
+        # options.description = self.video_info
+        # options.tags = ",".join(self.video_tags)
+        # options.client_secrets = self.current_path + "config/client_secret.json"
+        # options.credentials_file = self.current_path + "config/credentials_file.json"
+        # options.thumb = self.pic_path
+        # options.category = self.info["YOUTUBE_CATEGORY"]
 
         youtube = main.get_youtube_handler(options)
 
