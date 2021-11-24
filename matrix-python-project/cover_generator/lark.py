@@ -9,7 +9,7 @@ from utils.snow_id import HSIS
 from db.database_handler import InstantDB
 from cover_generator.main import Main
 
-with open("cover_generator/layout.json", 'r') as f0:
+with open("cover_generator/config.json", 'r') as f0:
     info = json.load(f0)
 
 APP_ID = info["APP_ID"]

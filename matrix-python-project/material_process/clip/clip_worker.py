@@ -24,7 +24,7 @@ class ClipWorker(object):
 
     def __init__(self, SERVER_IP):
 
-        with open(os.getcwd() + "/material_process/layout.json", 'r') as f0:
+        with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
             _info = json.load(f0)
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
@@ -43,14 +43,20 @@ class ClipWorker(object):
         self.info = _info["threads"]
         self.threads = None
 
-    # TODO：记得加上重试三次退出的代码，然后清除redis缓存
     @retry(wait=wait_fixed(5))
     def start(self):
         self.server_manager.connect()
         self.task_queue = self.server_manager.get_task_queue()
         print("Client Start!")
         while True:
-            instruction_set = self.task_queue.get()
+
+            try:
+                instruction_set = self.task_queue.get(block=False)
+            except Exception as e:
+                print(e)
+                print("等待任务中")
+                time.sleep(30)
+                continue
 
             # 定义渲染强度（间接控制风扇噪音），其中peak代表服务器的忙时，idle代表服务器的闲时，仅op为true时执行
             if self.info["op"]:

@@ -7,7 +7,7 @@ from material_process.audio.audio_worker import AudioWorker
 from material_process.image.image_master import ImageMaster
 from multiprocessing import Process
 
-with open(os.getcwd() + "/material_process/layout.json", 'r') as f0:
+with open(os.getcwd() + "/material_process/config.json", 'r') as f0:
     info = json.load(f0)
 
 SERVER_IP = info["master_ip"]

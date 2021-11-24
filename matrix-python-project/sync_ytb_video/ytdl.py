@@ -14,7 +14,7 @@ class VideoDownload(object):
     def __init__(self):
         self.db_handle = InstantDBPool().get_connect()
 
-        with open(os.getcwd() + "/sync_ytb_video/layout.json", 'r') as f0:
+        with open(os.getcwd() + "/sync_ytb_video/config.json", 'r') as f0:
             info = json.load(f0)
 
         self.ydl_opts = {

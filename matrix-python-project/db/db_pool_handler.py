@@ -117,7 +117,7 @@ class InstantDBPool(object):
 
     def __init__(self):
 
-        with open(os.getcwd() + "/db/layout.json", 'r') as f0:
+        with open(os.getcwd() + "/db/config.json", 'r') as f0:
             info = json.load(f0)
 
             # 本地生產

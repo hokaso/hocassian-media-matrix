@@ -16,6 +16,3 @@ while True:
         traceback.print_exc()
         print(e)
 
-
-# building = Building()
-# building.run()
