@@ -3,12 +3,14 @@ import sys, os, json, copy
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
 from utils.tools import Tools
+from utils.aes_cipher import AESCipher
 from auto_distribute.lark import Lark
 from auto_distribute.distribute_cover_generator.render_cover import RenderCover
 from multiprocessing import JoinableQueue
 from multiprocessing.managers import BaseManager
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request
+from auto_distribute.starter_question import StarterQuestion
 
 import pymysql, traceback
 
@@ -185,7 +187,60 @@ def flow():
     flow_data = json.loads(request.data)
     print(flow_data)
 
-    # TODO 需要给测试写一个专用卡片，当聊天端输入特定字符时，触发本来应该定时触发的卡片，然后进行测试
+    # ============== 以下为事件触发相关方法 ==============
+
+    # 给测试写一个专用卡片，当聊天端输入特定字符时，触发本来应该定时触发的卡片，然后进行测试
+    if "encrypt" in flow_data:
+        cipher = AESCipher(APP_ENCRYPT_KEY)
+        data = json.loads(cipher.decrypt_string(flow_data["encrypt"]))
+
+        # 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
+        if data["token"] != msg_handle.app_verification_token:
+            print("verification token not match, token =", data["token"])
+            return "illegal"
+
+        # 注册机器人验证
+        if msg_type == "url_verification":
+            rsg = {
+                "challenge": data["challenge"]
+            }
+            return json.dumps(rsg)
+
+        # 接下来主要处理会话事件，如果到这一步还没返回的，当做非法处理
+        if "event" in data:
+            event_data = data["event"]
+        else:
+            return "illegal"
+
+        # type = p2p_chat_create 首次创建会话
+        # type = message 对方发消息
+
+        # if "open_id" in event_data:
+        #     open_id = event_data["open_id"]
+        # else:
+        #     open_id = event_data["user"]["open_id"]
+
+        # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
+        if event_data["type"] == "p2p_chat_create":
+            return msg_handle.send_create_msg()
+
+        # 如果输入的是普通文字或图片
+        elif event_data["type"] == "message":
+
+            # 如果输入为文字，进行文字相关的操作
+            if event_data["msg_type"] == "text":
+
+                # 输入「测试流程」开始手动设置
+                if event_data["text"] == "测试流程":
+                    sq = StarterQuestion()
+                    sq.run()
+
+    # ============== 以下为bot相关方法 ==============
+
+    # challenge
+    if "challenge" in flow_data:
+        challenge = flow_data.get("challenge", "")
+        return challenge
 
     # 是否分发
     if flow_data["action"]["value"]["flow_type"] == "is_distributed":

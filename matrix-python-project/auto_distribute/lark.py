@@ -3,17 +3,19 @@ import sys, os, time, json, requests
 sys.path.append(os.getcwd())
 from utils.aes_cipher import AESCipher
 
-with open("auto_distribute/lark_config.json", 'r') as f0:
-    info = json.load(f0)
-
-APP_ID = info["APP_ID"]
-APP_SECRET = info["APP_SECRET"]
-APP_VERIFICATION_TOKEN = info["APP_VERIFICATION_TOKEN"]
-APP_ENCRYPT_KEY = info["APP_ENCRYPT_KEY"]
-CURRENT_USER_OPENID = info["CURRENT_USER_OPENID"]
-
 
 class Lark(object):
+
+    def __init__(self):
+        with open("auto_distribute/lark_config.json", 'r') as f0:
+            info = json.load(f0)
+
+        self.app_id = info["APP_ID"]
+        self.app_secret = info["APP_SECRET"]
+        self.app_verification_token = info["APP_VERIFICATION_TOKEN"]
+        self.app_encrypt_key = info["APP_ENCRYPT_KEY"]
+        self.current_user_openid = info["CURRENT_USER_OPENID"]
+
 
     def upload_pic(self, pic_path):
         with open(pic_path, 'rb') as f:
@@ -45,8 +47,8 @@ class Lark(object):
         }
 
         body = {
-            "app_id": APP_ID,
-            "app_secret": APP_SECRET
+            "app_id": self.app_id,
+            "app_secret": app_secret
         }
 
         try:
@@ -126,7 +128,7 @@ class Lark(object):
     def send_starter_msg(self, duration, flow_id):
         note = {
             # 未来可以做成多租户模式
-            "open_id": CURRENT_USER_OPENID,
+            "open_id": self.current_user_openid,
             "msg_type": "interactive",
             'card': {
                 "config": {
@@ -189,7 +191,7 @@ class Lark(object):
 
         pic_key = self.upload_pic(cover_local_path)
         note = {
-            "open_id": CURRENT_USER_OPENID,
+            "open_id": self.current_user_openid,
             "msg_type": "interactive",
             'card': {
                 "config": {
@@ -250,7 +252,7 @@ class Lark(object):
     def send_music_msg(self, duration, music_name, flow_id, music_url, audio_path):
         note = {
             # 未来可以做成多租户模式
-            "open_id": CURRENT_USER_OPENID,
+            "open_id": self.current_user_openid,
             "msg_type": "interactive",
             'card': {
                 "config": {
@@ -570,3 +572,33 @@ class Lark(object):
         }
 
         return note
+
+    def send_create_msg(self):
+        note = {
+            "open_id": self.current_user_openid,
+            "msg_type": "interactive",
+            'card': {
+                "config": {
+                    "wide_screen_mode": False
+                },
+                "header": {
+                    "template": "green",
+                    "title": {
+                        "tag": "plain_text",
+                        "content": "初次见面！"
+                    }
+                },
+                "elements": [
+                    {
+                        "tag": "div",
+                        "text": {
+                            "tag": "plain_text",
+                            "content": "欢迎来到素材分发助手~"
+                        }
+                    }
+                ]
+            }
+        }
+
+        # 发送提示
+        return self.send_msg_card(note)
