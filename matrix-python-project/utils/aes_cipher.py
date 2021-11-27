@@ -1,4 +1,5 @@
 from Crypto.Cipher import AES
+import hashlib, base64
 
 class AESCipher(object):
 

@@ -19,7 +19,7 @@ class Upload(object):
 
     def __init__(self):
 
-        with open("auto_distribute/distribute_config.json", 'r') as f0:
+        with open("auto_distribute/config/distribute_config.json", 'r') as f0:
             self.info = json.load(f0)
 
         self.current_path = "auto_distribute/"

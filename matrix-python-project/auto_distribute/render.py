@@ -1,4 +1,4 @@
-import sys, os, json, shutil, math
+import sys, os, json, shutil, math, traceback
 
 sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
@@ -72,7 +72,14 @@ class Render(object):
         self.task_queue = self.server_manager.get_task_queue()
         print("Client Start!")
         while True:
-            instruction_set = self.task_queue.get()
+
+            try:
+                instruction_set = self.task_queue.get()
+                if instruction_set is None:
+                    continue
+            except Exception as e:
+                traceback.print_exc()
+                print(e)
 
             # 查库，将所有素材记录取出，如果时间长度大于1秒，说明可以淡入淡出，如果可以就处理，不行就算了。
             select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords, adj_keywords FROM flow_distribute " \

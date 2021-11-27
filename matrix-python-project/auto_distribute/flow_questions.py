@@ -184,7 +184,6 @@ app = Flask(__name__, static_folder='', static_url_path='')
 @app.route('/', methods=['POST'])
 def flow():
     flow_data = json.loads(request.data)
-    print(flow_data)
 
     # ============== 以下为事件触发相关方法 ==============
 
@@ -224,6 +223,8 @@ def flow():
         # else:
         #     open_id = event_data["user"]["open_id"]
 
+        print(flow_data)
+
         # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
         if event_data["type"] == "p2p_chat_create":
             return msg_handle.send_create_msg()
@@ -239,12 +240,17 @@ def flow():
                     sq = StarterQuestion()
                     sq.run()
 
+        return True
+
     # ============== 以下为bot相关方法 ==============
+    print(flow_data)
 
     # challenge
     if "challenge" in flow_data:
-        challenge = flow_data.get("challenge", "")
-        return challenge
+        rsg = {
+            "challenge": flow_data["challenge"]
+        }
+        return json.dumps(rsg)
 
     # 是否分发
     if flow_data["action"]["value"]["flow_type"] == "is_distributed":
