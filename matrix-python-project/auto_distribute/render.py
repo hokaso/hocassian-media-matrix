@@ -1,4 +1,4 @@
-import requests, time, sys, os, time, json, pymysql, traceback, shutil, random
+import sys, os, json, shutil, math
 
 sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
@@ -32,6 +32,8 @@ class Render(object):
         self.task_queue = None
         self.upload = Upload()
         self.store_path = current + "/matrix/distribute/"
+        self.standard_4k_w = 3840
+        self.standard_4k_h = 2160
 
     '''
     输入：
@@ -42,11 +44,11 @@ class Render(object):
     lw和lh代表素材经过算法处理后左上角应该渲染在画面中的坐标（毕竟渲染器是从上至下，从左到右来渲染，所以需要左上角坐标）
     '''
 
-    @staticmethod
-    def crop_to_suit_4k(fw, fh):
 
-        FOUR_KILO_W = 3840
-        FOUR_KILO_H = 2160
+    def crop_to_suit_4k(self, fw, fh):
+
+        FOUR_KILO_W = self.standard_4k_w
+        FOUR_KILO_H = self.standard_4k_h
 
         # 毕竟大多数都是4k素材，hardcore一下提高效率
         if fw == FOUR_KILO_W and fh == FOUR_KILO_H:
@@ -75,7 +77,7 @@ class Render(object):
             # 查库，将所有素材记录取出，如果时间长度大于1秒，说明可以淡入淡出，如果可以就处理，不行就算了。
             select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords, adj_keywords FROM flow_distribute " \
                                              "WHERE id = '%s' LIMIT 1" % instruction_set["flow_id"]
-            _current_flow_detail = db_handle.search(select_current_flow_detail_sql)
+            _current_flow_detail = self.db_handle.search(select_current_flow_detail_sql)
             current_flow_detail = _current_flow_detail[0]
 
             # 到这里的前提条件，status一定为3
@@ -138,9 +140,9 @@ class Render(object):
                     ":",
                     str(lh),
                     " -crf 20 -s ",
-                    preview_width,
+                    str(self.standard_4k_w),
                     "x",
-                    preview_height,
+                    str(self.standard_4k_h),
                     " -an ",
                     "-r 60 ",
                     "-video_track_timescale 60k \"",

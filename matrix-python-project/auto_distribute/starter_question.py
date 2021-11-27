@@ -34,8 +34,8 @@ class StarterQuestion(object):
             return 0
 
         # 销毁过往工作流
-        destory_sql = "update flow_distribute set status = '%s'" % "0"
-        self.db_handle.modify(destory_sql)
+        destroy_sql = "update flow_distribute set status = '%s'" % "0"
+        self.db_handle.modify(destroy_sql)
 
         # 创建工作流
         create_sql = "INSERT INTO flow_distribute(status) VALUES('%s')" % "1"

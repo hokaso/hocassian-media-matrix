@@ -1,8 +1,8 @@
-import sys, os, random
+import sys, os, random, math
 
 sys.path.append(os.getcwd())
-import time, json, pymysql
-from PIL import Image
+import time, json
+from PIL import Image, ImageFilter, ImageDraw, ImageFont
 
 
 class RenderCover(object):
@@ -62,11 +62,11 @@ class RenderCover(object):
 
         # 模糊背景图
         img = back_img_tmp2.filter(ImageFilter.GaussianBlur(radius=18))
-        fg_pointx = int((1920 - re_fg_w) / 2)
-        fg_pointy = int((1080 - re_fg_h) / 2)
+        fg_point_x = int((1920 - re_fg_w) / 2)
+        fg_point_y = int((1080 - re_fg_h) / 2)
 
         # 拼合
-        img.paste(img2, (fg_pointx, fg_pointy, fg_pointx + re_fg_w, fg_pointy + re_fg_h))
+        img.paste(img2, (fg_point_x, fg_point_y, fg_point_x + re_fg_w, fg_point_y + re_fg_h))
 
         # 这两步是用来转换的
         bg = Image.new("RGB", img.size, (255, 255, 255))

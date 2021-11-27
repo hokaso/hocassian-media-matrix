@@ -1,13 +1,12 @@
-import sys, os, time, json, requests
+import sys, os, json, requests
 
 sys.path.append(os.getcwd())
-from utils.aes_cipher import AESCipher
 
 
 class Lark(object):
 
     def __init__(self):
-        with open("auto_distribute/lark_config.json", 'r') as f0:
+        with open("auto_distribute/config/lark_config.json", 'r') as f0:
             info = json.load(f0)
 
         self.app_id = info["APP_ID"]
@@ -38,8 +37,7 @@ class Lark(object):
         # print(receive_img_key)
         return receive_img_key
 
-    @staticmethod
-    def get_tenant_access_token():
+    def get_tenant_access_token(self):
         url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
 
         headers = {
@@ -48,7 +46,7 @@ class Lark(object):
 
         body = {
             "app_id": self.app_id,
-            "app_secret": app_secret
+            "app_secret": self.app_secret
         }
 
         try:
@@ -132,7 +130,7 @@ class Lark(object):
             "msg_type": "interactive",
             'card': {
                 "config": {
-                    "wide_screen_mode": true
+                    "wide_screen_mode": True
                 },
                 "header": {
                     "template": "wathet",
@@ -195,7 +193,7 @@ class Lark(object):
             "msg_type": "interactive",
             'card': {
                 "config": {
-                    "wide_screen_mode": true
+                    "wide_screen_mode": True
                 },
                 "header": {
                     "template": "wathet",
@@ -256,7 +254,7 @@ class Lark(object):
             "msg_type": "interactive",
             'card': {
                 "config": {
-                    "wide_screen_mode": true
+                    "wide_screen_mode": True
                 },
                 "header": {
                     "template": "wathet",
@@ -321,7 +319,7 @@ class Lark(object):
     def send_music_refresh_msg(duration, music_name, flow_id, music_url, audio_path, count):
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",
@@ -389,7 +387,7 @@ class Lark(object):
             'card': {
                 "open_ids":[open_id],
                 "config": {
-                    "wide_screen_mode": true
+                    "wide_screen_mode": True
                 },
                 "header": {
                     "template": "wathet",
@@ -447,7 +445,7 @@ class Lark(object):
     def send_continue_distribute_msg():
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",
@@ -473,7 +471,7 @@ class Lark(object):
     def send_continue_music_msg():
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",
@@ -499,7 +497,7 @@ class Lark(object):
     def send_continue_msg():
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",
@@ -525,7 +523,7 @@ class Lark(object):
     def send_cover_wait_msg():
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",
@@ -551,7 +549,7 @@ class Lark(object):
     def send_terminate_msg():
         note = {
             "config": {
-                "wide_screen_mode": true
+                "wide_screen_mode": True
             },
             "header": {
                 "template": "wathet",

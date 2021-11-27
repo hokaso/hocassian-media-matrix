@@ -1,4 +1,4 @@
-import sys, os, json, copy
+import sys, os, json, copy, pymysql, traceback, random
 
 sys.path.append(os.getcwd())
 from db.db_pool_handler import InstantDBPool
@@ -11,10 +11,9 @@ from multiprocessing.managers import BaseManager
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request
 from auto_distribute.starter_question import StarterQuestion
+from gevent import pywsgi
 
-import pymysql, traceback
-
-with open("auto_distribute/config.json", 'r') as f0:
+with open("auto_distribute/config/config.json", 'r') as f0:
     info = json.load(f0)
 
 LOCAL_MUSIC_PATH = info["LOCAL_MUSIC_PATH"]
@@ -191,12 +190,17 @@ def flow():
 
     # 给测试写一个专用卡片，当聊天端输入特定字符时，触发本来应该定时触发的卡片，然后进行测试
     if "encrypt" in flow_data:
-        cipher = AESCipher(APP_ENCRYPT_KEY)
+        cipher = AESCipher(msg_handle.app_encrypt_key)
         data = json.loads(cipher.decrypt_string(flow_data["encrypt"]))
 
         # 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
         if data["token"] != msg_handle.app_verification_token:
             print("verification token not match, token =", data["token"])
+            return "illegal"
+
+        if "type" in data:
+            msg_type = data["type"]
+        else:
             return "illegal"
 
         # 注册机器人验证

@@ -1,6 +1,6 @@
 # 请按需导入，将不需要的删去以提升性能
 from flask import Flask, request
-import os, sys, requests, json, datetime, time, pymysql, hashlib, base64, traceback, imghdr, shutil
+import os, sys, requests, json, time, hashlib, base64, traceback, imghdr, shutil
 from Crypto.Cipher import AES
 from gevent import pywsgi
 
