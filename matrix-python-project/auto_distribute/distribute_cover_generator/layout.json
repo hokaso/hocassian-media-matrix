@@ -1,0 +1,29 @@
+{
+  "font": "MTP.ttf",
+  "tag_size": 40,
+  "tag_shadow_offset": [
+    5,
+    5
+  ],
+  "tag_shadow_fill": "(70, 70, 70, 85)",
+  "tag_color": "(255, 255, 255, 255)",
+  "tag_top": 200,
+  "tag_top_readme": "tag和顶部的距离",
+  "adj_size": 30,
+  "adj_shadow_offset": [
+    5,
+    5
+  ],
+  "adj_shadow_fill": "(70, 70, 70, 85)",
+  "adj_color": "(255, 255, 255, 255)",
+  "adj_top": 720,
+  "adj_top_readme": "adj和顶部的距离",
+  "time_size": 5,
+  "time_location": [
+    720,
+    960
+  ],
+  "time_color": "(255, 255, 255, 255)",
+  "shadow_spread_ratio": 1.05,
+  "shadow_spread_ratio_readme": "阴影漫出比例"
+}
