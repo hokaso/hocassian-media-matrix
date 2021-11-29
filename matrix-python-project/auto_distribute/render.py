@@ -80,6 +80,7 @@ class Render(object):
             except Exception as e:
                 traceback.print_exc()
                 print(e)
+                break
 
             # 查库，将所有素材记录取出，如果时间长度大于1秒，说明可以淡入淡出，如果可以就处理，不行就算了。
             select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords, adj_keywords FROM flow_distribute " \
@@ -304,6 +305,11 @@ class Render(object):
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
             # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
+
+            # 更新素材表记录，证明相关素材已经被分发，下次无需分发
+            mat_id_list = [m["material_id"] for m in mat_list]
+            update_mat_clip_sql = "update mat_clip set has_uploaded = '%s' where id in (%s)" % ("1", ','.join(['%s'] * len(mat_id_list)))
+            self.db_handle.search(update_mat_clip_sql, mat_id_list)
 
 if __name__ == '__main__':
     SERVER_IP = '127.0.0.1'

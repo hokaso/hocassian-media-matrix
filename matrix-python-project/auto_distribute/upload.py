@@ -1,7 +1,6 @@
 import sys, os, json, copy, random, time
 
 sys.path.append(os.getcwd())
-from db.db_pool_handler import InstantDBPool
 from youtube_upload import main
 from bilibiliuploader.bilibiliuploader import BilibiliUploader
 from bilibiliuploader.core import VideoPart

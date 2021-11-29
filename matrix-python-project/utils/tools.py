@@ -1,4 +1,4 @@
-import sys, os, time, json
+import sys, os, time, json, decimal
 sys.path.append(os.getcwd())
 
 
@@ -17,3 +17,9 @@ class Tools(object):
     @staticmethod
     def assert_file_exist(file_path):
         assert os.path.isfile(file_path)
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        super(DecimalEncoder, self).default(o)

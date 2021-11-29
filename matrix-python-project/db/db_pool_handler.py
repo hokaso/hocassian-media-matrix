@@ -82,7 +82,7 @@ class DBPoolHandler(object):
         record = None
 
         try:
-            cursor.execute(sql)
+            cursor.execute(sql, *args)
             # 如果只查单个用fetchone()
             record = cursor.fetchall()
             self.connect_close(conn, cursor)

@@ -20,7 +20,8 @@ class StarterQuestion(object):
         find_suitable_duration_sql = "select material_id, material_path, material_time from mat_clip " \
                                      "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s'" % \
                                      ("0", "0", "0")
-        clip_records = self.db_handle.search_DB(find_suitable_duration_sql)
+        print(find_suitable_duration_sql)
+        clip_records = self.db_handle.search(find_suitable_duration_sql)
         duration_counter = 0
         for ikey in clip_records:
             current_duration = self.tools_handle.string2timestamp(ikey["material_time"])

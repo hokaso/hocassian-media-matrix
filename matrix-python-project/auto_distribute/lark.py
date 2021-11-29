@@ -183,6 +183,8 @@ class Lark(object):
             }
         }
 
+        print(note)
+
         return self.send_msg_card(note)
 
     def send_cover_msg(self, cover_local_path, flow_id, thumbnail_list, keywords):
@@ -218,26 +220,30 @@ class Lark(object):
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "就这张啦",
+                                    "content": "就这张啦"
+                                },
+                                "type": "primary",
+                                "value": {
                                     "flow_type": "choose_cover",
                                     "flow_id": flow_id,
                                     "choose_cover": "1",
                                     "cover_pic": cover_local_path
-                                },
-                                "type": "primary"
+                                }
                             },
                             {
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "换一张吧",
+                                    "content": "换一张吧"
+                                },
+                                "type": "danger",
+                                "value": {
                                     "flow_type": "choose_cover",
                                     "flow_id": flow_id,
                                     "choose_cover": "0",
                                     "thumbnail_list": thumbnail_list,
                                     "keywords": keywords
-                                },
-                                "type": "danger"
+                                }
                             }
                         ]
                     }
@@ -247,7 +253,7 @@ class Lark(object):
 
         return self.send_msg_card(note)
 
-    def send_music_msg(self, duration, music_name, flow_id, music_url, audio_path):
+    def send_music_msg(self, duration, music_name, flow_id, music_url, audio_path, mat_duration):
         note = {
             # 未来可以做成多租户模式
             "open_id": self.current_user_openid,
@@ -278,7 +284,9 @@ class Lark(object):
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "就这首啦",
+                                    "content": "就这首啦"
+                                },
+                                "value": {
                                     "flow_type": "choose_music",
                                     "flow_id": flow_id,
                                     "choose_music": "1",
@@ -292,18 +300,21 @@ class Lark(object):
                                     "tag": "plain_text",
                                     "content": "试听一下"
                                 },
-                                "url": music_url,
+                                "url": music_url + ".mp3",
                                 "type": "default"
                             },
                             {
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "换一首吧",
+                                    "content": "换一首吧"
+                                },
+                                "value": {
                                     "flow_type": "choose_music",
                                     "flow_id": flow_id,
                                     "choose_music": "0",
-                                    "count": 0
+                                    "count": 0,
+                                    "duration": mat_duration
                                 },
                                 "type": "danger"
                             }
@@ -316,7 +327,7 @@ class Lark(object):
         return self.send_msg_card(note)
 
     @staticmethod
-    def send_music_refresh_msg(duration, music_name, flow_id, music_url, audio_path, count):
+    def send_music_refresh_msg(duration, music_name, flow_id, music_url, audio_path, count, mat_duration):
         note = {
             "config": {
                 "wide_screen_mode": True
@@ -343,7 +354,9 @@ class Lark(object):
                             "tag": "button",
                             "text": {
                                 "tag": "plain_text",
-                                "content": "就这首啦",
+                                "content": "就这首啦"
+                            },
+                            "value": {
                                 "flow_type": "choose_music",
                                 "flow_id": flow_id,
                                 "choose_music": "1",
@@ -357,18 +370,21 @@ class Lark(object):
                                 "tag": "plain_text",
                                 "content": "试听一下"
                             },
-                            "url": music_url,
+                            "url": music_url + ".mp3",
                             "type": "default"
                         },
                         {
                             "tag": "button",
                             "text": {
                                 "tag": "plain_text",
-                                "content": "换一首吧",
+                                "content": "换一首吧"
+                            },
+                            "value": {
                                 "flow_type": "choose_music",
                                 "flow_id": flow_id,
                                 "choose_music": "0",
-                                "count": count + 1
+                                "count": count + 1,
+                                "duration": mat_duration
                             },
                             "type": "danger"
                         }
@@ -412,7 +428,9 @@ class Lark(object):
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "就这张啦",
+                                    "content": "就这张啦"
+                                },
+                                "value": {
                                     "flow_type": "choose_cover",
                                     "flow_id": flow_id,
                                     "choose_cover": "1",
@@ -424,7 +442,9 @@ class Lark(object):
                                 "tag": "button",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "换一张吧",
+                                    "content": "换一张吧"
+                                },
+                                "value": {
                                     "flow_type": "choose_cover",
                                     "flow_id": flow_id,
                                     "choose_cover": "0",
