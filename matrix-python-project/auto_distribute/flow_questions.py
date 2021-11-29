@@ -46,7 +46,6 @@ server_manager.start()
 
 
 def cover_generator(instruction_set):
-
     try:
 
         # 获取音乐详细信息
@@ -162,20 +161,25 @@ def cover_generator(instruction_set):
 
 
 def cover_generator_refresh(instruction_set):
-    thumbnail_list = instruction_set["thumbnail_list"]
+    try:
+        thumbnail_list = instruction_set["thumbnail_list"]
 
-    # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
-    index = random.randint(0, len(thumbnail_list))
+        # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
+        index = random.randint(0, len(thumbnail_list))
 
-    # 随机三个形容关键字
-    random.shuffle(ADJ_KEYWORDS)
-    adj_keywords = ADJ_KEYWORDS[:3]
+        # 随机三个形容关键字
+        random.shuffle(ADJ_KEYWORDS)
+        adj_keywords = ADJ_KEYWORDS[:3]
 
-    # 放入渲染器，开始生成
-    current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], instruction_set["keywords"], instruction_set["flow_id"], adj_keywords)
+        # 放入渲染器，开始生成
+        current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], instruction_set["keywords"], instruction_set["flow_id"], adj_keywords)
 
-    # 生成完毕后，更新卡片展示此封面，如果用户不满意，重新生成
-    msg_handle.send_cover_refresh_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, instruction_set["keywords"], instruction_set["token"], instruction_set["open_id"])
+        # 生成完毕后，更新卡片展示此封面，如果用户不满意，重新生成
+        msg_handle.send_cover_refresh_msg(current_pic_path, instruction_set["flow_id"], thumbnail_list, instruction_set["keywords"], instruction_set["token"], instruction_set["open_id"])
+
+    except Exception as e:
+        traceback.print_exc()
+        print(e)
 
 
 def random_music():
@@ -247,6 +251,10 @@ def flow():
                     sq = StarterQuestion()
                     sq.run()
 
+                if event_data["text"] == "测试渲染":
+                    test_instruction_set = {'flow_id': 10}
+                    task_queue.put(test_instruction_set)
+
         return "fail"
 
     # ============== 以下为bot相关方法 ==============
@@ -311,8 +319,7 @@ def flow():
                 }
 
                 # 抛一个生成封面图的任务给子线程，等待任务执行完毕后，再发一张卡片给用户，询问用户是否满意素材
-                future = executor.submit(cover_generator, instruction_set)
-                print(future.result())
+                executor.submit(cover_generator, instruction_set)
 
             except Exception as e:
                 # 做一个幂等，由于数据库自带锁所以能够确保一致性~
@@ -359,16 +366,19 @@ def flow():
 
             try:
                 db_handle.modify(update_to_render_sql)
+                print(instruction_set)
 
                 # 说明一下，为啥有些任务用子进程，有些任务用队列：如果耗时比较短的（比如图片处理）可以用子进程，不会说长期占用大量运算资源；
                 # 但如果是视频渲染的话，是一个长时间占用大量资源的任务，所以需要队列，逐个完成，保证系统稳定性；
-                task_queue.put(instruction_set)
+                # task_queue.put(instruction_set)
 
             except Exception as e:
                 # 做一个幂等，由于数据库自带锁所以能够确保一致性~
                 print("也许是手抽了~")
                 traceback.print_exc()
                 print(e)
+
+            return msg_handle.send_continue_distribute_msg()
 
         else:
 

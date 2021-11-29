@@ -16,6 +16,9 @@ class RenderCover(object):
         self.material_pic_path = "auto_distribute/distribute_cover_generator/"
         self.gen_pic_path = "auto_distribute/"
 
+        self.standard_1k_w = 1920
+        self.standard_1k_h = 1080
+
     def main(self, thumbnail, fin_keywords_list, flow_id, adj_keywords):
 
         # 生成背景板（例如：1_cover_background.png）
@@ -33,37 +36,36 @@ class RenderCover(object):
         return current_pic_path
 
     # 封面图标准：1920*1080，边边角角之类的通过背后叠一层模糊图层来解决
-    @staticmethod
-    def thumbnail2cover(thumbnail):
+    def thumbnail2cover(self, thumbnail):
 
         img = Image.open(thumbnail)
         w, h = img.size
         if w >= h * 16 / 9:
-            re_bg_w = math.ceil(1080 * w / h)
-            re_bg_h = 1080
-            re_fg_w = 1920
-            re_fg_h = math.ceil(1920 * h / w)
+            re_bg_w = math.ceil(self.standard_1k_h * w / h)
+            re_bg_h = self.standard_1k_h
+            re_fg_w = self.standard_1k_w
+            re_fg_h = math.ceil(self.standard_1k_w * h / w)
         else:
-            re_bg_w = 1920
-            re_bg_h = math.ceil(1920 * h / w)
-            re_fg_h = 1080
-            re_fg_w = math.ceil(1080 * w / h)
+            re_bg_w = self.standard_1k_w
+            re_bg_h = math.ceil(self.standard_1k_w * h / w)
+            re_fg_h = self.standard_1k_h
+            re_fg_w = math.ceil(self.standard_1k_h * w / h)
 
         # 把原图放大为背景图
         back_img_tmp = img.resize((re_bg_w, re_bg_h), Image.ANTIALIAS)
 
         # 把原图处理成前景图
         img2 = img.resize((re_fg_w, re_fg_h), Image.ANTIALIAS)
-        bg_pointx = int((re_bg_w - 1920) / 2)
-        bg_pointy = int((re_bg_h - 1080) / 2)
+        bg_pointx = int((re_bg_w - self.standard_1k_w) / 2)
+        bg_pointy = int((re_bg_h - self.standard_1k_h) / 2)
 
         # 裁切背景图
-        back_img_tmp2 = back_img_tmp.crop([bg_pointx, bg_pointy, bg_pointx + 1920, bg_pointy + 1080])
+        back_img_tmp2 = back_img_tmp.crop([bg_pointx, bg_pointy, bg_pointx + self.standard_1k_w, bg_pointy + self.standard_1k_h])
 
         # 模糊背景图
         img = back_img_tmp2.filter(ImageFilter.GaussianBlur(radius=18))
-        fg_point_x = int((1920 - re_fg_w) / 2)
-        fg_point_y = int((1080 - re_fg_h) / 2)
+        fg_point_x = int((self.standard_1k_w - re_fg_w) / 2)
+        fg_point_y = int((self.standard_1k_h - re_fg_h) / 2)
 
         # 拼合
         img.paste(img2, (fg_point_x, fg_point_y, fg_point_x + re_fg_w, fg_point_y + re_fg_h))
@@ -118,20 +120,25 @@ class RenderCover(object):
         adj_shadow_bg = shadow_bg.resize(adj_shadow_bg_location, Image.ANTIALIAS)
 
         # 阴影贴合到structure上
-        tag_shadow_paste_x = (1080 - tag_shadow_bg_location[0]) / 2
+        tag_shadow_paste_x = (self.standard_1k_w - tag_shadow_bg_location[0]) / 2
         tag_shadow_paste_y = self.info["tag_top"] - (tag_shadow_bg_location[1] - tag_location[1]) / 2
-        bg.paste(tag_shadow_bg, (tag_shadow_paste_x, tag_shadow_paste_y))
+        r, g, b, a = tag_shadow_bg.split()
+        bg.paste(tag_shadow_bg, (int(tag_shadow_paste_x), int(tag_shadow_paste_y)), mask=a)
 
-        adj_shadow_paste_x = (1080 - adj_shadow_bg_location[0]) / 2
+        adj_shadow_paste_x = (self.standard_1k_w - adj_shadow_bg_location[0]) / 2
         adj_shadow_paste_y = self.info["adj_top"] - (adj_shadow_bg_location[1] - adj_location[1]) / 2
-        bg.paste(adj_shadow_bg, (adj_shadow_paste_x, adj_shadow_paste_y))
+        r, g, b, a = adj_shadow_bg.split()
+        bg.paste(adj_shadow_bg, (int(adj_shadow_paste_x), int(adj_shadow_paste_y)), mask=a)
 
         # 文字贴合到structure上（包括文字阴影）
-        tag_paste_x = (1080 - tag_location[0]) / 2
+        tag_paste_x = int((self.standard_1k_w - tag_location[0]) / 2)
         tag_paste_y = self.info["tag_top"]
 
         draw.text(
-            (tag_paste_x + self.info["tag_shadow_offset"][0], tag_paste_y + self.info["tag_shadow_offset"][1]),
+            (
+                tag_paste_x + self.info["tag_shadow_offset"][0],
+                tag_paste_y + self.info["tag_shadow_offset"][1]
+            ),
             render_tag,
             font=tag_font,
             fill=tuple(eval(self.info["tag_shadow_fill"]))
@@ -143,11 +150,14 @@ class RenderCover(object):
             fill=tuple(eval(self.info["tag_color"]))
         )
 
-        adj_paste_x = (1080 - adj_location[0]) / 2
+        adj_paste_x = int((self.standard_1k_w - adj_location[0]) / 2)
         adj_paste_y = self.info["adj_top"]
 
         draw.text(
-            (adj_paste_x + self.info["adj_shadow_offset"][0], adj_paste_y + self.info["adj_shadow_offset"][1]),
+            (
+                adj_paste_x + self.info["adj_shadow_offset"][0],
+                adj_paste_y + self.info["adj_shadow_offset"][1]
+            ),
             render_adj,
             font=adj_font,
             fill=tuple(eval(self.info["adj_shadow_fill"]))
@@ -173,5 +183,5 @@ class RenderCover(object):
         return bg
 
     def spread_shadow(self, location):
-        new_location = (location[0] * self.info["shadow_spread_ratio"], location[1] * self.info["shadow_spread_ratio"])
+        new_location = (int(location[0] * self.info["shadow_spread_ratio_x"]), int(location[1] * self.info["shadow_spread_ratio_y"]))
         return new_location
