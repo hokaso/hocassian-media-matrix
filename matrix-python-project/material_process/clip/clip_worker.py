@@ -57,6 +57,7 @@ class ClipWorker(object):
             except Exception as e:
                 traceback.print_exc()
                 print(e)
+                continue
 
             # 定义渲染强度（间接控制风扇噪音），其中peak代表服务器的忙时，idle代表服务器的闲时，仅op为true时执行
             if self.info["op"]:
