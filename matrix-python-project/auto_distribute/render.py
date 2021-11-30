@@ -89,7 +89,7 @@ class Render(object):
             current_flow_detail = _current_flow_detail[0]
 
             # 到这里的前提条件，status一定为3
-            # assert current_flow_detail["status"] == "3"
+            assert current_flow_detail["status"] == "3"
 
             mat_list = json.loads(current_flow_detail["mat_list"])
 
@@ -107,6 +107,7 @@ class Render(object):
 
             for ikey in mat_list:
                 # 拼凑路径出来，然后处理，output到上述文件夹
+                temp_origin_clip_path = self.raw_path + ikey["material_path"] + ".mp4"
                 temp_clip_path = current_clip_path + ikey["material_path"] + ".mp4"
 
                 # 这个方法可能有点问题，所以保险起见重新ffprobe
@@ -118,7 +119,7 @@ class Render(object):
                 # =============================================================
 
                 # 采集原始素材信息
-                catch_set = f'./ffprobe -of json -select_streams v -show_streams "{temp_clip_path}"'
+                catch_set = f'./ffprobe -of json -select_streams v -show_streams "{temp_origin_clip_path}"'
                 catch_json = subprocess.run(shlex.split(catch_set), capture_output=True, encoding='utf-8',
                                             errors='ignore')
                 origin_info = json.loads(catch_json.stdout)
@@ -146,7 +147,7 @@ class Render(object):
                 temp_txt_file.writelines(temp_clip_concat_record)
 
                 # 准备好concat-filter的列表
-                mat_clip_list.append(ffmpeg.input(temp_clip_path))
+                mat_clip_list.append(ffmpeg.input(temp_origin_clip_path))
 
                 # 为何不用with open：效率太低，每进一个循环就需要开一次，所以还是在循环外开启，然后结束循环，待所有记录写入完毕后，再关闭文件
                 # with open(current_clip_path + "list.txt", "w+") as temp_txt_file:
@@ -159,7 +160,7 @@ class Render(object):
                     " -to ",
                     str(end_time),
                     " -i \"",
-                    temp_clip_path,
+                    temp_origin_clip_path,
                     "\" -i \"",
                     self.clip_bg_4k,
                     "\" ",
@@ -188,7 +189,7 @@ class Render(object):
                 print(temp_clip_set)
                 os.system(temp_clip_set)
 
-                self.tools_handle.assert_file_exist(current_clip_path + ikey["material_path"] + ".mp4")
+                self.tools_handle.assert_file_exist(temp_clip_path)
 
             temp_txt_file.close()
 
@@ -286,7 +287,7 @@ class Render(object):
             # current_clip_path = self.current_path + str(instruction_set["flow_id"]) + "_clip_temp/"
             # mat_clip_list = []
             # for ikey in mat_list:
-            #     temp_clip_path = current_clip_path + ikey["material_path"] + ".mp4"
+            #     temp_clip_path = temp_clip_path
             #     mat_clip_list.append(ffmpeg.input(temp_clip_path))
 
             # 替代方法：使用python-ffmpeg的便捷方式来Concat filter（详情见：https://trac.ffmpeg.org/wiki/Concatenate）
@@ -349,10 +350,10 @@ class Render(object):
                 temp_txt_file.writelines(current_flow_detail["adj_keywords"] + "\n")
 
             # TODO 测试通过，上线正式环境后，删除temp素材
-            # shutil.rmtree(current_clip_path)
-            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
-            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
-            # os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
+            shutil.rmtree(current_clip_path)
+            os.remove(self.current_path + str(instruction_set["flow_id"]) + "_output.mp4")
+            os.remove(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
+            os.remove(self.current_path + str(instruction_set["flow_id"]) + "_cover.jpg")
 
             # 更新素材表记录，证明相关素材已经被分发，下次无需分发
             mat_id_list = [m["material_id"] for m in mat_list]

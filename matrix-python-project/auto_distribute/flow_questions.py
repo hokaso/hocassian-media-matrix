@@ -125,8 +125,11 @@ def cover_generator(instruction_set):
         _fin_keywords_list = [i["tag"] for i in keywords_list]
         fin_keywords_list = _fin_keywords_list[:10]
 
-        # shuffle选中素材
-        random.shuffle(render_clips_list)
+        # Deactivate：shuffle选中素材
+        # random.shuffle(render_clips_list)
+
+        # 根據素材打分來排序
+        render_clips_list.sort(key=lambda x: float(x["material_mark"]), reverse=True)
         random.shuffle(ADJ_KEYWORDS)
 
         # 随机三个形容关键字
@@ -147,7 +150,7 @@ def cover_generator(instruction_set):
         thumbnail_list = [i["pic_path"] for i in _thumbnail_list]
 
         # 随机一张图片作为封面图
-        index = random.randint(0, adoption)
+        index = random.randint(0, adoption-1)
 
         # 放入渲染器，开始生成
         current_pic_path = render_cover.main(current_cover_pic_path + thumbnail_list[index], fin_keywords_list, instruction_set["flow_id"], adj_keywords)
@@ -165,7 +168,7 @@ def cover_generator_refresh(instruction_set):
         thumbnail_list = instruction_set["thumbnail_list"]
 
         # 从回传的列表中随机选一个，生成好之后用延迟更新方法更新消息卡片
-        index = random.randint(0, len(thumbnail_list))
+        index = random.randint(0, len(thumbnail_list)-1)
 
         # 随机三个形容关键字
         random.shuffle(ADJ_KEYWORDS)
@@ -252,7 +255,7 @@ def flow():
                     sq.run()
 
                 if event_data["text"] == "测试渲染":
-                    test_instruction_set = {'flow_id': 10}
+                    test_instruction_set = {'flow_id': 12}
                     task_queue.put(test_instruction_set)
 
         return "fail"
@@ -370,7 +373,7 @@ def flow():
 
                 # 说明一下，为啥有些任务用子进程，有些任务用队列：如果耗时比较短的（比如图片处理）可以用子进程，不会说长期占用大量运算资源；
                 # 但如果是视频渲染的话，是一个长时间占用大量资源的任务，所以需要队列，逐个完成，保证系统稳定性；
-                # task_queue.put(instruction_set)
+                task_queue.put(instruction_set)
 
             except Exception as e:
                 # 做一个幂等，由于数据库自带锁所以能够确保一致性~
