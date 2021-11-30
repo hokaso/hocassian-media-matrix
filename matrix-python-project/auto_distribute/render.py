@@ -147,7 +147,7 @@ class Render(object):
                 temp_txt_file.writelines(temp_clip_concat_record)
 
                 # 准备好concat-filter的列表
-                mat_clip_list.append(ffmpeg.input(temp_origin_clip_path))
+                mat_clip_list.append(ffmpeg.input(temp_clip_path))
 
                 # 为何不用with open：效率太低，每进一个循环就需要开一次，所以还是在循环外开启，然后结束循环，待所有记录写入完毕后，再关闭文件
                 # with open(current_clip_path + "list.txt", "w+") as temp_txt_file:
@@ -282,13 +282,6 @@ class Render(object):
             # os.system(concat_set)
             #
             # self.tools_handle.assert_file_exist(self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4")
-
-            # for test
-            # current_clip_path = self.current_path + str(instruction_set["flow_id"]) + "_clip_temp/"
-            # mat_clip_list = []
-            # for ikey in mat_list:
-            #     temp_clip_path = temp_clip_path
-            #     mat_clip_list.append(ffmpeg.input(temp_clip_path))
 
             # 替代方法：使用python-ffmpeg的便捷方式来Concat filter（详情见：https://trac.ffmpeg.org/wiki/Concatenate）
             concat_clip_filename = self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4"
