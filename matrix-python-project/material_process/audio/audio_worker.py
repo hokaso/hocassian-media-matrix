@@ -4,6 +4,7 @@ sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
 from db.database_handler import InstantDB
 from tenacity import retry, wait_fixed
+from utils.tools import Tools
 
 # SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7969
@@ -20,6 +21,7 @@ class AudioWorker(object):
         current = os.getcwd().replace("/prod/matrix-python-project", "")
 
         ServerManager.register("get_task_queue")
+        self.tools_handle = Tools()
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.db_handle = InstantDB().get_connect()
         self.local_path = current + "/matrix/material/audio_music/"
@@ -36,7 +38,17 @@ class AudioWorker(object):
             instruction_set = self.task_queue.get()
             if instruction_set["op"] == 2:
                 print("收到处理指令！")
-                self.task_queue.task_done()
+
+                try:
+                    instruction_set = self.task_queue.get()
+                    if instruction_set is None:
+                        continue
+                except Exception as e:
+                    print(e)
+                    print("等待任务中")
+                    time.sleep(30)
+                    continue
+
                 try:
                     shutil.copyfile(self.local_path + instruction_set["file_path"], instruction_set["file_path"])
                     self.optional(instruction_set["file_path"])
@@ -63,6 +75,9 @@ class AudioWorker(object):
         ]
         audio_handle_set = "".join(audio_handle_set_list)
         os.system(audio_handle_set)
+
+        self.tools_handle.assert_file_exist(self.off_vocal_url + path.split(".")[0] + ".mp3")
+
         shutil.rmtree("output")
 
 

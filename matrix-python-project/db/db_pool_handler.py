@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, os, json
 from dbutils.pooled_db import PooledDB
 
 # 初始化日志模块
@@ -82,7 +82,7 @@ class DBPoolHandler(object):
         record = None
 
         try:
-            cursor.execute(sql)
+            cursor.execute(sql, *args)
             # 如果只查单个用fetchone()
             record = cursor.fetchall()
             self.connect_close(conn, cursor)
@@ -97,11 +97,12 @@ class DBPoolHandler(object):
 
         # 增删改操作
         conn, cursor = self.connect()
-        effect_row = None
+        last_row_id = None
 
         try:
-            effect_row = cursor.execute(sql)
+            _ = cursor.execute(sql)
             conn.commit()
+            last_row_id = cursor.lastrowid
             self.connect_close(conn, cursor)
         except Exception as e:
             traceback.print_exc()
@@ -110,7 +111,7 @@ class DBPoolHandler(object):
             # 记录错误
             logging.error("执行「" + str(sql) + "」时出现错误，具体原因为「" + str(e) + "」，详细原因为：\n" + traceback.format_exc())
         finally:
-            return effect_row
+            return last_row_id
 
 class InstantDBPool(object):
 

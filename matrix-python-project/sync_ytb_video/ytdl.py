@@ -6,7 +6,7 @@ from db.db_pool_handler import InstantDBPool
 from PIL import Image
 from utils.snow_id import HSIS
 from tenacity import retry, wait_random
-import json, pymysql, time, traceback
+import json, pymysql, time, traceback, shutil
 
 
 class VideoDownload(object):
@@ -18,6 +18,8 @@ class VideoDownload(object):
             info = json.load(f0)
 
         self.ydl_opts = {
+            'writesubtitles': True,
+            'subtitlesformat': 'vtt',
             'ignoreerrors': True,
             'writethumbnail': True,
             'writeinfojson': True,
@@ -31,6 +33,9 @@ class VideoDownload(object):
         }
 
         self.file_path = info["file_path"]
+        self.file_path_temp = info["file_path"] + "temp/"
+        if not os.path.exists(self.file_path_temp):
+            os.makedirs(self.file_path_temp)
 
     def run(self):
 
@@ -144,27 +149,56 @@ class VideoDownload(object):
         for t in dl_url:
             ydlk.extract_info(t["video_url"], download=True)
             after_name = HSIS.main()
-            os.rename(self.file_path + t["video_ytb_id"] + ".mp4", self.file_path + after_name + ".mp4")
-            os.rename(self.file_path + t["video_ytb_id"] + ".info.json", self.file_path + after_name + ".json")
 
-            if os.path.isfile(self.file_path + t["video_ytb_id"] + ".jpg"):
-                os.rename(self.file_path + t["video_ytb_id"] + ".jpg", self.file_path + after_name + ".jpg")
-            elif os.path.isfile(self.file_path + t["video_ytb_id"] + ".webp"):
-                target = Image.open(self.file_path + t["video_ytb_id"] + ".webp")
+            # 重命名视频
+            os.rename(self.file_path_temp + t["video_ytb_id"] + ".mp4", self.file_path_temp + after_name + ".mp4")
+            os.rename(self.file_path_temp + t["video_ytb_id"] + ".info.json", self.file_path_temp + after_name + ".json")
+
+            # 重命名图片
+            if os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".jpg"):
+                os.rename(self.file_path_temp + t["video_ytb_id"] + ".jpg", self.file_path_temp + after_name + ".jpg")
+            elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".webp"):
+                target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".webp")
                 target = target.convert('RGB')
-                target.save(self.file_path + after_name + ".jpg", quality=100)
-                os.remove(self.file_path + t["video_ytb_id"] + ".webp")
-            elif os.path.isfile(self.file_path + t["video_ytb_id"] + ".png"):
-                target = Image.open(self.file_path + t["video_ytb_id"] + ".png")
+                target.save(self.file_path_temp + after_name + ".jpg", quality=100)
+                os.remove(self.file_path_temp + t["video_ytb_id"] + ".webp")
+            elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".png"):
+                target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".png")
                 target = target.convert('RGB')
-                target.save(self.file_path + after_name + ".jpg", quality=100)
-                os.remove(self.file_path + t["video_ytb_id"] + ".png")
+                target.save(self.file_path_temp + after_name + ".jpg", quality=100)
+                os.remove(self.file_path_temp + t["video_ytb_id"] + ".png")
             else:
                 after_name = "undefined"
 
-            update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s' where video_ytb_id = '%s'" % \
-                               (after_name + ".mp4", after_name + ".json", after_name + ".jpg", "0", "1",
-                                t["video_ytb_id"])
+            # 如有字幕，重命名字幕
+            has_sub = "0"
+            sub_list = []
+            for root, dirs, files in os.walk(self.file_path_temp):
+                # 遍历所有文件
+                for file in files:
+                    if file.endswith('.vtt'):
+                        has_sub = "1"
+                        sub_name = file.split(".")
+                        # 下表为1的值表示字幕语言（例如：zh-Hant）
+                        if sub_name[1] == "vtt":
+                            # 表示默认语言，直接vtt即可
+                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + ".vtt")
+                        else:
+                            sub_list.append(sub_name[1])
+                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
+
+            if sub_list:
+                sub_list_fin = pymysql.escape_string(json.dumps(sub_list, ensure_ascii=False))
+            else:
+                sub_list_fin = ""
+
+            # 把所有文件移动到主文件夹下
+            temp_files = os.listdir(self.file_path_temp)
+            for file in temp_files:
+                shutil.move(self.file_path_temp + file, self.file_path)
+
+            update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s', video_has_subtitle = '%s', video_sub_list = '%s' where video_ytb_id = '%s'" % \
+                               (after_name + ".mp4", after_name + ".json", after_name + ".jpg", "0", "1", has_sub, sub_list_fin, t["video_ytb_id"])
             self.db_handle.modify(update_video_sql)
 
 

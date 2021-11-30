@@ -31,8 +31,6 @@ class Style(object):
             # 9: self.nine
         }
 
-        self.image_path = image_path
-
         self.build_map = {
             1: One(image_path),
             2: Two(image_path),
@@ -44,7 +42,7 @@ class Style(object):
 
         # "model_id": "模板编号，从左往右数第一位是父模板编号，第二位是子模板编号",
         # "model_match": "具体模板的拼接方式，比如子模板中的第一个方格存放第五张图片，具体的最优摆放路径和得分已由KM算法得出",
-        # "model_mark": "当前子模板最优摆放的得分，从所有子模板里选择得分最高的前三名来渲染展示"
+        # "model_mark": "当前子模板最优摆放的得分，从所有子模板里选择得分最高（裁切素材量最低）的前三名来渲染展示"
         self.rank_dict = []
 
         # self.image_path = image_path if image_path else self.image_path = "images"
@@ -111,7 +109,9 @@ class Style(object):
         self.rank_dict.append(Six(self.image_path).arround(                 self.image_list))
 
     def render(self):
-        self.rank_dict.sort(key=lambda x: x["model_mark"])
+
+        # 确实需要升序（由小到大）排列，选裁切量最小的
+        self.rank_dict.sort(key=lambda x: x["model_mark"], reverse=False)
 
         # 测试程序
         # assert adoption > 3
@@ -119,37 +119,46 @@ class Style(object):
         # for ikey in range(adoption):
         #     self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
-        # 实际程序
+        # 实际程序，这一步是为了筛选出所有备选方案中分数前三分之二的方案
         adoption = int(len(self.rank_dict) / 1.5)
 
+        # 如果这些方案不足3种，那么直接全给他整上，不需要筛选
         if adoption <= 3:
             adoption = int(len(self.rank_dict))
+
+        # 日志中打出全部方案
         print(self.rank_dict)
+
+        # 断言必须3种方案，否则会导致消息卡片渲染失败
         assert adoption > 3
+
+        # 不重样地随机选三种方案
         temp = []
         while len(temp) < 3:
             index = random.randint(0, adoption)
             if index not in temp:
                 temp.append(index)
 
+        # 把这些方案推出渲染
         for ikey in temp:
             self.build_map[int(self.rank_dict[ikey]["model_id"][0])].build(self.image_list, self.rank_dict[ikey])
 
     def run(self):
 
         start = time.perf_counter()
-        _image_count = self.image_count
 
+        # 如果图片数量不足n张，那么置入图片数量超过n的模板将无法使用，所以需要做限制
+        _image_count = self.image_count
         if self.image_count > 6:
             _image_count = 6
 
         for i in range(_image_count):
             self.image_map[i+1]()
 
+        # 渲染封面图片
         self.render()
 
         end = time.perf_counter()
         print("用时:" + str(end - start))
-        print(self.rank_dict)
 
 

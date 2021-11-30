@@ -36,6 +36,7 @@
     <!--    這個分頁組件應該是靠list大小和total算出來一共有多少頁……雖然我不是前端開發但我依舊大受震撼……-->
     <el-pagination
       v-show="needPage"
+      :page-size="pageSize"
       @current-change="$emit('handleCurrentChange', $event)"
       :current-page="currentPage"
       layout="total, prev, pager, next, jumper"
@@ -163,6 +164,10 @@
       showCopyRight: {
         type: Boolean,
         default: false
+      },
+      pageSize: {
+        type: Number,
+        default: 0
       }
     },
     data() {
