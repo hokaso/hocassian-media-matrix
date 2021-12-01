@@ -1,4 +1,4 @@
-import sys, os, json, copy, random, time
+import sys, os, json, copy, random, time, shutil, traceback
 
 sys.path.append(os.getcwd())
 from youtube_upload import main
@@ -6,6 +6,7 @@ from bilibiliuploader.bilibiliuploader import BilibiliUploader
 from bilibiliuploader.core import VideoPart
 from db.db_pool_handler import InstantDBPool
 from tenacity import retry, wait_fixed, wait_random, stop_after_attempt
+from utils.snow_id import HSIS
 
 
 WATCH_VIDEO_URL = "https://www.youtube.com/watch?v={id}"
@@ -51,6 +52,7 @@ class Upload(object):
         self.bilibili_token_file_path = "auto_distribute/config/bilibili_config.json"
         self.current_path = "auto_distribute/"
         self.ytb_current_path = os.getcwd() + "/auto_distribute/"
+        self.store_path = os.getcwd().replace("/prod/matrix-python-project", "") + "/matrix/distribute/"
 
         self.video_path = ""
         self.pic_path = ""
@@ -164,6 +166,9 @@ class Upload(object):
                 # 到这里要是再出错，神仙也救不了……
                 uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
 
+            finally:
+                access_token, refresh_token = uploader.save_login_data(file_name=self.bilibili_token_file_path)
+
         # 处理视频文件
         parts = [VideoPart(
             path=self.video_path,
@@ -184,10 +189,57 @@ class Upload(object):
 
         return str(avid) + "-" + str(bvid)
 
+    def fix_records(self, flow_id, keywords, adj_keywords):
+
+        select_current_flow_detail_sql = "SELECT status, mat_list, audio_path, cover_pic, keywords, adj_keywords FROM flow_distribute " \
+                                         "WHERE id = '%s' LIMIT 1" % flow_id
+        _current_flow_detail = self.db_handle.search(select_current_flow_detail_sql)
+        current_flow_detail = _current_flow_detail[0]
+
+        mat_list = json.loads(current_flow_detail["mat_list"])
+
+        random.shuffle(keywords)
+        title_keywords = keywords[:3]
+
+        self.video_title = self.info["MANUSCRIPT_TITLE"].replace(
+            "{{adj}}",
+            "/".join(adj_keywords[:2])
+        ).replace(
+            "{{noun}}",
+            "".join(title_keywords)
+        )
+
+        self.video_info = self.info["MANUSCRIPT_INFO"].replace(
+            "{{keywords}}",
+            "·".join(keywords)
+        ).replace(
+            "{{datetime}}",
+            time.strftime('%Y.%m.%d', time.localtime())
+        )
+
+        # 这个方法专门用于修复上传失败的流程
+        after_name = HSIS.main()
+        shutil.copyfile(self.current_path + str(flow_id) + "_output.mp4", self.store_path + after_name + ".mp4")
+        shutil.copyfile(self.current_path + str(flow_id) + "_cover.jpg", self.store_path + after_name + ".jpg")
+
+        with open(self.store_path + after_name + ".txt", "w+") as temp_txt_file:
+            temp_txt_file.writelines(self.video_title + "\n")
+            temp_txt_file.writelines(self.video_info + "\n")
+            temp_txt_file.writelines(current_flow_detail["keywords"] + "\n")
+            temp_txt_file.writelines(current_flow_detail["adj_keywords"] + "\n")
+
+        # 更新素材表记录，证明相关素材已经被分发，下次无需分发
+        mat_id_list = [m["material_id"] for m in mat_list]
+        update_mat_clip_sql = "update mat_clip set has_uploaded = '%s' where material_id in (%s)" % ("1", ','.join(['%s'] * (len(mat_id_list))))
+        # print(update_mat_clip_sql)
+        self.db_handle.modify(update_mat_clip_sql, mat_id_list)
+
+
 if __name__ == '__main__':
-    a = 18
-    b = ["户外", "水", "建筑", "场景", "自然风光", "动植物", "鹅", "江河湖泊", "鸟", "路"]
-    c = ["HLG", "10bit", "4K"]
+    a = 20
+    b = ["户外", "人", "场景", "建筑", "男人", "路", "", "街道", "人体", "人物"]
+    c = ["可商用", "高清", "免版权"]
     up = Upload()
     up.distribute(a, b, c)
+    up.fix_records(a, b, c)
 
