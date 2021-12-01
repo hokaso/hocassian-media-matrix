@@ -100,7 +100,8 @@ class DBPoolHandler(object):
         last_row_id = None
 
         try:
-            _ = cursor.execute(sql)
+            # print(args)
+            _ = cursor.execute(sql, args[0])
             conn.commit()
             last_row_id = cursor.lastrowid
             self.connect_close(conn, cursor)

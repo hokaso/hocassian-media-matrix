@@ -254,9 +254,9 @@ def flow():
                     sq = StarterQuestion()
                     sq.run()
 
-                if event_data["text"] == "测试渲染":
-                    test_instruction_set = {'flow_id': 12}
-                    task_queue.put(test_instruction_set)
+                # if event_data["text"] == "测试渲染":
+                #     test_instruction_set = {'flow_id': 12}
+                #     task_queue.put(test_instruction_set)
 
         return "fail"
 
