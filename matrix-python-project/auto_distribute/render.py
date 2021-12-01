@@ -351,7 +351,7 @@ class Render(object):
             # 更新素材表记录，证明相关素材已经被分发，下次无需分发
             mat_id_list = [m["material_id"] for m in mat_list]
             update_mat_clip_sql = "update mat_clip set has_uploaded = '%s' where material_id in (%s)" % ("1", ','.join(['%s'] * (len(mat_id_list))))
-            print(update_mat_clip_sql)
+            # print(update_mat_clip_sql)
             self.db_handle.modify(update_mat_clip_sql, mat_id_list)
 
 

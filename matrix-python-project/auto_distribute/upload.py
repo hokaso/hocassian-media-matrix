@@ -5,7 +5,7 @@ from youtube_upload import main
 from bilibiliuploader.bilibiliuploader import BilibiliUploader
 from bilibiliuploader.core import VideoPart
 from db.db_pool_handler import InstantDBPool
-from tenacity import retry, wait_fixed
+from tenacity import retry, wait_fixed, wait_random, stop_after_attempt
 
 
 WATCH_VIDEO_URL = "https://www.youtube.com/watch?v={id}"
@@ -48,6 +48,7 @@ class Upload(object):
         with open("auto_distribute/config/distribute_config.json", 'r') as f0:
             self.info = json.load(f0)
 
+        self.bilibili_token_file_path = "auto_distribute/config/bilibili_config.json"
         self.current_path = "auto_distribute/"
         self.ytb_current_path = os.getcwd() + "/auto_distribute/"
 
@@ -59,8 +60,8 @@ class Upload(object):
 
     def distribute(self, flow_id, keywords, adj_keywords):
 
+        random.shuffle(keywords)
         title_keywords = keywords[:3]
-        random.shuffle(title_keywords)
 
         self.video_title = self.info["MANUSCRIPT_TITLE"].replace(
             "{{adj}}",
@@ -82,20 +83,27 @@ class Upload(object):
         self.pic_path = self.current_path + str(flow_id) + "_cover.jpg"
         self.video_tags = self.info["EXTRA_TAGS"] + keywords
 
-        # 完成bilibili上传
-        bilibili_id = self.bilibili_upload()
+        try:
 
-        # 完成YouTube上传
-        youtube_id = self.youtube_upload()
+            # 完成bilibili上传
+            bilibili_id = self.bilibili_upload()
 
-        # 修改流程表记录
-        finish_flow_sql = "update flow_distribute set youtube_id = '%s', bilibili_id = '%s', status = '%s' where id = '%s' and status = '%s'" % \
-                          (youtube_id, bilibili_id, "5", flow_id, "4")
+            # 完成YouTube上传
+            youtube_id = self.youtube_upload()
 
-        self.db_handle.modify(finish_flow_sql)
+            # 修改流程表记录
+            finish_flow_sql = "update flow_distribute set youtube_id = '%s', bilibili_id = '%s', status = '%s' where id = '%s' and status = '%s'" % \
+                              (youtube_id, bilibili_id, "5", flow_id, "4")
+
+            self.db_handle.modify(finish_flow_sql)
+
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+
         return self.video_title, self.video_info
 
-    @retry(wait=wait_fixed(5))
+    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
     def youtube_upload(self):
 
         # 设置环境变量
@@ -137,13 +145,24 @@ class Upload(object):
 
         return video_id
 
-    @retry(wait=wait_fixed(5))
+    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
     def bilibili_upload(self):
 
         uploader = BilibiliUploader()
 
         # 登录
-        uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
+        try:
+            uploader.login_by_access_token_file(self.bilibili_token_file_path)
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            try:
+                uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
+            except Exception as e:
+                print(e)
+                traceback.print_exc()
+                # 到这里要是再出错，神仙也救不了……
+                uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
 
         # 处理视频文件
         parts = [VideoPart(
@@ -166,9 +185,9 @@ class Upload(object):
         return str(avid) + "-" + str(bvid)
 
 if __name__ == '__main__':
-    a = 12
-    b = ["建筑", "户外", "场景", "街道", "路", "物品", "交通工具", "人", "公共设施", "男人"]
-    c = ["可商用", "HLG", "60fps"]
+    a = 18
+    b = ["户外", "水", "建筑", "场景", "自然风光", "动植物", "鹅", "江河湖泊", "鸟", "路"]
+    c = ["HLG", "10bit", "4K"]
     up = Upload()
     up.distribute(a, b, c)
 
