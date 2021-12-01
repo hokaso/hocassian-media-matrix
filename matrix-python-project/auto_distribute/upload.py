@@ -57,7 +57,6 @@ class Upload(object):
         self.video_info = ""
         self.video_tags = []
 
-    @retry(wait=wait_fixed(5))
     def distribute(self, flow_id, keywords, adj_keywords):
 
         title_keywords = keywords[:3]
@@ -96,6 +95,7 @@ class Upload(object):
         self.db_handle.modify(finish_flow_sql)
         return self.video_title, self.video_info
 
+    @retry(wait=wait_fixed(5))
     def youtube_upload(self):
 
         # 设置环境变量
@@ -137,6 +137,7 @@ class Upload(object):
 
         return video_id
 
+    @retry(wait=wait_fixed(5))
     def bilibili_upload(self):
 
         uploader = BilibiliUploader()
@@ -165,9 +166,9 @@ class Upload(object):
         return str(avid) + "-" + str(bvid)
 
 if __name__ == '__main__':
-    a = 10
-    b = ["建筑", "户外", "场景", "街道", "物品", "交通工具", "路", "人", "公共设施", "室内"]
-    c = ["可商用", "无水印", "4K"]
+    a = 12
+    b = ["建筑", "户外", "场景", "街道", "路", "物品", "交通工具", "人", "公共设施", "男人"]
+    c = ["可商用", "HLG", "60fps"]
     up = Upload()
     up.distribute(a, b, c)
 
