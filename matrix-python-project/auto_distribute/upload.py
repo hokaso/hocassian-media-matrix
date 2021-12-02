@@ -102,8 +102,10 @@ class Upload(object):
         except Exception as e:
             print(e)
             traceback.print_exc()
+            return
 
-        return self.video_title, self.video_info
+        ytb_url = WATCH_VIDEO_URL.format(id=youtube_id)
+        return self.video_title, self.video_info, ytb_url
 
     @retry(wait=wait_random(min=360, max=720))
     def youtube_upload(self):

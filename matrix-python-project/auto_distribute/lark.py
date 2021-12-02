@@ -15,7 +15,6 @@ class Lark(object):
         self.app_encrypt_key = info["APP_ENCRYPT_KEY"]
         self.current_user_openid = info["CURRENT_USER_OPENID"]
 
-
     def upload_pic(self, pic_path):
         with open(pic_path, 'rb') as f:
             image = f.read()
@@ -401,7 +400,7 @@ class Lark(object):
         note = {
             "token": token,
             'card': {
-                "open_ids":[open_id],
+                "open_ids": [open_id],
                 "config": {
                     "wide_screen_mode": True
                 },
@@ -612,6 +611,72 @@ class Lark(object):
                         "text": {
                             "tag": "plain_text",
                             "content": "欢迎来到素材分发助手~"
+                        }
+                    }
+                ]
+            }
+        }
+
+        # 发送提示
+        return self.send_msg_card(note)
+
+    def send_finish_msg(self, video_title, ytb_url):
+
+        note = {
+            "open_id": self.current_user_openid,
+            "msg_type": "interactive",
+            'card': {
+                "config": {
+                    "wide_screen_mode": False
+                },
+                "header": {
+                    "template": "green",
+                    "title": {
+                        "tag": "plain_text",
+                        "content": "分发完成~"
+                    }
+                },
+                "elements": [
+                    {
+                        "tag": "div",
+                        "text": {
+                            "tag": "plain_text",
+                            "content": "视频标题：" + video_title
+                        }
+                    },
+                    {
+                        "tag": "markdown",
+                        "content": "油管链接：[点我查看]("+ ytb_url +")"
+                    }
+                ]
+            }
+        }
+
+        # 发送提示
+        return self.send_msg_card(note)
+
+    def send_mat_not_enough(self):
+
+        note = {
+            "open_id": self.current_user_openid,
+            "msg_type": "interactive",
+            'card': {
+                "config": {
+                    "wide_screen_mode": False
+                },
+                "header": {
+                    "template": "orange",
+                    "title": {
+                        "tag": "plain_text",
+                        "content": "素材不足T_T"
+                    }
+                },
+                "elements": [
+                    {
+                        "tag": "div",
+                        "text": {
+                            "tag": "plain_text",
+                            "content": "素材不够分发啦，还请大佬再接再厉~"
                         }
                     }
                 ]
