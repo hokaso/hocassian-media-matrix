@@ -171,7 +171,7 @@ class Upload(object):
                 uploader.login(self.info["BILIBILI_ACCOUNT"], self.info["BILIBILI_SECRET"])
 
             finally:
-                access_token, refresh_token = uploader.save_login_data(file_name=self.bilibili_token_file_path)
+                uploader.save_login_data(file_name=self.bilibili_token_file_path)
 
         try:
 
