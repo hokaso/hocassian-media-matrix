@@ -105,7 +105,7 @@ class Upload(object):
 
         return self.video_title, self.video_info
 
-    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
+    @retry(wait=wait_random(min=360, max=720))
     def youtube_upload(self):
 
         # 设置环境变量
@@ -145,9 +145,13 @@ class Upload(object):
         else:
             raise AuthenticationError("Cannot get youtube resource")
 
+        # 改回环境变量
+        os.environ['http_proxy'] = ""
+        os.environ['https_proxy'] = ""
+
         return video_id
 
-    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
+    @retry(wait=wait_random(min=360, max=720))
     def bilibili_upload(self):
 
         uploader = BilibiliUploader()
@@ -169,23 +173,30 @@ class Upload(object):
             finally:
                 access_token, refresh_token = uploader.save_login_data(file_name=self.bilibili_token_file_path)
 
-        # 处理视频文件
-        parts = [VideoPart(
-            path=self.video_path,
-            title=self.video_title,
-            desc=self.video_info
-        )]
+        try:
 
-        # 上传
-        avid, bvid = uploader.upload(
-            parts=parts,
-            copyright=1,
-            title=self.video_title,
-            tid=self.info["BILIBILI_CATEGORY"],
-            tag=",".join(self.video_tags[:9]),
-            desc=self.video_info,
-            cover=self.pic_path
-        )
+            # 处理视频文件
+            parts = [VideoPart(
+                path=self.video_path,
+                title=self.video_title,
+                desc=self.video_info
+            )]
+
+            # 上传
+            avid, bvid = uploader.upload(
+                parts=parts,
+                copyright=1,
+                title=self.video_title,
+                tid=self.info["BILIBILI_CATEGORY"],
+                tag=",".join(self.video_tags[:9]),
+                desc=self.video_info,
+                cover=self.pic_path
+            )
+
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            return
 
         return str(avid) + "-" + str(bvid)
 
@@ -236,9 +247,9 @@ class Upload(object):
 
 
 if __name__ == '__main__':
-    a = 20
-    b = ["户外", "人", "场景", "建筑", "男人", "路", "", "街道", "人体", "人物"]
-    c = ["可商用", "高清", "免版权"]
+    a = 22
+    b = ["场景", "建筑", "户外", "人", "人体", "男人", "室内", "", "物品", "人物"]
+    c = ["可商用", "10bit", "HLG"]
     up = Upload()
     up.distribute(a, b, c)
     up.fix_records(a, b, c)

@@ -255,7 +255,7 @@ def flow():
                     sq.run()
 
                 if event_data["text"] == "测试渲染":
-                    test_instruction_set = {'flow_id': 19}
+                    test_instruction_set = {'flow_id': 22}
                     task_queue.put(test_instruction_set)
 
         return "fail"
