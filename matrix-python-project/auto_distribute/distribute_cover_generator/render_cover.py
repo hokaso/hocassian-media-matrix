@@ -183,5 +183,7 @@ class RenderCover(object):
         return bg
 
     def spread_shadow(self, location):
+        print(location)
         new_location = (int(location[0] * self.info["shadow_spread_ratio_x"]), int(location[1] * self.info["shadow_spread_ratio_y"]))
+        print(new_location)
         return new_location
