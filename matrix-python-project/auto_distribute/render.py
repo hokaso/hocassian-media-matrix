@@ -90,7 +90,9 @@ class Render(object):
             current_flow_detail = _current_flow_detail[0]
 
             # 到这里的前提条件，status一定为3
-            assert current_flow_detail["status"] == "3"
+            if current_flow_detail["status"] != "3":
+                print("状态不匹配！请重新检查！")
+                continue
 
             mat_list = json.loads(current_flow_detail["mat_list"])
 

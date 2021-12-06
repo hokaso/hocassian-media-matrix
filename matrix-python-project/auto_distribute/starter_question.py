@@ -18,8 +18,9 @@ class StarterQuestion(object):
 
         # 查库，将所有适合做视频的素材总时长加起来（新增字段：has_uploaded；0没发布过，1已经发布过）
         find_suitable_duration_sql = "select material_id, material_path, material_time from mat_clip " \
-                                     "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s'" % \
-                                     ("0", "0", "0")
+                                     "where material_status = '%s' and is_copyright = '%s' " \
+                                     "and has_uploaded = '%s' and is_show = '%s'" % \
+                                     ("0", "0", "0", "0")
         print(find_suitable_duration_sql)
         clip_records = self.db_handle.search(find_suitable_duration_sql)
         duration_counter = 0

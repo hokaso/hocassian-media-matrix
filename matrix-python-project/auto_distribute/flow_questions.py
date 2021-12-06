@@ -57,8 +57,8 @@ def cover_generator(instruction_set):
 
         # 从第一个有效素材开始选，选择N个视频素材，直到N+1个视频素材大于音乐长度
         select_all_active_clips = "select material_id, material_path, material_size, material_time, material_mark, material_tag from mat_clip " \
-                                  "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s' order by material_id" % \
-                                  ("0", "0", "0")
+                                  "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s' and is_show = '%s' order by material_id" % \
+                                  ("0", "0", "0", "0")
         clip_records = db_handle.search(select_all_active_clips)
 
         # 设置需要渲染的视频片段的列表
