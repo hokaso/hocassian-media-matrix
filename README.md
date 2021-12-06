@@ -5,14 +5,14 @@
 
 ![APM](https://img.shields.io/apm/l/vim-mode?style=plastic) 
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
-![Build Status](https://img.shields.io/circleci/project/github/tootsuite/mastodon.svg?style=plastic)
+![GitHub Repo stars](https://img.shields.io/github/stars/hokaso/hocassian-media-matrix?style=plastic)
 
 <p>
   <a href="https://hocassian.gitbook.io/matrix">文檔</a> •
   <a href="https://youtu.be/64MMjp2V34w">發布會</a> •
   <a href="https://www.bilibili.com/video/BV15o4y1C7tf">如何使用</a> •
-  <a href="https://material.hocassian.com">素材矩陣示例站</a> •
-  <a href="https://hocassian.com">視頻矩陣示例站</a> •
+  <a href="https://material.hocassian.com">素材矩陣示例站</a><a href="https://ops.hocassian.com:9002">（國內請點我訪問）</a> •
+  <a href="https://hocassian.com">視頻矩陣示例站</a><a href="https://ops.hocassian.com:9001">（國內請點我訪問）</a> •
   <a href="https://github.com/hokaso/hocassian-people-neo4j">人脈矩陣demo</a>
 </p>
 
