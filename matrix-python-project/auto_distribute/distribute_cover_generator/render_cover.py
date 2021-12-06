@@ -121,7 +121,7 @@ class RenderCover(object):
 
         # 阴影贴合到structure上
         tag_shadow_paste_x = (self.standard_1k_w - tag_shadow_bg_location[0]) / 2
-        tag_shadow_paste_y = self.info["tag_top"] - (tag_shadow_bg_location[1] - tag_location[1]) / 2
+        tag_shadow_paste_y = self.info["tag_top"] - (tag_shadow_bg_location[1] - tag_location[1]) / 2 + 15 # 修复计算误差
         r, g, b, a = tag_shadow_bg.split()
         bg.paste(tag_shadow_bg, (int(tag_shadow_paste_x), int(tag_shadow_paste_y)), mask=a)
 
@@ -183,5 +183,7 @@ class RenderCover(object):
         return bg
 
     def spread_shadow(self, location):
+        print(location)
         new_location = (int(location[0] * self.info["shadow_spread_ratio_x"]), int(location[1] * self.info["shadow_spread_ratio_y"]))
+        print(new_location)
         return new_location

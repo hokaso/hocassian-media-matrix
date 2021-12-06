@@ -57,8 +57,8 @@ def cover_generator(instruction_set):
 
         # 从第一个有效素材开始选，选择N个视频素材，直到N+1个视频素材大于音乐长度
         select_all_active_clips = "select material_id, material_path, material_size, material_time, material_mark, material_tag from mat_clip " \
-                                  "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s' order by material_id" % \
-                                  ("0", "0", "0")
+                                  "where material_status = '%s' and is_copyright = '%s' and has_uploaded = '%s' and is_show = '%s' order by material_id" % \
+                                  ("0", "0", "0", "0")
         clip_records = db_handle.search(select_all_active_clips)
 
         # 设置需要渲染的视频片段的列表
@@ -249,14 +249,14 @@ def flow():
             # 如果输入为文字，进行文字相关的操作
             if event_data["msg_type"] == "text":
 
-                # 输入「测试流程」开始手动设置
-                if event_data["text"] == "测试流程":
+                # 输入「手动分发」手动开启分发流程
+                if event_data["text"] == "手动分发":
                     sq = StarterQuestion()
                     sq.run()
 
-                # if event_data["text"] == "测试渲染":
-                #     test_instruction_set = {'flow_id': 12}
-                #     task_queue.put(test_instruction_set)
+                if event_data["text"] == "推进渲染":
+                    test_instruction_set = {'flow_id': 22}
+                    task_queue.put(test_instruction_set)
 
         return "fail"
 

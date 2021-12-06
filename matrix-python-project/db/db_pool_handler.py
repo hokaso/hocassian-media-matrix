@@ -101,7 +101,10 @@ class DBPoolHandler(object):
 
         try:
             # print(args)
-            _ = cursor.execute(sql, args[0])
+            if args:
+                _ = cursor.execute(sql, args[0])
+            else:
+                _ = cursor.execute(sql)
             conn.commit()
             last_row_id = cursor.lastrowid
             self.connect_close(conn, cursor)

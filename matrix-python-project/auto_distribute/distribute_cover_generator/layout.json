@@ -25,6 +25,6 @@
   ],
   "time_color": "(255, 255, 255, 255)",
   "shadow_spread_ratio_x": 1.05,
-  "shadow_spread_ratio_y": 1.8,
+  "shadow_spread_ratio_y": 3.25,
   "shadow_spread_ratio_readme": "阴影漫出比例"
 }

@@ -3,6 +3,7 @@ import sys, os, json, shutil, math, traceback, shlex, subprocess, ffmpeg
 sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
 from db.db_pool_handler import InstantDBPool
+from auto_distribute.lark import Lark
 from tenacity import retry, wait_fixed
 from utils.tools import Tools
 from auto_distribute.upload import Upload
@@ -10,7 +11,6 @@ from utils.snow_id import HSIS
 
 # SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7967
-
 
 class ServerManager(BaseManager):
     pass
@@ -31,10 +31,11 @@ class Render(object):
         ServerManager.register("get_task_queue")
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.task_queue = None
-        self.upload = Upload()
+        self.upload = None
         self.store_path = current + "/matrix/distribute/"
         self.standard_4k_w = 3840
         self.standard_4k_h = 2160
+        self.msg_handle = Lark()
 
     '''
     输入：
@@ -89,7 +90,9 @@ class Render(object):
             current_flow_detail = _current_flow_detail[0]
 
             # 到这里的前提条件，status一定为3
-            assert current_flow_detail["status"] == "3"
+            if current_flow_detail["status"] != "3":
+                print("状态不匹配！请重新检查！")
+                continue
 
             mat_list = json.loads(current_flow_detail["mat_list"])
 
@@ -326,7 +329,9 @@ class Render(object):
             self.db_handle.modify(update_to_complete_render_sql)
 
             # 到这一步，封面图和稿件本身都有了，开始准备分发（YouTube、Bilibili），同时把材料复制一份到仓库特定的文件夹，用来人肉分发（使用融媒宝分发各大平台）
-            write_title, write_info = self.upload.distribute(
+            # 第三方插件比较诡异，所以牺牲性能，每次启用都重新初始化，换取系统稳定性
+            self.upload = Upload()
+            write_title, write_info, ytb_url = self.upload.distribute(
                 instruction_set["flow_id"],
                 json.loads(current_flow_detail["keywords"]),
                 json.loads(current_flow_detail["adj_keywords"])
@@ -351,9 +356,11 @@ class Render(object):
             # 更新素材表记录，证明相关素材已经被分发，下次无需分发
             mat_id_list = [m["material_id"] for m in mat_list]
             update_mat_clip_sql = "update mat_clip set has_uploaded = '%s' where material_id in (%s)" % ("1", ','.join(['%s'] * (len(mat_id_list))))
-            print(update_mat_clip_sql)
+            # print(update_mat_clip_sql)
             self.db_handle.modify(update_mat_clip_sql, mat_id_list)
 
+            # 需要增加一个飞书通知，告诉用户渲染+分发的流程执行完了
+            self.msg_handle.send_finish_msg(write_title, ytb_url)
 
 if __name__ == '__main__':
     SERVER_IP = '127.0.0.1'
