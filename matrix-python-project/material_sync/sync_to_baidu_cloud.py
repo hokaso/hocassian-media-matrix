@@ -18,11 +18,11 @@ class Sync2Cloud(object):
 
         self.clip_pre_sync_path = current + "/database/matrix/material/clip/"
         self.audio_pre_sync_path = current + "/database/matrix/material/audio/"
-        self.audio_off_vocal_pre_sync_path = current + "/database/matrix/material/audio/off_vocal/"
+        self.audio_off_vocal_pre_sync_path = current + "/database/matrix/material/audio/audio_off_vocal/"
         self.image_pre_sync_path = current + "/database/matrix/material/image/"
 
-        self.local_dir = current + "/database/material/"
-        self.remote_dir = "/apps/bypy/matrix/material/"
+        self.local_dir = current + "/database/matrix/material/"
+        self.remote_dir = "matrix/material/"
 
         self.db_handle = InstantDBPool().get_connect()
 
@@ -115,7 +115,9 @@ class Sync2Cloud(object):
         self.remove_files_from_exist(self.image_pre_sync_path, remove_list)
 
         # 开启同步
+        print("sync to cloud")
         bp = ByPy()
+        bp.list()
         bp.syncup(localdir = self.local_dir, remotedir = self.remote_dir, deleteremote = True)
 
     @staticmethod
@@ -136,7 +138,7 @@ class Sync2Cloud(object):
             try:
                 print(file_path + file)
                 # 危险操作，需要经过足够多的测试确定后才能放行
-                # os.remove(file_path + file)
+                os.remove(file_path + file)
             except Exception as e:
                 print(e)
                 traceback.print_exc()
