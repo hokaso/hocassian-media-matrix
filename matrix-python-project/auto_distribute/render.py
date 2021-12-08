@@ -128,7 +128,10 @@ class Render(object):
                 origin_info = json.loads(catch_json.stdout)
 
                 # 为何不判断素材后缀？因为如果这不是一个视频素材，这一步就会直接报错走人
-                assert origin_info['streams'][0]['height']
+                if not origin_info['streams'][0]['height']:
+                    print(temp_origin_clip_path + " is not a valid clip!")
+                    continue
+
                 origin_height = origin_info['streams'][0]['height']
                 origin_width = origin_info['streams'][0]['width']
 
@@ -167,7 +170,6 @@ class Render(object):
                     "\" -i \"",
                     self.clip_bg_4k,
                     "\" ",
-                    # "-vf zscale=matrixin=709:matrix=709,format=yuv420p ",
                     "-filter_complex \"[0:v]scale=",
                     str(tw),
                     ":",

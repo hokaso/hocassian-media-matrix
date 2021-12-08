@@ -78,6 +78,67 @@ class SpinVideo(object):
                     traceback.print_exc()
                     print(e)
 
+    # input_file应当传入绝对路径
+    @staticmethod
+    def get_cmd(input_file):
+
+        is_spin_success = True
+        filename, extension = os.path.splitext(input_file)
+
+        spin_set_list = [
+            "ffmpeg -i ",
+            "\"",
+            input_file,
+            "\"",
+            " -metadata:s:v rotate=\"0\" -codec copy -y ",
+            "\"",
+            filename,
+            "_.mp4"
+            "\"",
+        ]
+        spin_set = "".join(spin_set_list)
+
+        # 首次执行
+        os.system(spin_set)
+
+        # 校验文件是否存在
+        if not os.path.isfile(filename + "_.mp4"):
+            is_spin_success = False
+            return is_spin_success
+
+        # 删除源文件
+        os.remove(input_file)
+        os.rename(filename + "_" + ".mp4", filename + ".mp4")
+
+        # 存在需要二次执行的个体
+        capture = cv2.VideoCapture(input_file)
+        width = capture.get(3)
+        height = capture.get(4)
+        capture.release()
+        if width <= height:
+            sec_spin_set_list = [
+                "ffmpeg -i ",
+                "\"",
+                input_file,
+                "\"",
+                " -metadata:s:v rotate=\"90\" -codec copy -y ",
+                "\"",
+                filename,
+                "_.mp4"
+                "\"",
+            ]
+            sec_spin_set = "".join(sec_spin_set_list)
+            os.system(sec_spin_set)
+
+            # 校验文件是否存在
+            if not os.path.isfile(filename + "_.mp4"):
+                is_spin_success = False
+                return is_spin_success
+
+            os.remove(input_file)
+            os.rename(filename + "_" + ".mp4", filename + ".mp4")
+
+        return is_spin_success
 
 if __name__ == "__main__":
     sv = SpinVideo()
