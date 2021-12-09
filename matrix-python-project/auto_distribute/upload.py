@@ -1,11 +1,11 @@
-import sys, os, json, copy, random, time, shutil, traceback
+import sys, os, json, random, time, shutil, traceback
 
 sys.path.append(os.getcwd())
 from youtube_upload import main
 from bilibiliuploader.bilibiliuploader import BilibiliUploader
 from bilibiliuploader.core import VideoPart
 from db.db_pool_handler import InstantDBPool
-from tenacity import retry, wait_fixed, wait_random, stop_after_attempt
+from tenacity import retry, wait_random
 from utils.snow_id import HSIS
 
 
