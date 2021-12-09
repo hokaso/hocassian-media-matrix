@@ -7,3 +7,4 @@
 ../material_process/config.json
 ../db/config.json
 ../sync_ytb_video/config.json
+../archive_tools/archive_config.json
