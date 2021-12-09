@@ -114,11 +114,11 @@ class Sync2Cloud(object):
         self.add_files_from_next(self.image_resouce_path, self.image_pre_sync_path, add_list)
         self.remove_files_from_exist(self.image_pre_sync_path, remove_list)
 
-        # 开启同步
-        print("sync to cloud")
-        bp = ByPy()
-        bp.list()
-        bp.syncup(localdir = self.local_dir, remotedir = self.remote_dir, deleteremote = True)
+        # 开启同步（由于本地已经安装了群晖，所以此处同步由群晖替代）
+        # print("sync to cloud")
+        # bp = ByPy()
+        # bp.list()
+        # bp.syncup(localdir = self.local_dir, remotedir = self.remote_dir, deleteremote = True)
 
     @staticmethod
     def add_or_remove(next_list, exist_list):
