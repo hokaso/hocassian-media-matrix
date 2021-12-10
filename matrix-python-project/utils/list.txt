@@ -8,3 +8,8 @@
 ../db/config.json
 ../sync_ytb_video/config.json
 ../archive_tools/archive_config.json
+../../matrix-control-back-end/ruoyi-admin/src/main/resources/application.yml
+../../matrix-control-back-end/ruoyi-admin/src/main/resources/application-linux.yml
+../../matrix-control-back-end/ruoyi-admin/src/main/resources/application-mac.yml
+../../matrix-control-back-end/ruoyi-admin/src/main/resources/application-win.yml
+../../matrix-people-back-end/src/main/resources/application.yml
