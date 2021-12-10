@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-jdbc-driver</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.4</version>
         </dependency>
         <!-- 文件上传工具类 -->
         <dependency>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.1.10</version>
+            <version>1.2.8</version>
         </dependency>
         <!-- 阿里JSON解析器 -->
         <dependency>
@@ -94,6 +94,16 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.15.0</version>
         </dependency>
     </dependencies>
 
