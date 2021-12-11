@@ -37,9 +37,9 @@ class StarterQuestion(object):
             return 0
 
         # 验证工作流，要求上一个工作流必须状态为「5：分发完成」，否则不予分发
-        assert_sql = "select status from flow_distribute order by id desc limit 1"
-        flow_status_result = self.db_handle.search(assert_sql)
-        assert flow_status_result[0]["status"] == "5" or flow_status_result[0]["status"] == "0"
+        # assert_sql = "select status from flow_distribute order by id desc limit 1"
+        # flow_status_result = self.db_handle.search(assert_sql)
+        # assert flow_status_result[0]["status"] == "5" or flow_status_result[0]["status"] == "0"
 
         # 销毁过往工作流
         destroy_sql = "update flow_distribute set status = '%s'" % "0"
