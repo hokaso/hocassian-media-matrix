@@ -13,3 +13,6 @@
 ../../matrix-control-back-end/ruoyi-admin/src/main/resources/application-mac.yml
 ../../matrix-control-back-end/ruoyi-admin/src/main/resources/application-win.yml
 ../../matrix-people-back-end/src/main/resources/application.yml
+../../material-front-end/vue.config.js
+../../video-front-end/vue.config.js
+../../matrix-management-front-end/vue.config.js
