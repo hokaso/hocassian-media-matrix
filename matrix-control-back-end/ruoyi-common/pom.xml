@@ -119,6 +119,18 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- Log4j零日漏洞 2021.12.10紧急修复-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
