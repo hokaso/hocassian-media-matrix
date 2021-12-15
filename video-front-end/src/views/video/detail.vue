@@ -19,15 +19,15 @@
                 <span>发布时间：{{videoDetail.videoPublish}}</span>
 
               </div>
-              <div class="ipv6_info">
-                <span>IPv6加速通道（请确认所在网域已开启ipv6）：</span>
-              </div>
-              <el-switch
-                v-model="ipv6"
-                active-value="0"
-                inactive-value="1"
-                @change="useIPV6()"
-              ></el-switch>
+<!--              <div class="ipv6_info">-->
+<!--                <span>IPv6加速通道（请确认所在网域已开启ipv6）：</span>-->
+<!--              </div>-->
+<!--              <el-switch-->
+<!--                v-model="ipv6"-->
+<!--                active-value="0"-->
+<!--                inactive-value="1"-->
+<!--                @change="useIPV6()"-->
+<!--              ></el-switch>-->
             </div>
             <div class="video_detail">
               <div id="mse"></div>
@@ -154,7 +154,7 @@
         list: null,
         listQuery: {
           pageNum: 1,
-          pageSize: 5,
+          pageSize: 6,
           videoTitle: ""
         },
         UrlConfig: "",

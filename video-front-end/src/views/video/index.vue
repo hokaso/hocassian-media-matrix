@@ -120,7 +120,7 @@ export default {
       list: null,
       listQuery: {
         pageNum: 1,
-        pageSize: 8,
+        pageSize: 32,
         videoTitle: ""
       }
     };
