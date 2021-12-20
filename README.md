@@ -6,8 +6,7 @@
 ![APM](https://img.shields.io/apm/l/vim-mode?style=plastic) 
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
 ![GitHub Repo stars](https://img.shields.io/github/stars/hokaso/hocassian-media-matrix?style=plastic)
-
-<a href="https://github.com/hokaso/hocassian-media-matrix/blob/master/README_zh_tw.md">👉🏻繁体中文</a>
+<a href="https://github.com/hokaso/hocassian-media-matrix/blob/master/README_zh_tw.md"> 👉🏻繁体中文</a>
 
 <p>
   <a href="https://hocassian.gitbook.io/matrix">文档</a> •
@@ -18,9 +17,9 @@
   <a href="https://github.com/hokaso/hocassian-people-neo4j">人脉矩阵demo</a>
 </p>
 
-## 同和新媒体矩阵是什麼？
+## 同和新媒体矩阵是什么？
 
-> 通过技术赋能创作：优化创作者体验，推动内部创作增强实际感受（Optimize the creator experience, promote creation in the organization to enhance the actual experience.）
+> 通过技术赋能创作：优化创作者体验，推动内部创作增强实际感受（Optimize the creator experience, promote creation in the organization to enhance the actual-experience.）
 
 物欲横流，谁主沉浮？同和系视频矩阵由多个亚文化小众KOL组成，迄今为止已为数十位天才级视频博主提供了多元化的信息流传播服务，目前正在孵化多位原创视频作者。在保证原创作者多项权益不受侵害的同时，我们也在持续建设为一个成熟的去中心小众亚文化推广平台。未来的PGC&UGC平台必定符合这三大定律：分类明确、高度集成和精致包装，我们的终极目标即通过最少量的资源达到上述三点的极致，搭建新媒体信息流的生产流水线，通过最少量的信息输入，借由机器自动生成完整的「数据礼盒」并分发，以创造最大化的舆论价值。
 
