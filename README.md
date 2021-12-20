@@ -6,7 +6,7 @@
 ![APM](https://img.shields.io/apm/l/vim-mode?style=plastic) 
 ![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCf3z3UGPivTyGDeLWNREIJw?style=plastic)
 ![GitHub Repo stars](https://img.shields.io/github/stars/hokaso/hocassian-media-matrix?style=plastic)
-<a href="https://github.com/hokaso/hocassian-media-matrix/blob/master/README_zh_tw.md"> 👉🏻繁体中文</a>
+<a href="https://github.com/hokaso/hocassian-media-matrix/blob/master/README-zh_tw.md"> 👉🏻繁体中文</a>
 
 <p>
   <a href="https://hocassian.gitbook.io/matrix">文档</a> •
