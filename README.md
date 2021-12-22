@@ -292,6 +292,15 @@
     <tr>
         <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/10.jpg"/></td>
     </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/11.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/12.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/13.jpg"/></td>
+    </tr>
 </table>
 
 ## [创始人简介](https://hocassian.cn/archives/other/7800)

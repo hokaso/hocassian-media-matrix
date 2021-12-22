@@ -899,6 +899,7 @@ def generator():
                 # 调隔壁的函数进行渲染
                 try:
 
+                    # TODO 可以换成异步任务
                     image_list = Main().run(str(check[0]["record_id"]), check[0]["record_first_title"], check[0]["record_secord_title"])
                     image_key_list = []
                     for ikey in image_list:
