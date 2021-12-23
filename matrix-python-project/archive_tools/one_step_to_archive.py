@@ -14,7 +14,7 @@ class ArchiveAssistant(object):
 
     def __init__(self):
 
-        with open(os.getcwd() + "/archive_tools/archive_config.json", 'r') as f0:
+        with open("archive_tools/archive_config.json", 'r') as f0:
             info = json.load(f0)
 
         self.sv = SpinVideo()
@@ -66,9 +66,8 @@ class ArchiveAssistant(object):
     def clip_init(self):
 
         for clip in os.listdir(self.input_path):
-            if os.path.isfile(clip):
-
-                temp_origin_clip_path = self.input_path + clip
+            temp_origin_clip_path = self.input_path + "\\\\" + clip
+            if os.path.isfile(temp_origin_clip_path):
                 clip_name, clip_extension = os.path.splitext(temp_origin_clip_path)
 
                 # 采集原始素材信息
@@ -213,7 +212,11 @@ class ArchiveAssistant(object):
         th = math.ceil(resolution_standard[0] * fh / fw)
 
         # 确定lw和lh
-        lw = int((FOUR_KILO_W - tw) / 2)
-        lh = int((FOUR_KILO_H - th) / 2)
+        lw = int((resolution_standard[0] - tw) / 2)
+        lh = int((resolution_standard[1] - th) / 2)
 
         return tw, th, lw, lh, is_spin, resolution_standard
+
+if __name__ == '__main__':
+    aa = ArchiveAssistant()
+    aa.clip_init()

@@ -23,7 +23,7 @@ class AudioAnalyze(object):
         audio_set = set()
         analyze_json = {}
 
-        # 由于国内hifi平台拒绝继续提供服务，故此功能封板
+        # 由于国内hifi平台拒绝继续提供额外服务，故此功能封板
         #
         # try:
         #     # 上传到国内平台打标签
@@ -40,6 +40,7 @@ class AudioAnalyze(object):
         #     }
         #     first_response = requests.request("POST", self.hifi_url, headers=headers, data=self.payload, files=files_class, timeout=10)
         #     first_data = first_response.json()
+        #     print(first_data)
         #     analyze_json["hifi_raw"] = first_data
         #     time.sleep(10)
         #     second_response = requests.request("GET", self.obtain_url + first_data["data"]["fileKey"], headers=headers, data=self.payload, timeout=10)
@@ -58,5 +59,20 @@ class AudioAnalyze(object):
         # except Exception as e:
         #     traceback.print_exc()
         #     print(e)
+
+        # 目前hifi仅提供此项服务，凑合用吧
+        try:
+            files_emo = [('file', open(audio_path, 'rb'))]
+            emo_headers = {}
+            emo_response = requests.request("POST", self.emo_url, headers=emo_headers, data=self.payload, files=files_emo)
+            print(emo_response.text)
+            emo_data = emo_response.json()
+            analyze_json["hifi_emo"] = emo_data
+            for jkey in emo_data["result"]:
+                audio_set.add(jkey["name"])
+
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
 
         return audio_set, analyze_json

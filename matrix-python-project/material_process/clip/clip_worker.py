@@ -71,7 +71,7 @@ class ClipWorker(object):
 
             if instruction_set["op"] == 1:
                 print("收到导入指令！")
-                self.task_queue.task_done()
+
                 try:
 
                     # 采集原始素材信息
@@ -226,10 +226,13 @@ class ClipWorker(object):
                     traceback.print_exc()
                     print(e)
 
+                finally:
+                    self.task_queue.task_done()
+
             elif instruction_set["op"] == 2:
 
                 print("收到裁切指令！")
-                self.task_queue.task_done()
+
                 try:
                     # 根据素材种类确定最终压缩率
                     if instruction_set["material_type"] == "0":
@@ -376,3 +379,6 @@ class ClipWorker(object):
                 except Exception as e:
                     traceback.print_exc()
                     print(e)
+
+                finally:
+                    self.task_queue.task_done()
