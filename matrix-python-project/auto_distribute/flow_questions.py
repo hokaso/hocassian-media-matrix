@@ -241,7 +241,8 @@ def flow():
 
         # 首次进入bot会话，需要向当前用户介绍机器人的用法，以及提示用户先输入1开始流程
         if event_data["type"] == "p2p_chat_create":
-            return msg_handle.send_create_msg()
+            return "pass"
+            # return msg_handle.send_create_msg()
 
         # 如果输入的是普通文字或图片
         elif event_data["type"] == "message":

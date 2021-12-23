@@ -22,7 +22,6 @@ class ClipAnalyze(object):
         self.area = info["tencent"]["area"]
 
     def tencent_pic(self, image_url_list):
-        # 顺便把图片质量标签一并打了，记得补充代码！
         image_mark = 0
         tag_set = set()
         self.analyze_json["tencent_distinguish"] = []

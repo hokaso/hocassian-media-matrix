@@ -26,14 +26,12 @@ public class WebController extends BaseController {
     @Autowired
     private WebService webService;
 
-    @PreAuthorize("@ss.hasPermi('*:*:*')")
     @GetMapping("/map")
     public Result getPersonWebMap() {
         List<Record> list = webService.selectPersonWebMap();
         return getDataResult(list);
     }
 
-    @PreAuthorize("@ss.hasPermi('*:*:*')")
     @GetMapping("/list")
     public Result getPersonWebList() {
         List<PersonWeb> list = webService.selectPersonWebList();
