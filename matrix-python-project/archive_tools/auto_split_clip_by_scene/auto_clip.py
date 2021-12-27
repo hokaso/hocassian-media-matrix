@@ -20,9 +20,9 @@ class AutoClip(object):
         self.input_dir = './input'
         self.output_dir = 'output'
 
-        current_clip_output_path = os.getcwd() + "/" + output_dir
-        if not os.path.exists(current_clip_output_path):
-            os.makedirs(current_clip_output_path)
+        self.current_clip_output_path = os.getcwd() + "/" + self.output_dir
+        if not os.path.exists(self.current_clip_output_path):
+            os.makedirs(self.current_clip_output_path)
 
         self.threshold_default = 27.5
         self.crf_default = 20
@@ -47,8 +47,8 @@ class AutoClip(object):
                 [key],
                 scenes,
                 "$VIDEO_NAME - Scene $SCENE_NUMBER.mp4",
-                output_dir + "/" + f_name,
-                arg_override='-c:v libx264 -preset slow -crf ' + crf + ' -c:a aac',
+                self.output_dir + "/" + f_name,
+                arg_override='-c:v libx264 -preset slow -crf ' + str(crf) + ' -c:a aac',
                 hide_progress=False,
                 suppress_output=False
             )
@@ -100,6 +100,8 @@ class AutoClip(object):
     def file_prepare(self):
         file_list = []
         for root, dirs, files in os.walk(self.input_dir):
-            file_list = [input_dir + "/" + i for i in files]
+            file_list = [self.input_dir + "/" + i for i in files]
         return file_list
 
+if __name__ == '__main__':
+    AutoClip().run()
