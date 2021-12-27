@@ -20,13 +20,13 @@ bili_opts = {
     'recode_video': 'mp4',
     'merge_output_format': 'mp4',
     'nocheckcertificate': True,
-    'outtmpl': './files/%(id)s.mp4',
+    'outtmpl': './files/%(title)s-%(id)s.mp4',
 }
 
-video_url = "https://www.youtube.com/watch?v=3Zperr6_OQQ"
+video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
 # channel_url = "https://www.youtube.com/channel/UCf3z3UGPivTyGDeLWNREIJw"
 channel_url = "https://www.youtube.com/c/%E5%90%8C%E5%92%8C%E5%90%9BHocassian/videos"
-choice = "1"
+choice = "2"
 
 
 class EasyDownload(object):
@@ -56,4 +56,4 @@ class EasyDownload(object):
 
 if __name__ == '__main__':
     vd = EasyDownload()
-    vd.dl_by_channel()
+    vd.dl_one()
