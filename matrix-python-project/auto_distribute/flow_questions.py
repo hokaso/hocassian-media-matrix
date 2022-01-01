@@ -187,8 +187,11 @@ def cover_generator_refresh(instruction_set):
 
 def random_music():
     select_music_sql = "SELECT audio_id, audio_path, audio_name, audio_author, audio_time FROM mat_audio as t1 " \
-                       "WHERE t1.audio_id>=(RAND()*(SELECT MAX(audio_id) FROM mat_audio))LIMIT 1"
+                       "WHERE t1.audio_id>=(RAND()*(SELECT MAX(audio_id) FROM mat_audio))LIMIT 10"
     rand_music = db_handle.search(select_music_sql)
+
+    # 二次混淆
+    random.shuffle(rand_music)
     return rand_music[0]
 
 
