@@ -2,14 +2,14 @@
 # 答：将这些视频按多种标准分别合并，比如(,720P]的归档成一个（帧率30），
 # (720P,2160P)归档成两个（帧率30&60），(2160P,)归档成两个（帧率30&60），
 # 如果出现尺寸不符合16:9的，缩放为帧大小，其余地方用白色填补，按照最长边翻转为宽。
-import sys, os, json, shutil, math, traceback, shlex, subprocess, ffmpeg
+import sys, os, json, shutil, math, shlex, subprocess, ffmpeg
 
 sys.path.append(os.getcwd())
 from utils.tools import Tools
-from archive_tools.spin_video import SpinVideo
-from archive_tools.HMM_rate_archive_standard import HMM
+from archive_tools.tools.spin_video import SpinVideo
+from archive_tools.tools.HMM_rate_archive_standard import HMM
 
-
+# TODO 1.需要用雪花id重命名 2. 帧率为什么处理出来都是25？？？ 这一点需要多次确认！
 class ArchiveAssistant(object):
 
     def __init__(self):
@@ -25,7 +25,7 @@ class ArchiveAssistant(object):
         self.output_path = info["output_path"]
         self.archive_path = info["archive_path"]
         self.ffmpeg_path = info["ffmpeg_path"]
-        self.current_path = "archive_tools/"
+        self.current_path = "archive_tools/materials/"
 
         self.s720 = (1280, 720)
         self.s1080 = (1920, 1080)
@@ -66,7 +66,7 @@ class ArchiveAssistant(object):
     def clip_init(self):
 
         for clip in os.listdir(self.input_path):
-            temp_origin_clip_path = self.input_path + "\\\\" + clip
+            temp_origin_clip_path = self.input_path + "\\" + clip
             if os.path.isfile(temp_origin_clip_path):
                 clip_name, clip_extension = os.path.splitext(temp_origin_clip_path)
 
@@ -86,10 +86,21 @@ class ArchiveAssistant(object):
                 origin_height = origin_info['streams'][0]['height']
                 origin_width = origin_info['streams'][0]['width']
 
-                tw, th, lw, lh, is_spin, resolution_standard = self.crop_to_suit(int(origin_width), int(origin_height))
+                extra_is_spin = False
+                if "side_data_list" in origin_info['streams'][0] and origin_info['streams'][0]["side_data_list"] != 0:
+                    extra_is_spin = True
+
+                # 初步确定素材类别（后期可手动调整）
+                is_HDR_and_vertical = False
+                if 'pix_fmt' in origin_info['streams'][0]:
+                    origin_pix_fmt = origin_info['streams'][0]['pix_fmt']
+                    if origin_pix_fmt == 'yuv422p10le' and extra_is_spin:
+                        is_HDR_and_vertical = True
+
+                tw, th, lw, lh, is_spin, resolution_standard = self.crop_to_suit(int(origin_width), int(origin_height), is_HDR_and_vertical)
 
                 # 如果需旋转，则需要多做一步处理
-                if is_spin:
+                if (is_spin or extra_is_spin) and not is_HDR_and_vertical:
                     is_success = self.sv.get_cmd(temp_origin_clip_path)
                     if not is_success:
                         print("无法处理片段：" + temp_origin_clip_path)
@@ -107,6 +118,8 @@ class ArchiveAssistant(object):
 
                 temp_clip_set_list = [
                     "ffmpeg",
+                    " -r ",
+                    str(after_rate),
                     " -i \"",
                     temp_origin_clip_path,
                     "\" -i \"",
@@ -126,8 +139,6 @@ class ArchiveAssistant(object):
                     str(resolution_standard[0]),
                     "x",
                     str(resolution_standard[1]),
-                    " -r ",
-                    str(after_rate),
                     " \"",
                     current_clip_path,
                     "\""
@@ -156,7 +167,7 @@ class ArchiveAssistant(object):
                     self.s1080r30_list.append(ffmpeg.input(current_clip_path))
 
                 # 最后将源文件移动到archive_path
-                shutil.move(temp_origin_clip_path, self.archive_path + clip)
+                shutil.move(temp_origin_clip_path, self.archive_path + "\\" + clip)
 
         self.concat(self.s720r30_list, self.output_path + self.s720r30_ext)
         self.concat(self.s1080r30_list, self.output_path + self.s1080r30_ext)
@@ -166,16 +177,21 @@ class ArchiveAssistant(object):
 
     def concat(self, clip_list, output_name):
 
-        ffmpeg.concat(
-            *clip_list
-        ).output(
-            output_name
-        ).run(
-            cmd=self.ffmpeg_path,
-            capture_stdout=True
-        )
+        if clip_list:
 
-        self.tools_handle.assert_file_exist(output_name)
+            ffmpeg.concat(
+                *clip_list
+            ).output(
+                output_name
+            ).run(
+                cmd=self.ffmpeg_path,
+                capture_stdout=True
+            )
+
+            self.tools_handle.assert_file_exist(output_name)
+
+            for ikey in clip_list:
+                os.remove(ikey)
 
     '''
     输入：
@@ -188,11 +204,11 @@ class ArchiveAssistant(object):
     lw和lh代表素材经过算法处理后左上角应该渲染在画面中的坐标（毕竟渲染器是从上至下，从左到右来渲染，所以需要左上角坐标）
     '''
 
-    def crop_to_suit(self, fw, fh):
+    def crop_to_suit(self, fw, fh, is_HDR_and_vertical):
 
         # 确定is_spin、fw、fh
         is_spin = False
-        if fw < fh * 16 / 9:
+        if fw < fh * 9 / 16:
             # 长边恒为宽
             fw, fh = fh, fw
             is_spin = True
@@ -207,9 +223,16 @@ class ArchiveAssistant(object):
         else:
             resolution_standard = self.s1080
 
-        # 确定tw和th
-        tw = resolution_standard[0]
-        th = math.ceil(resolution_standard[0] * fh / fw)
+        # 当视频为特殊格式时，保持宽高，两侧留白（ffmpeg不支持旋轉這類視頻）
+        if is_HDR_and_vertical:
+            fw, fh = fh, fw
+            th = resolution_standard[1]
+            tw = math.ceil(resolution_standard[1] * fw / fh)
+            is_spin = False
+        else:
+            # 确定tw和th
+            tw = resolution_standard[0]
+            th = math.ceil(resolution_standard[0] * fh / fw)
 
         # 确定lw和lh
         lw = int((resolution_standard[0] - tw) / 2)

@@ -6,8 +6,8 @@ class SpinVideo(object):
 
     def __init__(self):
 
-        self.path_input = "./temp_input"
-        self.path_output = "./temp_output"
+        self.path_input = "../temp_input"
+        self.path_output = "../temp_output"
         self.path_complete = "./complete"
 
     def main(self):
@@ -128,6 +128,7 @@ class SpinVideo(object):
                 "\"",
             ]
             sec_spin_set = "".join(sec_spin_set_list)
+            print(sec_spin_set)
             os.system(sec_spin_set)
 
             # 校验文件是否存在

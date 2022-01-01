@@ -39,7 +39,7 @@ class HMM(object):
         else:
             after_rate = 30
 
-        print("帧率从" + origin_rate_value + "调整为" + after_rate)
+        print("帧率从" + str(origin_rate_value) + "调整为" + str(after_rate))
 
         return after_rate
 
