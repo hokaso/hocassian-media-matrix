@@ -1,6 +1,6 @@
 .idea
 /files/
-**/nico_config.json
+archive_tools/tools/nico_config.json
 db/config.json
 sync_ytb_video/config.json
 utils/test.py
