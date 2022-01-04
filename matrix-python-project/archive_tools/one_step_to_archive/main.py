@@ -10,13 +10,12 @@ from archive_tools.tools.spin_video import SpinVideo
 from archive_tools.tools.rate_archive_standard import HMM
 from utils.snow_id import HSIS
 
-
-# TODO 1.需要用雪花id重命名 2. 帧率为什么处理出来都是25？？？ 这一点需要多次确认！
+# 仅适用于linux系统
 class ArchiveAssistant(object):
 
     def __init__(self):
 
-        with open("config/archive_config.json", 'r') as f0:
+        with open("archive_tools/one_step_to_archive/config/archive_config.json", 'r') as f0:
             info = json.load(f0)
 
         self.sv = SpinVideo()
@@ -50,18 +49,21 @@ class ArchiveAssistant(object):
         }
 
         self.s720r30_list = []
+        self.s720r60_list = []
         self.s1080r30_list = []
         self.s1080r60_list = []
         self.s2160r30_list = []
         self.s2160r60_list = []
 
         self.s720r30_list_file = []
+        self.s720r60_list_file = []
         self.s1080r30_list_file = []
         self.s1080r60_list_file = []
         self.s2160r30_list_file = []
         self.s2160r60_list_file = []
 
         self.s720r30_ext = "s720r30.mp4"
+        self.s720r60_ext = "s720r60.mp4"
         self.s1080r30_ext = "s1080r30.mp4"
         self.s1080r60_ext = "s1080r60.mp4"
         self.s2160r30_ext = "s2160r30.mp4"
@@ -69,12 +71,77 @@ class ArchiveAssistant(object):
 
     def clip_classify(self):
 
-        print(self)
+        for clip in os.listdir(self.input_path):
+            temp_origin_clip_path = self.input_path + "/" + clip
+            print(temp_origin_clip_path)
+            if os.path.isfile(temp_origin_clip_path):
+
+                # 采集原始素材信息
+                catch_set = f'ffprobe -of json -select_streams v -show_streams "{temp_origin_clip_path}"'
+                catch_json = subprocess.run(
+                    shlex.split(catch_set),
+                    capture_output=True,
+                    encoding='utf-8',
+                    errors='ignore'
+                )
+                origin_info = json.loads(catch_json.stdout)
+                if not origin_info['streams'][0]['height']:
+                    print(temp_origin_clip_path + " is not a valid clip!")
+                    continue
+
+                origin_height = origin_info['streams'][0]['height']
+                origin_width = origin_info['streams'][0]['width']
+
+                tw, th, lw, lh, is_spin, resolution_standard = self.crop_to_suit(int(origin_width), int(origin_height),
+                                                                                 False)
+
+                # 确定渲染帧率
+                if 'avg_frame_rate' in origin_info['streams'][0]:
+                    pix_rate = origin_info['streams'][0]['avg_frame_rate']
+                    after_rate = self.hmm.archive_standard(eval(pix_rate))
+                else:
+                    # 默认30fps
+                    after_rate = 30
+
+                current_clip_path_with_ext = temp_origin_clip_path
+                if after_rate == 30 and resolution_standard == self.s720:
+                    self.s720r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s720r30_list_file.append(current_clip_path_with_ext)
+                elif after_rate == 60 and resolution_standard == self.s720:
+                    self.s720r60_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s720r60_list_file.append(current_clip_path_with_ext)
+                elif after_rate == 30 and resolution_standard == self.s1080:
+                    self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s1080r30_list_file.append(current_clip_path_with_ext)
+                elif after_rate == 60 and resolution_standard == self.s1080:
+                    self.s1080r60_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s1080r60_list_file.append(current_clip_path_with_ext)
+                elif after_rate == 30 and resolution_standard == self.s2160:
+                    self.s2160r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s2160r30_list_file.append(current_clip_path_with_ext)
+                elif after_rate == 60 and resolution_standard == self.s2160:
+                    self.s2160r60_list.append(ffmpeg.input(current_clip_path_with_ext))
+                    self.s2160r60_list_file.append(current_clip_path_with_ext)
+                # else:
+                #     self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+
+        self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext,
+                    self.crf_map[self.s720])
+        self.concat(self.s720r60_list, self.s720r60_list_file, self.output_path + self.s720r60_ext,
+                    self.crf_map[self.s720])
+        self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext,
+                    self.crf_map[self.s1080])
+        self.concat(self.s1080r60_list, self.s1080r60_list_file, self.output_path + self.s1080r60_ext,
+                    self.crf_map[self.s1080])
+        self.concat(self.s2160r30_list, self.s2160r30_list_file, self.output_path + self.s2160r30_ext,
+                    self.crf_map[self.s2160])
+        self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext,
+                    self.crf_map[self.s2160])
 
     def clip_init(self):
 
         for clip in os.listdir(self.input_path):
-            temp_origin_clip_path = self.input_path + "\\" + clip
+            temp_origin_clip_path = self.input_path + "/" + clip
             if os.path.isfile(temp_origin_clip_path):
                 # clip_name, clip_extension = os.path.splitext(temp_origin_clip_path)
 
@@ -125,7 +192,7 @@ class ArchiveAssistant(object):
 
                 # 設定唯一id
                 after_name = HSIS.main()
-                current_clip_path = self.input_path + "\\" + after_name + "_clip"
+                current_clip_path = self.input_path + "/" + after_name + "_clip"
 
                 # 首次處理幀率
                 rate_set_list = [
@@ -215,7 +282,7 @@ class ArchiveAssistant(object):
                     self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
 
                 # 最后将源文件移动到archive_path
-                shutil.move(temp_origin_clip_path, self.archive_path + "\\" + clip)
+                shutil.move(temp_origin_clip_path, self.archive_path + "/" + clip)
 
         self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext, self.crf_map[self.s720])
         self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext, self.crf_map[self.s1080])
@@ -224,23 +291,27 @@ class ArchiveAssistant(object):
         self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext, self.crf_map[self.s2160])
 
     def concat(self, clip_list, clip_list_file, output_name, crf):
+        try:
+            if clip_list:
 
-        if clip_list:
+                ffmpeg.concat(
+                    *clip_list
+                ).output(
+                    output_name,
+                    crf=int(crf)
+                ).run(
+                    cmd=self.ffmpeg_path,
+                    capture_stdout=True
+                )
 
-            ffmpeg.concat(
-                *clip_list
-            ).output(
-                output_name,
-                crf=int(crf)
-            ).run(
-                cmd=self.ffmpeg_path,
-                capture_stdout=True
-            )
+                self.tools_handle.assert_file_exist(output_name)
 
-            self.tools_handle.assert_file_exist(output_name)
+                for ikey in clip_list_file:
+                    os.remove(ikey)
 
-            for ikey in clip_list_file:
-                os.remove(ikey)
+        except Exception as e:
+            print(e)
+            return "fail"
 
     '''
     输入：
@@ -292,4 +363,4 @@ class ArchiveAssistant(object):
 
 if __name__ == '__main__':
     aa = ArchiveAssistant()
-    aa.clip_init()
+    aa.clip_classify()
