@@ -29,6 +29,7 @@ class AutoClip(object):
 
 
     def run(self):
+        print("请确保运行前素材已经放置在同一目录下的input文件夹中~\n")
         _file_list = self.file_prepare()
         threshold = input("请输入画面阈值（选择区间[10, 90]，如无输入则默认27.5）：")
         if not threshold:
