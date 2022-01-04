@@ -363,4 +363,4 @@ class ArchiveAssistant(object):
 
 if __name__ == '__main__':
     aa = ArchiveAssistant()
-    aa.clip_classify()
+    aa.clip_init()
