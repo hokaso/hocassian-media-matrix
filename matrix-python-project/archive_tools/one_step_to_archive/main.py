@@ -26,7 +26,7 @@ class ArchiveAssistant(object):
         self.output_path = info["output_path"]
         self.archive_path = info["archive_path"]
         self.ffmpeg_path = info["ffmpeg_path"]
-        self.current_path = "materials/"
+        self.current_path = "archive_tools/one_step_to_archive/materials/"
 
         self.s720 = (1280, 720)
         self.s1080 = (1920, 1080)
