@@ -1,10 +1,10 @@
 .idea
 /files/
-**/nico_config.json
+archive_tools/tools/nico_config.json
 db/config.json
 sync_ytb_video/config.json
 utils/test.py
-archive_tools/archive_config.json
+archive_tools/one_step_to_archive/config/archive_config.json
 auto_distribute/config/lark_config.json
 auto_distribute/config/client_secret.json
 auto_distribute/config/distribute_config.json
@@ -13,6 +13,7 @@ auto_distribute/config/config.json
 material_process/config.json
 cover_generator/config.json
 pretrained_models/
+archive_tools/auto_split_clip_by_scene/input
 key.txt
 **/test.py
 **/test.png

@@ -1,4 +1,4 @@
-import os, cv2, shutil, shlex, subprocess, json, traceback
+import os, shutil, shlex, subprocess, json, traceback
 
 
 # 把所有的视频旋转为更长的那一条边为宽，比较窄的边为高
@@ -6,8 +6,8 @@ class SpinVideo(object):
 
     def __init__(self):
 
-        self.path_input = "./temp_input"
-        self.path_output = "./temp_output"
+        self.path_input = "../temp_input"
+        self.path_output = "../temp_output"
         self.path_complete = "./complete"
 
     def main(self):
@@ -50,11 +50,22 @@ class SpinVideo(object):
                     shutil.move(self.path_input + file, self.path_complete + file)
 
                     # 存在需要二次执行的个体
-                    capture = cv2.VideoCapture(self.path_output + filename + ".mp4")
-                    width = capture.get(3)
-                    height = capture.get(4)
-                    capture.release()
-                    if width <= height:
+                    # 采集原始素材信息
+                    catch_set = f'ffprobe -of json -select_streams v -show_streams "{self.path_output + filename}"'
+                    catch_json = subprocess.run(
+                        shlex.split(catch_set),
+                        capture_output=True,
+                        encoding='utf-8',
+                        errors='ignore'
+                    )
+                    origin_info = json.loads(catch_json.stdout)
+                    if not origin_info['streams'][0]['height']:
+                        print(self.path_output + filename + " is not a valid clip!")
+
+                    origin_height = origin_info['streams'][0]['height']
+                    origin_width = origin_info['streams'][0]['width']
+
+                    if origin_width <= origin_height:
                         sec_spin_set_list = [
                             "ffmpeg -i ",
                             "\"",
@@ -111,11 +122,23 @@ class SpinVideo(object):
         os.rename(filename + "_" + ".mp4", filename + ".mp4")
 
         # 存在需要二次执行的个体
-        capture = cv2.VideoCapture(input_file)
-        width = capture.get(3)
-        height = capture.get(4)
-        capture.release()
-        if width <= height:
+
+        # 采集原始素材信息
+        catch_set = f'ffprobe -of json -select_streams v -show_streams "{input_file}"'
+        catch_json = subprocess.run(
+            shlex.split(catch_set),
+            capture_output=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        origin_info = json.loads(catch_json.stdout)
+        if not origin_info['streams'][0]['height']:
+            print(input_file + " is not a valid clip!")
+
+        origin_height = origin_info['streams'][0]['height']
+        origin_width = origin_info['streams'][0]['width']
+
+        if origin_width <= origin_height:
             sec_spin_set_list = [
                 "ffmpeg -i ",
                 "\"",
@@ -128,6 +151,7 @@ class SpinVideo(object):
                 "\"",
             ]
             sec_spin_set = "".join(sec_spin_set_list)
+            print(sec_spin_set)
             os.system(sec_spin_set)
 
             # 校验文件是否存在

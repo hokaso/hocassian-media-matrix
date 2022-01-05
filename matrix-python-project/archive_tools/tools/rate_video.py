@@ -7,8 +7,8 @@ CRF_VALUE = 20
 class RateVideo(object):
 
     def __init__(self):
-        self.path_input = "./temp_input"
-        self.path_output = "./temp_output"
+        self.path_input = "../temp_input"
+        self.path_output = "../temp_output"
         self.path_complete = "./complete"
 
     def main(self):

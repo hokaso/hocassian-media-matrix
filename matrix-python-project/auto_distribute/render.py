@@ -21,7 +21,8 @@ class Render(object):
     def __init__(self, SERVER_IP):
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
-        self.ffmpeg_path = current + "/prod/matrix-python-project/ffmpeg"
+        # self.ffmpeg_path = current + "/prod/matrix-python-project/ffmpeg"
+        self.ffmpeg_path = "/usr/bin/ffmpeg"
         self.raw_path = current + "/matrix/material/video_clip/raw/"
         self.music_path = current + "/matrix/material/audio_music/"
         self.current_path = "auto_distribute/"
@@ -291,15 +292,7 @@ class Render(object):
             # 替代方法：使用python-ffmpeg的便捷方式来Concat filter（详情见：https://trac.ffmpeg.org/wiki/Concatenate）
             concat_clip_filename = self.current_path + str(instruction_set["flow_id"]) + "_clip_no_audio.mp4"
 
-            ffmpeg.concat(
-                *mat_clip_list
-            ).output(
-                concat_clip_filename
-            ).run(
-                cmd=self.ffmpeg_path,
-                capture_stdout=True
-            )
-
+            self.try_ffmpeg(mat_clip_list, concat_clip_filename)
             self.tools_handle.assert_file_exist(concat_clip_filename)
 
             # 叠加音频轨道，输出最终成片，成片名称示例：1_output.mp4
@@ -363,6 +356,17 @@ class Render(object):
 
             # 需要增加一个飞书通知，告诉用户渲染+分发的流程执行完了
             self.msg_handle.send_finish_msg(write_title, ytb_url)
+
+    def try_ffmpeg(self, mat_clip_list, concat_clip_filename):
+
+        ffmpeg.concat(
+            *mat_clip_list
+        ).output(
+            concat_clip_filename
+        ).run(
+            cmd=self.ffmpeg_path,
+            capture_stdout=True
+        )
 
 if __name__ == '__main__':
     SERVER_IP = '127.0.0.1'
