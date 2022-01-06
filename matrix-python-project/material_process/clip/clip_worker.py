@@ -154,6 +154,8 @@ class ClipWorker(object):
 
                     self.tools_handle.assert_file_exist(self.final_path + after_name + ".mp4")
 
+                    # TODO 有的素材处理完之后尾部会存在帧冻结情况，需要想解决方案处理
+
                     # 确定素材色域，此处必须使用https://johnvansickle.com/ffmpeg/静态编译好的pkg，可以下载到根目录下以./的方式引用
                     if "color_primaries" in origin_info['streams'][0] and origin_info['streams'][0]['color_primaries'] == 'bt2020':
                         import_preview_set_list = [

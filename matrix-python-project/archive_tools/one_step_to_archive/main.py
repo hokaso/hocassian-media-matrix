@@ -284,11 +284,11 @@ class ArchiveAssistant(object):
                 # 最后将源文件移动到archive_path
                 shutil.move(temp_origin_clip_path, self.archive_path + "/" + clip)
 
-        self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext, self.crf_map[self.s720])
-        self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext, self.crf_map[self.s1080])
-        self.concat(self.s1080r60_list, self.s1080r60_list_file, self.output_path + self.s1080r60_ext, self.crf_map[self.s1080])
-        self.concat(self.s2160r30_list, self.s2160r30_list_file, self.output_path + self.s2160r30_ext, self.crf_map[self.s2160])
-        self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext, self.crf_map[self.s2160])
+        # self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext, self.crf_map[self.s720])
+        # self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext, self.crf_map[self.s1080])
+        # self.concat(self.s1080r60_list, self.s1080r60_list_file, self.output_path + self.s1080r60_ext, self.crf_map[self.s1080])
+        # self.concat(self.s2160r30_list, self.s2160r30_list_file, self.output_path + self.s2160r30_ext, self.crf_map[self.s2160])
+        # self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext, self.crf_map[self.s2160])
 
     def concat(self, clip_list, clip_list_file, output_name, crf):
         try:

@@ -105,4 +105,5 @@ class AutoClip(object):
         return file_list
 
 if __name__ == '__main__':
+    print("如果出现错误，请通过「pip install scenedetect[opencv,progress_bar,scenedetect]」安装部分所需要的依赖~")
     AutoClip().run()
