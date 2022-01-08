@@ -16,6 +16,9 @@
       <head-nav v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path"/>
     </el-menu>
     <div class="container__login">
+      <div class="login--tutorial">
+        <a href="https://hocassian.feishu.cn/docs/doccnMQlI9vgr275f7ivTuj9BWb#" target="_blank">使用手册</a>
+      </div>
       <div
         v-if="!loginSuccess"
         @click="openLogin()">
@@ -147,6 +150,10 @@
       background-size: 100% 100%;
     }
 
+    .login--tutorial {
+      padding-right: 30px;
+    }
+
     .popver {
       width: 120px;
       top: 56px;
@@ -159,5 +166,5 @@
     text-align: center;
     cursor: pointer;
   }
-</style>>
+</style>
 
