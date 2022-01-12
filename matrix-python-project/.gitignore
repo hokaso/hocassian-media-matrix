@@ -14,6 +14,7 @@ material_process/config.json
 cover_generator/config.json
 pretrained_models/
 archive_tools/auto_split_clip_by_scene/input
+archive_tools/auto_split_clip_by_scene/output
 key.txt
 **/test.py
 **/test.png
