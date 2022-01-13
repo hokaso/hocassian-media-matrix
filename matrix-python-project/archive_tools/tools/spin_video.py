@@ -132,8 +132,11 @@ class SpinVideo(object):
             errors='ignore'
         )
         origin_info = json.loads(catch_json.stdout)
-        if not origin_info['streams'][0]['height']:
+        print(origin_info)
+        if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
             print(input_file + " is not a valid clip!")
+            is_spin_success = False
+            return is_spin_success
 
         origin_height = origin_info['streams'][0]['height']
         origin_width = origin_info['streams'][0]['width']

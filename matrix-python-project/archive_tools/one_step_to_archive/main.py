@@ -85,7 +85,8 @@ class ArchiveAssistant(object):
                     errors='ignore'
                 )
                 origin_info = json.loads(catch_json.stdout)
-                if not origin_info['streams'][0]['height']:
+                print(origin_info)
+                if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
                     print(temp_origin_clip_path + " is not a valid clip!")
                     continue
 
@@ -154,7 +155,7 @@ class ArchiveAssistant(object):
                     errors='ignore'
                 )
                 origin_info = json.loads(catch_json.stdout)
-                if not origin_info['streams'][0]['height']:
+                if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
                     print(temp_origin_clip_path + " is not a valid clip!")
                     continue
 
@@ -284,12 +285,13 @@ class ArchiveAssistant(object):
                 # 最后将源文件移动到archive_path
                 shutil.move(temp_origin_clip_path, self.archive_path + "/" + clip)
 
-        self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext, self.crf_map[self.s720])
-        self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext, self.crf_map[self.s1080])
-        self.concat(self.s1080r60_list, self.s1080r60_list_file, self.output_path + self.s1080r60_ext, self.crf_map[self.s1080])
-        self.concat(self.s2160r30_list, self.s2160r30_list_file, self.output_path + self.s2160r30_ext, self.crf_map[self.s2160])
-        self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext, self.crf_map[self.s2160])
+        # self.concat(self.s720r30_list, self.s720r30_list_file, self.output_path + self.s720r30_ext, self.crf_map[self.s720])
+        # self.concat(self.s1080r30_list, self.s1080r30_list_file, self.output_path + self.s1080r30_ext, self.crf_map[self.s1080])
+        # self.concat(self.s1080r60_list, self.s1080r60_list_file, self.output_path + self.s1080r60_ext, self.crf_map[self.s1080])
+        # self.concat(self.s2160r30_list, self.s2160r30_list_file, self.output_path + self.s2160r30_ext, self.crf_map[self.s2160])
+        # self.concat(self.s2160r60_list, self.s2160r60_list_file, self.output_path + self.s2160r60_ext, self.crf_map[self.s2160])
 
+    # Tips：每个合集的视频片段大小不应超过8G，否则会造成内存溢出（默认服务器内存为128G）。
     def concat(self, clip_list, clip_list_file, output_name, crf):
         try:
             if clip_list:
@@ -364,3 +366,4 @@ class ArchiveAssistant(object):
 if __name__ == '__main__':
     aa = ArchiveAssistant()
     aa.clip_init()
+    # aa.clip_classify()

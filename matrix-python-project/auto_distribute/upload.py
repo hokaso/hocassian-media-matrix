@@ -5,7 +5,7 @@ from youtube_upload import main
 from bilibiliuploader.bilibiliuploader import BilibiliUploader
 from bilibiliuploader.core import VideoPart
 from db.db_pool_handler import InstantDBPool
-from tenacity import retry, wait_random
+from tenacity import retry, wait_random, stop_after_attempt
 from utils.snow_id import HSIS
 
 
@@ -93,21 +93,25 @@ class Upload(object):
             # 完成YouTube上传
             youtube_id = self.youtube_upload()
 
-            # 修改流程表记录
-            finish_flow_sql = "update flow_distribute set youtube_id = '%s', bilibili_id = '%s', status = '%s' where id = '%s' and status = '%s'" % \
-                              (youtube_id, bilibili_id, "5", flow_id, "4")
-
-            self.db_handle.modify(finish_flow_sql)
-
         except Exception as e:
+            bilibili_id = ""
+            youtube_id = ""
             print(e)
             traceback.print_exc()
-            return
 
+        # 改回环境变量
+        os.environ['http_proxy'] = ""
+        os.environ['https_proxy'] = ""
+
+        # 修改流程表记录
+        finish_flow_sql = "update flow_distribute set youtube_id = '%s', bilibili_id = '%s', status = '%s' where id = '%s' and status = '%s'" % \
+                          (youtube_id, bilibili_id, "5", flow_id, "4")
+
+        self.db_handle.modify(finish_flow_sql)
         ytb_url = WATCH_VIDEO_URL.format(id=youtube_id)
         return self.video_title, self.video_info, ytb_url
 
-    @retry(wait=wait_random(min=360, max=720))
+    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
     def youtube_upload(self):
 
         # 设置环境变量
@@ -147,13 +151,9 @@ class Upload(object):
         else:
             raise AuthenticationError("Cannot get youtube resource")
 
-        # 改回环境变量
-        os.environ['http_proxy'] = ""
-        os.environ['https_proxy'] = ""
-
         return video_id
 
-    @retry(wait=wait_random(min=360, max=720))
+    @retry(wait=wait_random(min=360, max=720), stop=stop_after_attempt(3))
     def bilibili_upload(self):
 
         uploader = BilibiliUploader()
