@@ -23,10 +23,11 @@ bili_opts = {
     'outtmpl': './files/%(title)s-%(id)s.mp4',
 }
 
-video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
+# video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
+video_url = "https://www.youtube.com/watch?v=nZbAA102_g4"
 # channel_url = "https://www.youtube.com/channel/UCf3z3UGPivTyGDeLWNREIJw"
 channel_url = "https://www.youtube.com/c/%E5%90%8C%E5%92%8C%E5%90%9BHocassian/videos"
-choice = "2"
+choice = "1"
 
 
 class EasyDownload(object):
