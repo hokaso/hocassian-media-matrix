@@ -874,7 +874,9 @@ def generator():
                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                             "and record_pic_count != 0 " \
                             "and record_first_title is not null " \
-                            "and record_secord_title is not null limit 1" % \
+                            "and record_secord_title is not null " \
+                            "and record_status != '4' " \
+                            "and record_status != '5' limit 1" % \
                             event_data["employee_id"]
 
                 check = db_handle.search_DB(check_sql)
