@@ -251,7 +251,7 @@
 
 <table>
     <tr>
-        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/history.png"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/history.jpg"/></td>
     </tr>
     <tr>
         <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/certificate/honor_01.jpg"/></td>
