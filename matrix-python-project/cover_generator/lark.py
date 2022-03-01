@@ -726,6 +726,8 @@ app = Flask(__name__, static_folder='', static_url_path='')
 def generator():
     _data = json.loads(request.data)
 
+    print(_data)
+
     if "encrypt" in _data:
         cipher = AESCipher(APP_ENCRYPT_KEY)
         data = json.loads(cipher.decrypt_string(_data["encrypt"]))
