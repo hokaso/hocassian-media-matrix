@@ -20,7 +20,12 @@ class AutoClip(object):
         self.input_dir = './input'
         self.output_dir = 'output'
 
+        self.current_clip_input_path = os.getcwd() + "/" + self.input_dir
         self.current_clip_output_path = os.getcwd() + "/" + self.output_dir
+
+        if not os.path.exists(self.current_clip_input_path):
+            os.makedirs(self.current_clip_input_path)
+
         if not os.path.exists(self.current_clip_output_path):
             os.makedirs(self.current_clip_output_path)
 

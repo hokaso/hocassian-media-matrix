@@ -51,8 +51,10 @@ class Style(object):
         image_ext = ['.jpg', '.png', '.jpeg', '.bmp']
         self.image_list = []
         self.image_count = 0
+        # print(self.image_path)
         for root, dirs, files in os.walk(self.image_path):
             for file in files:
+                # print(file)
                 if os.path.splitext(file)[-1] in image_ext:
                     self.image_count += 1
                     image = Image.open(self.image_path + "/" + file)

@@ -33,7 +33,9 @@
 - 素材矩阵：共享&展示&归档图片、音乐、视频素材
 - 视频矩阵：同步&储存&展示&维权成员视频作品
 - 分发矩阵：生产&分发文章、图片、音乐、视频作品到各大媒体平台
-- 创作矩阵：帮助创作者找到相关领域的合作伙伴&法务諮询&共享商单
+- 创作矩阵：帮助创作者找到相关领域的合作伙伴&法务咨询&共享商单
+
+![](https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/15.jpg)
 
 对于持续发展的新媒体领域，我们相信混合云服务和批量生成内容是未来创作者的主流选择，所以在此与众多合作机构共同推出了这套开源矩阵框架，任何部署了此框架并遵守矩阵守则的主体都可以开设属于自己的新媒体矩阵，根据主体的需求，选择性地加入上述五大子矩阵，优化个人或工作室的创作工作流。
 
@@ -303,6 +305,9 @@
     </tr>
     <tr>
         <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/14.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/16.jpg"/></td>
     </tr>
 </table>
 

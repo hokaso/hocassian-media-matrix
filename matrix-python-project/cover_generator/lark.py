@@ -726,6 +726,8 @@ app = Flask(__name__, static_folder='', static_url_path='')
 def generator():
     _data = json.loads(request.data)
 
+    print(_data)
+
     if "encrypt" in _data:
         cipher = AESCipher(APP_ENCRYPT_KEY)
         data = json.loads(cipher.decrypt_string(_data["encrypt"]))
@@ -874,7 +876,9 @@ def generator():
                             "and record_created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)" \
                             "and record_pic_count != 0 " \
                             "and record_first_title is not null " \
-                            "and record_secord_title is not null limit 1" % \
+                            "and record_secord_title is not null " \
+                            "and record_status != '4' " \
+                            "and record_status != '5' limit 1" % \
                             event_data["employee_id"]
 
                 check = db_handle.search_DB(check_sql)
