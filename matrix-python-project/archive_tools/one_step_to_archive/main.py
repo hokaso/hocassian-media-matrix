@@ -2,7 +2,7 @@
 # 答：将这些视频按多种标准分别合并，比如(,720P]的归档成一个（帧率30），
 # (720P,2160P)归档成两个（帧率30&60），(2160P,)归档成两个（帧率30&60），
 # 如果出现尺寸不符合16:9的，缩放为帧大小，其余地方用白色填补，按照最长边翻转为宽。
-import sys, os, json, shutil, math, shlex, subprocess, ffmpeg
+import sys, os, json, shutil, math, shlex, subprocess, ffmpeg, traceback
 
 sys.path.append(os.getcwd())
 from utils.tools import Tools
@@ -62,12 +62,12 @@ class ArchiveAssistant(object):
         self.s2160r30_list_file = []
         self.s2160r60_list_file = []
 
-        self.s720r30_ext = "s720r30.mp4"
-        self.s720r60_ext = "s720r60.mp4"
-        self.s1080r30_ext = "s1080r30.mp4"
-        self.s1080r60_ext = "s1080r60.mp4"
-        self.s2160r30_ext = "s2160r30.mp4"
-        self.s2160r60_ext = "s2160r60.mp4"
+        self.s720r30_ext = "s720r30"
+        self.s720r60_ext = "s720r60"
+        self.s1080r30_ext = "s1080r30"
+        self.s1080r60_ext = "s1080r60"
+        self.s2160r30_ext = "s2160r30"
+        self.s2160r60_ext = "s2160r60"
 
     def clip_classify(self):
 
@@ -86,8 +86,14 @@ class ArchiveAssistant(object):
                 )
                 origin_info = json.loads(catch_json.stdout)
                 print(origin_info)
-                if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
+                try:
+                    if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
+                        print(temp_origin_clip_path + " is not a valid clip!")
+                        continue
+                except Exception as e:
                     print(temp_origin_clip_path + " is not a valid clip!")
+                    traceback.print_exc()
+                    print(e)
                     continue
 
                 origin_height = origin_info['streams'][0]['height']
@@ -155,6 +161,7 @@ class ArchiveAssistant(object):
                     errors='ignore'
                 )
                 origin_info = json.loads(catch_json.stdout)
+                print(origin_info)
                 if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
                     print(temp_origin_clip_path + " is not a valid clip!")
                     continue
@@ -263,24 +270,24 @@ class ArchiveAssistant(object):
                 # 刪除舊文件並改名
                 os.remove(current_clip_path + "_.mp4")
 
-                current_clip_path_with_ext = current_clip_path + ".mp4"
-                if after_rate == 30 and resolution_standard == self.s720:
-                    self.s720r30_list.append(ffmpeg.input(current_clip_path_with_ext))
-                    self.s720r30_list_file.append(current_clip_path_with_ext)
-                elif after_rate == 30 and resolution_standard == self.s1080:
-                    self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
-                    self.s1080r30_list_file.append(current_clip_path_with_ext)
-                elif after_rate == 60 and resolution_standard == self.s1080:
-                    self.s1080r60_list.append(ffmpeg.input(current_clip_path_with_ext))
-                    self.s1080r60_list_file.append(current_clip_path_with_ext)
-                elif after_rate == 30 and resolution_standard == self.s2160:
-                    self.s2160r30_list.append(ffmpeg.input(current_clip_path_with_ext))
-                    self.s2160r30_list_file.append(current_clip_path_with_ext)
-                elif after_rate == 60 and resolution_standard == self.s2160:
-                    self.s2160r60_list.append(ffmpeg.input(current_clip_path_with_ext))
-                    self.s2160r60_list_file.append(current_clip_path_with_ext)
-                else:
-                    self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                # current_clip_path_with_ext = current_clip_path + ".mp4"
+                # if after_rate == 30 and resolution_standard == self.s720:
+                #     self.s720r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                #     self.s720r30_list_file.append(current_clip_path_with_ext)
+                # elif after_rate == 30 and resolution_standard == self.s1080:
+                #     self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                #     self.s1080r30_list_file.append(current_clip_path_with_ext)
+                # elif after_rate == 60 and resolution_standard == self.s1080:
+                #     self.s1080r60_list.append(ffmpeg.input(current_clip_path_with_ext))
+                #     self.s1080r60_list_file.append(current_clip_path_with_ext)
+                # elif after_rate == 30 and resolution_standard == self.s2160:
+                #     self.s2160r30_list.append(ffmpeg.input(current_clip_path_with_ext))
+                #     self.s2160r30_list_file.append(current_clip_path_with_ext)
+                # elif after_rate == 60 and resolution_standard == self.s2160:
+                #     self.s2160r60_list.append(ffmpeg.input(current_clip_path_with_ext))
+                #     self.s2160r60_list_file.append(current_clip_path_with_ext)
+                # else:
+                #     self.s1080r30_list.append(ffmpeg.input(current_clip_path_with_ext))
 
                 # 最后将源文件移动到archive_path
                 shutil.move(temp_origin_clip_path, self.archive_path + "/" + clip)
@@ -296,24 +303,44 @@ class ArchiveAssistant(object):
         try:
             if clip_list:
 
-                ffmpeg.concat(
-                    *clip_list
-                ).output(
-                    output_name,
-                    crf=int(crf)
-                ).run(
-                    cmd=self.ffmpeg_path,
-                    capture_stdout=True
-                )
+                # 增加分段处理，每100个视频片段应该归为一组
+                cluster_num = len(clip_list) // 100
+                if cluster_num == 0:
+                    self.concat_sku(clip_list, output_name + ".mp4", crf)
 
-                self.tools_handle.assert_file_exist(output_name)
+                for ikey in range(cluster_num):
+                    fin_name = output_name + "-" + str(ikey) + ".mp4"
+                    if ikey == cluster_num:
+                        last_index = len(clip_list) - 1
+                    else:
+                        last_index = ikey*100+99
 
-                for ikey in clip_list_file:
-                    os.remove(ikey)
+                    temp_cluster_list = clip_list[ikey*100:last_index]
+
+                    self.concat_sku(temp_cluster_list, fin_name, crf)
+
+                for d_key in clip_list_file:
+                    os.remove(d_key)
 
         except Exception as e:
+            traceback.print_exc()
             print(e)
             return "fail"
+
+    def concat_sku(self, temp_cluster_list, fin_name, crf):
+
+        ffmpeg.concat(
+            *temp_cluster_list
+        ).output(
+            fin_name,
+            crf=int(crf)
+        ).run(
+            cmd=self.ffmpeg_path,
+            capture_stdout=True
+        )
+
+        self.tools_handle.assert_file_exist(fin_name)
+
 
     '''
     输入：
@@ -362,8 +389,8 @@ class ArchiveAssistant(object):
 
         return tw, th, lw, lh, is_spin, resolution_standard
 
-
+# 使用逻辑，先取消aa.clip_init()的注释，全部素材刷一遍，统一规格，然后取消aa.clip_classify()的注释，把aa.clip_init()注释回去，把错误的挑出来删掉，然后重试；
 if __name__ == '__main__':
     aa = ArchiveAssistant()
     aa.clip_init()
-    # aa.clip_classify()
+    aa.clip_classify()
