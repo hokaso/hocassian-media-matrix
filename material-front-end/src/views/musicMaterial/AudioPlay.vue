@@ -54,8 +54,8 @@
           @click="nextPlay()" />
       </div>
       <div class="list-controls">
+<!--        v-show="getToken() !== '' && getToken() !== undefined"-->
         <svg-icon
-          v-show="getToken() !== '' && getToken() !== undefined"
           icon-class="down"
           class="download"
           @click="download()" />

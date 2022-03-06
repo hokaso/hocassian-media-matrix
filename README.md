@@ -307,7 +307,7 @@
         <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/14.jpg"/></td>
     </tr>
     <tr>
-        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/16.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/showcase/17.png"/></td>
     </tr>
 </table>
 
