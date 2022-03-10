@@ -162,8 +162,14 @@ class ArchiveAssistant(object):
                 )
                 origin_info = json.loads(catch_json.stdout)
                 print(origin_info)
-                if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
+                try:
+                    if origin_info == {} or "streams" not in origin_info or not origin_info['streams'][0]['height']:
+                        print(temp_origin_clip_path + " is not a valid clip!")
+                        continue
+                except Exception as e:
                     print(temp_origin_clip_path + " is not a valid clip!")
+                    traceback.print_exc()
+                    print(e)
                     continue
 
                 origin_height = origin_info['streams'][0]['height']
