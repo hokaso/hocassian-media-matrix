@@ -9,6 +9,7 @@
 <a href="https://github.com/hokaso/hocassian-media-matrix/blob/master/README-zh_tw.md"> 👉🏻繁体中文</a>
 
 <p>
+  <a href="https://hocassian.org">官网</a> •
   <a href="https://hocassian.gitbook.io/matrix">文档</a> •
   <a href="https://youtu.be/64MMjp2V34w">发布会</a> •
   <a href="https://www.bilibili.com/video/BV15o4y1C7tf">如何使用</a> •
