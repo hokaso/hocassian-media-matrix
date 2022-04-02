@@ -2,5 +2,5 @@
   "BILIBILI_ACCOUNT": "",
   "BILIBILI_SECRET": "",
   "MANUSCRIPT_TITLE": "【开源素材/{{adj}}】{{noun}}影像素材",
-  "MANUSCRIPT_INFO": "素材关键词：{{keywords}}\n同和素材矩阵：https://ops.hocassian.com:9002\nCreate At {{datetime}} · The MIT License (MIT)\nCopyright © 2017-2021 · All Rights Reserved · 同和新媒体矩阵"
+  "MANUSCRIPT_INFO": "素材关键词：{{keywords}}\n同和素材矩阵：https://material.hocassian.com\nCreate At {{datetime}} · The MIT License (MIT)\nCopyright © 2017-2022 · All Rights Reserved · 同和新媒体矩阵"
 }
