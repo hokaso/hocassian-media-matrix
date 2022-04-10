@@ -41,7 +41,7 @@
     "babel-polyfill": "^6.26.0",
     "clipboard": "2.0.6",
     "core-js": "3.8.1",
-    "echarts": "latest",
+    "echarts": "^5.3.2",
     "el-table-editabled": "^1.0.27",
     "element-ui": "2.15.0",
     "file-saver": "2.0.4",
@@ -59,12 +59,12 @@
     "vue": "2.6.12",
     "vue-count-to": "1.0.13",
     "vue-cropper": "0.5.5",
-    "vue-router": "3.4.9",
-    "vuedraggable": "2.24.3",
-    "vuex": "3.6.0",
     "vue-image-crop-upload": "^2.5.0",
     "vue-quill-editor": "3.0.6",
-    "vue-splitpane": "1.0.4"
+    "vue-router": "3.4.9",
+    "vue-splitpane": "1.0.4",
+    "vuedraggable": "2.24.3",
+    "vuex": "3.6.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.6",
