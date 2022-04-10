@@ -88,7 +88,8 @@ class Upload(object):
         try:
 
             # 完成bilibili上传
-            bilibili_id = self.bilibili_upload()
+            # bilibili_id = self.bilibili_upload()
+            bilibili_id = ""
 
             # 完成YouTube上传
             youtube_id = self.youtube_upload()
@@ -249,9 +250,9 @@ class Upload(object):
 
 
 if __name__ == '__main__':
-    a = 22
-    b = ["场景", "建筑", "户外", "人", "人体", "男人", "室内", "", "物品", "人物"]
-    c = ["可商用", "10bit", "HLG"]
+    a = 72
+    b = ["场景", "建筑", "户外", "人", "室内", "公共设施", "站", "山", "草", "天花板"]
+    c = ["高清", "60fps", "10bit"]
     up = Upload()
     up.distribute(a, b, c)
     up.fix_records(a, b, c)
