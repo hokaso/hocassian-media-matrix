@@ -6,8 +6,8 @@
           <h3>关于我们</h3>
           <div class="sub-area">
             <h4>组织简介</h4>
-            <div class="text-area">
-              {{ about.aboutInfo }}
+            <div class="text-area" v-html="about.aboutInfo">
+<!--                {{ about.aboutInfo }}-->
             </div>
           </div>
           <div class="sub-area">

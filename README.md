@@ -82,7 +82,82 @@
     </tr>
 </table>
 
-## [介绍PPT](https://www.woodo.cn/mobile/h5/slides/4188690372/)
+## 技术介绍PPT
+
+<table>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/1.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/2.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/3.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/4.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/5.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/6.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/7.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/8.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/9.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/10.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/11.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/12.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/13.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/14.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/15.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/16.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/17.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/18.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/19.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/20.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/21.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/22.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/23.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/24.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/25.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/26.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/27.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/28.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/29.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/30.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/31.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/32.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/33.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/34.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/35.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/36.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/37.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/38.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/39.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/40.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/41.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/42.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/43.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/44.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/45.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/46.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/47.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/48.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/49.jpg"/></td>
+        <td><img src="https://github.com/hokaso/hocassian-media-matrix/blob/master/project-introduction/technology/50.jpg"/></td>
+    </tr>
+</table>
+
+## [业务介绍PPT](https://www.woodo.cn/mobile/h5/slides/4188690372/)
 
 <table>
     <tr>

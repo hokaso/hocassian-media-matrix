@@ -19,7 +19,7 @@
     "@riophae/vue-treeselect": "0.4.0",
     "axios": "0.18.1",
     "babel-polyfill": "^6.26.0",
-    "clipboard": "^2.0.4",
+    "clipboard": "^2.0.10",
     "core-js": "3.6.5",
     "echarts": "4.2.1",
     "el-table-editabled": "^1.0.27",
@@ -39,10 +39,10 @@
     "vue-cropper": "0.4.9",
     "vue-image-crop-upload": "^2.5.0",
     "vue-quill-editor": "3.0.6",
-    "vue-router": "latest",
+    "vue-router": "^3.5.3",
     "vue-splitpane": "1.0.4",
     "vuedraggable": "^2.20.0",
-    "vuex": "3.1.0"
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.4",
