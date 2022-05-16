@@ -104,7 +104,7 @@ class SelectAlgorithmWithDP(object):
             num >>= 1
             i += 1
 
-    def main(self):
+    def main_dp(self):
         # dp[row][status][2]
         # dp[row][status][0] 在1~row层，列占用情况的二进制位status的时候，[0]存放当前最优状态（初始化最大值INF，表示不合法 or 未探索到），[1]存放当前最优状态由上一层的哪个最优状态转移而来（回溯标记）
         dp = [[[self.min_size, -1] for i in range(pow(2, self.column))] for j in range(self.row)]
@@ -119,6 +119,7 @@ class SelectAlgorithmWithDP(object):
             for status in range(pow(2, self.column)):
                 # 查看status二进制每一位的情况
                 for j in range(self.column):
+                    self.count += 1
                     # 当前位为1，说明当前位置被占用了，要考虑是第i行的第j位要不要取用
                     if status & (1 << j) != 0:
                         # 如果取用第i行的第j位的数字能获得更大收益
@@ -178,6 +179,19 @@ class SelectAlgorithmWithDP(object):
         # 返回答案
         return ans, ans_step
 
+    def main(self):
+
+        start = time.perf_counter()
+
+        # 递归入口
+        ans, ans_step = self.main_dp()
+
+        end = time.perf_counter()
+
+        print("总递归次数：" + str(self.count))
+        print("用时:" + str(end - start))
+
+        return ans, ans_step
 
 # 时间复杂度O(n^3)
 class SelectAlgorithmWithKM(object):
@@ -190,7 +204,7 @@ class SelectAlgorithmWithKM(object):
         self.min_size = sys.maxsize
 
     def main(self):
-        # start = time.perf_counter()
+        start = time.perf_counter()
         m = Munkres()
         indexes = m.compute(self.matrix)
         # print_matrix(self.matrix, msg='Lowest cost through this matrix:')
@@ -201,18 +215,18 @@ class SelectAlgorithmWithKM(object):
             total += value
             # print(f'({row}, {column}) -> {value}')
         # print(f'total cost: {total}')
-        # end = time.perf_counter()
-        # print("用时:" + str(end - start))
+        end = time.perf_counter()
+        print("用时:" + str(end - start))
 
         return indexes, total
 
 
 if __name__ == '__main__':
     # 列数（N）
-    row = 1
+    row = 9
 
     # 行数（M）
-    column = 8
+    column = 9
 
     # 随机生成一组测试数据
     matrix = [[random.random() for j in range(column)] for i in range(row)]
@@ -220,8 +234,8 @@ if __name__ == '__main__':
     sa = SelectAlgorithmWithDFS(row, column, matrix)
     print(sa.main())
 
-    # sa = SelectAlgorithmWithDP(row, row, matrix)
-    # print(sa.main())
+    sa = SelectAlgorithmWithDP(row, row, matrix)
+    print(sa.main())
 
     sa = SelectAlgorithmWithKM(matrix)
     print(sa.main())
