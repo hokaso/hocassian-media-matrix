@@ -62,7 +62,7 @@
         <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/580132096660746240.jpg"/></td>
         <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/580133042165919744.jpg"/></td>
         <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/580133855420493824.jpg"/></td>
-        <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/580134859373293568.jpg"/></td>
+        <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/725459916328022016.jpg"/></td>
     </tr>
     <tr>
         <td><img src="https://ops.hocassian.com:9000/prod-api/profile/video_matrix/580135903834681344.jpg"/></td>
