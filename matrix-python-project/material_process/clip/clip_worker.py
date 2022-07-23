@@ -333,8 +333,7 @@ class ClipWorker(object):
                         self.tools_handle.assert_file_exist(self.clip_slot_path + instruction_set["file_path"] + "_" + str(count) + ".jpg")
 
                     # 识别素材图，返回标签（调用隔壁类的方法）
-                    pic_tag_set, pic_mark, pic_meta = self.az.tag_pic(image_url_list)
-                    pic_tag_list = list(pic_tag_set)
+                    pic_tag_list, pic_mark, pic_meta = self.az.tag_pic(image_url_list)
 
                     # 选择中间的那张作为封面图
                     slot_title_set_list = [

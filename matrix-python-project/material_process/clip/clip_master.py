@@ -32,10 +32,10 @@ class ClipMaster(object):
         # self.virtual_host = info["local_dev"]["virtual_host"]
         # self.__dict__ = {**self.__dict__, **info[local_dev]}
 
-        self.ip           = info["local_prod"]["ip"]
-        self.port         = info["local_prod"]["port"]
-        self.account      = info["local_prod"]["account"]
-        self.password     = info["local_prod"]["password"]
+        self.ip = info["local_prod"]["ip"]
+        self.port = info["local_prod"]["port"]
+        self.account = info["local_prod"]["account"]
+        self.password = info["local_prod"]["password"]
         self.virtual_host = info["local_prod"]["virtual_host"]
         # self.__dict__ = {**self.__dict__, **info[local_prod]}
 
@@ -56,7 +56,8 @@ class ClipMaster(object):
         ServerManager.register("get_task_queue", callable=lambda: self.task_queue)
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.server_manager.start()
-        self.video_ext = ["mp4", "mxf", "mov", "mpeg", "mpg", "avi", "flv", "mkv", "ogg", "3gp", "wmv", "h264", "m4v", "webm"]
+        self.video_ext = ["mp4", "mxf", "mov", "mpeg", "mpg", "avi", "flv", "mkv", "ogg", "3gp", "wmv", "h264", "m4v",
+                          "webm"]
 
     @retry(wait=wait_fixed(5))
     def listen(self):
@@ -66,10 +67,10 @@ class ClipMaster(object):
         )
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host         = self.ip,
-                port         = self.port,
-                virtual_host = self.virtual_host,
-                credentials  = credentials
+                host=self.ip,
+                port=self.port,
+                virtual_host=self.virtual_host,
+                credentials=credentials
             )
         )
         channel = connection.channel()
@@ -240,14 +241,16 @@ class ClipMaster(object):
             counting = 0
 
             for ikey in all_prepared_clips:
-
                 counting += 1
                 # 複製原始文件
-                shutil.copyfile(self.final_path + "/raw/" + ikey["material_path"] + ".mp4", current_folder + "/" + ikey["material_path"] + ".mp4")
+                shutil.copyfile(self.final_path + "/raw/" + ikey["material_path"] + ".mp4",
+                                current_folder + "/" + ikey["material_path"] + ".mp4")
                 # 複製代理文件
-                shutil.copyfile(self.final_path + "/preview/" + ikey["material_path"] + ".mp4", current_folder + "/proxies/" + ikey["material_path"] + ".mp4")
+                shutil.copyfile(self.final_path + "/preview/" + ikey["material_path"] + ".mp4",
+                                current_folder + "/proxies/" + ikey["material_path"] + ".mp4")
 
-                reduction_sql = "UPDATE mat_clip set material_status = '0' where material_id = '%s'" % (ikey["material_id"])
+                reduction_sql = "UPDATE mat_clip set material_status = '0' where material_id = '%s'" % (
+                ikey["material_id"])
                 self.db_handle.modify_DB(reduction_sql)
 
             self.task_queue.join()
@@ -257,7 +260,6 @@ class ClipMaster(object):
             duration = "%02d时%02d分%02d秒" % (h, m, s)
             self.redis_handle.delete("translateClip")
             self.output_notice("视频导出完成！", counting, duration)
-
 
 
 if __name__ == '__main__':

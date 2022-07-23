@@ -4,6 +4,8 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.tiia.v20190529 import tiia_client, models
+
+
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 class ClipAnalyze(object):
@@ -45,7 +47,7 @@ class ClipAnalyze(object):
 
                 # 图片打标签
                 params_1 = {
-                    "Scenes": [ "CAMERA" ],
+                    "Scenes": ["CAMERA"],
                     "ImageBase64": image_base64
                 }
                 req_1.from_json_string(json.dumps(params_1))
@@ -76,7 +78,7 @@ class ClipAnalyze(object):
 
         except TencentCloudSDKException as err:
             print(err)
-        return tag_set, round(image_mark/3, 2)
+        return tag_set, round(image_mark / 3, 2)
 
     def azure_pic(self, image_url_list):
         azure_tag_set = set()
@@ -120,8 +122,14 @@ class ClipAnalyze(object):
         # print(image_url_list)
         tag_temp, mark_temp = self.tencent_pic(image_url_list)
         image_tag = all_tag_set.union(tag_temp, self.azure_pic(image_url_list))
-        return image_tag, mark_temp, self.analyze_json
 
+        # 去除image_tag中的空选项
+        image_tags_full = []
+        for ikey in image_tag:
+            if ikey != "":
+                image_tags_full.append(ikey)
+
+        return image_tags_full, mark_temp, self.analyze_json
 
 # if __name__ == '__main__':
 #     image_url_list = ["364037758150123520_cover", "364037758150123520_test"]
