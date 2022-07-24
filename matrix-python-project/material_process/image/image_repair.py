@@ -37,7 +37,7 @@ class ClipRepair(object):
             # 查询该素材的tag是否够格
             image_tags = json.loads(ikey["image_tag"])
 
-            if len(image_tags) < 2:
+            if len(image_tags) < 6:
 
                 # 将list_temp变成一个set
                 set_temp = set(image_tags)

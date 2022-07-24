@@ -1,5 +1,5 @@
 import json, os
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 
 
 ydl_opts = {
@@ -24,7 +24,7 @@ bili_opts = {
 }
 
 # video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
-video_url = "https://www.youtube.com/watch?v=qmaNUK-e1aA&t=32s"
+video_url = "https://www.youtube.com/watch?v=Yi5rJmHtu0c"
 # channel_url = "https://www.youtube.com/channel/UCf3z3UGPivTyGDeLWNREIJw"
 channel_url = "https://www.youtube.com/c/%E5%90%8C%E5%92%8C%E5%90%9BHocassian/videos"
 choice = "1"

@@ -28,7 +28,7 @@ class ClipRepair(object):
     def main(self):
         # 查数据库，看看哪些需要重新打标签
 
-        prepare_sql = "SELECT material_id, material_path, material_tag from mat_clip where material_status = '0'"
+        prepare_sql = "SELECT material_id, material_path, material_tag from mat_clip where material_status = '0' order by material_id desc limit 100"
 
         all_prepared_clips = self.db_handle.search_DB(prepare_sql)
 
@@ -37,7 +37,7 @@ class ClipRepair(object):
             # 查询该素材的tag是否够格
             material_tags = json.loads(ikey["material_tag"])
 
-            if len(material_tags) < 2:
+            if len(material_tags) < 10:
 
                 # 将list_temp变成一个set
                 set_temp = set(material_tags)

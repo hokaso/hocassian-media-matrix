@@ -32,10 +32,10 @@ class GenImg(object):
             re_fg_w = math.ceil(self.standard_1k_h * w / h)
 
         # 把原图放大为背景图
-        back_img_tmp = img.resize((re_bg_w, re_bg_h), Image.ANTIALIAS)
+        back_img_tmp = img.resize((re_bg_w, re_bg_h), Image.Resampling.LANCZOS)
 
         # 把原图处理成前景图
-        img2 = img.resize((re_fg_w, re_fg_h), Image.ANTIALIAS)
+        img2 = img.resize((re_fg_w, re_fg_h), Image.Resampling.LANCZOS)
         bg_point_x = int((re_bg_w - self.standard_1k_w) / 2)
         bg_point_y = int((re_bg_h - self.standard_1k_h) / 2)
 

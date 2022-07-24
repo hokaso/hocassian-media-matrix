@@ -1,4 +1,4 @@
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 import os, sys
 
 sys.path.append(os.getcwd())
