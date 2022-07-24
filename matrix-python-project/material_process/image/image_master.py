@@ -1,4 +1,5 @@
 import sys, os, time, json, shutil, pymysql, pika, requests, traceback
+
 sys.path.append(os.getcwd())
 from db.database_handler import InstantDB
 from db.redis_handler import InstantRedis
@@ -7,6 +8,7 @@ from tenacity import retry, wait_fixed
 from PIL import Image
 from volcengine.imagex.ImageXService import ImageXService
 from material_process.image.image_analyze import AnalyzeImage
+
 
 class ImageMaster(object):
 
@@ -21,10 +23,10 @@ class ImageMaster(object):
         # self.password     = info["local_dev"]["password"]
         # self.virtual_host = info["local_dev"]["virtual_host"]
 
-        self.ip           = info["local_prod"]["ip"]
-        self.port         = info["local_prod"]["port"]
-        self.account      = info["local_prod"]["account"]
-        self.password     = info["local_prod"]["password"]
+        self.ip = info["local_prod"]["ip"]
+        self.port = info["local_prod"]["port"]
+        self.account = info["local_prod"]["account"]
+        self.password = info["local_prod"]["password"]
         self.virtual_host = info["local_prod"]["virtual_host"]
 
         # self.ip           = info["remote_prod"]["ip"]
@@ -33,11 +35,11 @@ class ImageMaster(object):
         # self.password     = info["remote_prod"]["password"]
         # self.virtual_host = info["remote_prod"]["virtual_host"]
 
-        self.app_id     = info["imagex"]["app_id"]
+        self.app_id = info["imagex"]["app_id"]
         self.app_secret = info["imagex"]["app_secret"]
         self.service_id = info["imagex"]["service_id"]
-        self.prefix     = info["imagex"]["prefix"]
-        self.suffix     = info["imagex"]["suffix"]
+        self.prefix = info["imagex"]["prefix"]
+        self.suffix = info["imagex"]["suffix"]
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
         self.db_handle = InstantDB().get_connect()
@@ -205,9 +207,11 @@ class ImageMaster(object):
                     update_sql = "insert into mat_image(image_path, image_note, image_size, image_tag, image_mark, " \
                                  "image_status, image_type, is_copyright, is_show, image_meta) VALUES " \
                                  "('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-                                 (after_name, pymysql.escape_string(file.split('.')[0]), str(origin_width) + "*" + str(origin_height),
-                                 pymysql.escape_string(json.dumps(list(pic_tag_set), ensure_ascii=False)), pic_mark, "0", image_type, "0", "0",
-                                 pymysql.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
+                                 (after_name, pymysql.escape_string(file.split('.')[0]),
+                                  str(origin_width) + "*" + str(origin_height),
+                                  pymysql.escape_string(json.dumps(pic_tag_set, ensure_ascii=False)), pic_mark, "0",
+                                  image_type, "0", "0",
+                                  pymysql.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
                     self.db_handle.modify_DB(update_sql)
 
             end = time.perf_counter()

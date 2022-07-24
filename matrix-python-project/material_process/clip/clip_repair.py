@@ -28,7 +28,7 @@ class ClipRepair(object):
     def main(self):
         # 查数据库，看看哪些需要重新打标签
 
-        prepare_sql = "SELECT material_id, material_path, material_tag from mat_clip where material_status = '0' limit 9000 offset 1000"
+        prepare_sql = "SELECT material_id, material_path, material_tag from mat_clip where material_status = '0'"
 
         all_prepared_clips = self.db_handle.search_DB(prepare_sql)
 
@@ -45,17 +45,14 @@ class ClipRepair(object):
 
                 # 需要重新过一遍处理
                 image_tags, _, _, = self.az.tag_pic(image_url_list)
+                for jkey in image_tags:
+                    set_temp.add(jkey)
 
-                for ukey in image_tags:
-                    if ukey != "":
-                        set_temp.add(ukey)
-
-                list_temp = list(set_temp)
                 print(set_temp)
                 print(ikey["material_path"])
 
                 rewrite_sql = "Update mat_clip set material_tag = '%s' where material_id = %s" % \
-                              (pymysql.escape_string(json.dumps(list_temp, ensure_ascii=False)),
+                              (pymysql.escape_string(json.dumps(list(set_temp), ensure_ascii=False)),
                                ikey["material_id"])
 
                 self.db_handle.modify_DB(rewrite_sql)

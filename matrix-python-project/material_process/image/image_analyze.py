@@ -48,7 +48,7 @@ class AnalyzeImage(object):
                 }
                 req_1.from_json_string(json.dumps(params_1))
                 resp_1 = client.DetectLabel(req_1)
-                print(resp_1)
+                # print(resp_1)
                 if resp_1:
                     image_tag = json.loads(resp_1.to_json_string())
                     if image_tag["CameraLabels"]:
@@ -66,7 +66,7 @@ class AnalyzeImage(object):
                 }
                 req_2.from_json_string(json.dumps(params_2))
                 resp_2 = client.AssessQuality(req_2)
-                print(resp_2)
+                # print(resp_2)
                 if resp_2:
                     image_mark_info = json.loads(resp_2.to_json_string())
                     if "AestheticScore" in image_mark_info and image_mark_info["AestheticScore"]:
@@ -94,7 +94,7 @@ class AnalyzeImage(object):
             try:
                 assert self.auth and self.auth != ""
                 response = requests.request("POST", self.azure_url, headers=headers, data=json.dumps(data), timeout=10)
-                print(response.json())
+                # print(response.json())
                 if response:
                     image_tag = response.json()
                     if image_tag["description"]["tags"]:
@@ -121,7 +121,14 @@ class AnalyzeImage(object):
         # 应该返回三个值：标签、打分、meta
         tag_temp, mark_temp = self.tencent_pic(image_url_list)
         image_tag = all_tag_set.union(tag_temp, self.azure_pic(image_url_list))
-        return image_tag, mark_temp, self.analyze_json
+
+        # 去除image_tag中的空选项
+        image_tags_full = []
+        for ikey in image_tag:
+            if ikey != "":
+                image_tags_full.append(ikey)
+
+        return image_tags_full, mark_temp, self.analyze_json
 
 
 # if __name__ == '__main__':
