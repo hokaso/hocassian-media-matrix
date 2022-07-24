@@ -7,7 +7,8 @@
 ```bash
 # 安装依赖，国内推荐使用淘宝源
 
-# 初次安装： npm install --registry=https://registry.npm.taobao.org --python=python2.7.15 --python2=python2.7.15
+# 初次安装： npm install --registry=https://registry.npm.taobao.org --python=python2.7.15 --python2=python2.7.15 --legacy-peer-d
+eps
 
 npm install --registry=https://registry.npm.taobao.org
 
