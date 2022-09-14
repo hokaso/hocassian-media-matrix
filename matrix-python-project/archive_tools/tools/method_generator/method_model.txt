@@ -1,0 +1,18 @@
+import sys, os, time, json
+
+sys.path.append(os.getcwd())
+
+
+class {method_name}(object):
+
+    def __init__(self):
+        print(self)
+
+    def run(self):
+        print(self)
+        pass
+
+
+if __name__ == "__main__":
+    {method_name_abbr} = {method_name}()
+    {method_name_abbr}.run()

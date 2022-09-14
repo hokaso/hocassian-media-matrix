@@ -1,7 +1,6 @@
 import json, os
 from yt_dlp import YoutubeDL
 
-
 ydl_opts = {
     'writesubtitles': True,
     'subtitlesformat': 'vtt',
@@ -15,6 +14,17 @@ ydl_opts = {
     'writeinfojson': True,
 }
 
+tt_opts = {
+    'writesubtitles': True,
+    'subtitlesformat': 'vtt',
+    'ignoreerrors': True,
+    'recode_video': 'mp4',
+    'nocheckcertificate': True,
+    'outtmpl': './files/%(id)s.mp4',
+    'writethumbnail': True,
+    'writeinfojson': True,
+}
+
 bili_opts = {
     'ignoreerrors': True,
     'recode_video': 'mp4',
@@ -24,10 +34,10 @@ bili_opts = {
 }
 
 # video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
-video_url = "https://www.youtube.com/watch?v=Yi5rJmHtu0c"
+video_url = "https://www.tiktok.com/@letsweight/video/7074640188122746158?is_from_webapp=v1&item_id=7074640188122746158"
 # channel_url = "https://www.youtube.com/channel/UCf3z3UGPivTyGDeLWNREIJw"
 channel_url = "https://www.youtube.com/c/%E5%90%8C%E5%92%8C%E5%90%9BHocassian/videos"
-choice = "1"
+choice = "2"
 
 
 class EasyDownload(object):
@@ -36,6 +46,8 @@ class EasyDownload(object):
 
         if choice == "1":
             opt = ydl_opts
+        elif choice == "2":
+            opt = tt_opts
         else:
             opt = bili_opts
 
