@@ -41,7 +41,13 @@ class GenImg(object):
 
         # 裁切背景图
         back_img_tmp2 = back_img_tmp.crop(
-            [bg_point_x, bg_point_y, bg_point_x + self.standard_1k_w, bg_point_y + self.standard_1k_h])
+            (
+                bg_point_x,
+                bg_point_y,
+                bg_point_x + self.standard_1k_w,
+                bg_point_y + self.standard_1k_h
+            )
+        )
 
         # 模糊背景图
         img = back_img_tmp2.filter(ImageFilter.GaussianBlur(radius=18))
@@ -57,12 +63,13 @@ class GenImg(object):
 
         return bg
 
-
     def run(self):
         for file in os.listdir(self.img_source_path):
-            x = self.thumbnail2cover(self.img_source_path + file)
-            new_pic_name = int(round(time.time() * 1000))
-            x.save(os.path.join(self.img_save_path, str(new_pic_name) + '.jpg'), quality=100)
+            image_ext = ['.jpg', '.png', '.jpeg', '.bmp']
+            if os.path.splitext(file)[-1] in image_ext:
+                x = self.thumbnail2cover(self.img_source_path + file)
+                new_pic_name = int(round(time.time() * 1000))
+                x.save(os.path.join(self.img_save_path, str(new_pic_name) + '.jpg'), quality=100)
 
 
 if __name__ == '__main__':
