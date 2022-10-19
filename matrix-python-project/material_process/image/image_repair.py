@@ -6,7 +6,7 @@ import json, time, os, sys, requests, pymysql
 
 sys.path.append(os.getcwd())
 
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from material_process.image.image_analyze import AnalyzeImage
 
 
@@ -19,7 +19,7 @@ class ClipRepair(object):
 
         # self.__dict__ = {**self.__dict__, **info["local_prod"]}
 
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.az = AnalyzeImage()
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
@@ -30,7 +30,7 @@ class ClipRepair(object):
 
         prepare_sql = "SELECT image_id, image_path, image_tag from mat_image where image_status = '0'"
 
-        all_prepared_images = self.db_handle.search_DB(prepare_sql)
+        all_prepared_images = self.db_handle.search(prepare_sql)
 
         for ikey in all_prepared_images:
 
@@ -55,10 +55,10 @@ class ClipRepair(object):
                 print(ikey["image_path"])
 
                 rewrite_sql = "Update mat_image set image_tag = '%s' where image_id = %s" % \
-                              (pymysql.escape_string(json.dumps(list_temp, ensure_ascii=False)),
+                              (pymysql.converters.escape_string(json.dumps(list_temp, ensure_ascii=False)),
                                ikey["image_id"])
 
-                self.db_handle.modify_DB(rewrite_sql)
+                self.db_handle.modify(rewrite_sql)
 
 
 if __name__ == '__main__':

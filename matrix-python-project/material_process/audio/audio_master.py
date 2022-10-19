@@ -5,7 +5,7 @@ import shlex, subprocess
 from multiprocessing import JoinableQueue
 from multiprocessing.managers import BaseManager
 from utils.snow_id import HSIS
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from db.redis_handler import InstantRedis
 from tenacity import retry, wait_fixed
 from material_process.audio.audio_analzye import AudioAnalyze
@@ -49,7 +49,7 @@ class AudioMaster(object):
         self.tools_handle = Tools()
 
         # 队列相关
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.redis_handle = InstantRedis().get_redis_connect()
         self.task_queue = JoinableQueue()
         ServerManager.register("get_task_queue", callable=lambda: self.task_queue)
@@ -182,10 +182,10 @@ class AudioMaster(object):
                         insert_audio_sql = "INSERT INTO mat_audio(audio_path, audio_name, audio_author, audio_type, " \
                                            "audio_status, audio_emotion, audio_time, is_copyright, is_show, audio_meta) VALUES " \
                                           "('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-                                          (after_name, pymysql.escape_string(audio_name), pymysql.escape_string(audio_author), '0', '2',
-                                           pymysql.escape_string(json.dumps(list(audio_set), ensure_ascii=False)),
-                                           duration, '1', '0', pymysql.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
-                        self.db_handle.modify_DB(insert_audio_sql)
+                                          (after_name, pymysql.converters.escape_string(audio_name), pymysql.converters.escape_string(audio_author), '0', '2',
+                                           pymysql.converters.escape_string(json.dumps(list(audio_set), ensure_ascii=False)),
+                                           duration, '1', '0', pymysql.converters.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
+                        self.db_handle.modify(insert_audio_sql)
 
                         if audio_ext != "mp3":
                             os.remove(self.origin_path + file)
@@ -205,9 +205,9 @@ class AudioMaster(object):
             start = time.perf_counter()
             # 整理
             prepare_sql = "SELECT audio_id, audio_path, audio_time from mat_audio where audio_status = '1' or audio_status = '3'"
-            all_prepared_audios = self.db_handle.search_DB(prepare_sql)
+            all_prepared_audios = self.db_handle.search(prepare_sql)
             update_status_sql = "UPDATE mat_audio set audio_status = '3', is_show = '1' where audio_status = '1'"
-            self.db_handle.modify_DB(update_status_sql)
+            self.db_handle.modify(update_status_sql)
             counting = 0
 
             for ikey in all_prepared_audios:

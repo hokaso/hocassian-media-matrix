@@ -5,12 +5,18 @@ import time, json, pymysql
 from datetime import datetime
 from multiprocessing.managers import BaseManager
 from utils.snow_id import HSIS
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 import shlex, subprocess, traceback
 from tenacity import retry, wait_fixed
 from utils.tools import Tools
 from PIL import Image
 from material_process.clip.clip_analyze import ClipAnalyze
+
+from vidgear.gears.stabilizer import Stabilizer
+from vidgear.gears import CamGear
+from vidgear.gears import WriteGear
+
+from utils.vision_algorithm.obtain_media_meta import video_meta, video_rate_info, video_is_ten_bit, video_is_bt2020, video_meta_info
 
 # SERVER_IP = '127.0.0.1'
 SERVER_PORT = 7968
@@ -38,7 +44,7 @@ class ClipWorker(object):
         ServerManager.register("get_task_queue")
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
         self.task_queue = None
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.az = ClipAnalyze()
         self.info = _info["threads"]
         self.threads = None
@@ -164,7 +170,7 @@ class ClipWorker(object):
                             self.final_path,
                             after_name,
                             ".mp4",
-                            " -vf zscale=matrixin=709:matrix=709,format=rgb24 -crf 28 -s ",
+                            " -bsf:v h264_metadata=colour_primaries=9:transfer_characteristics=18:matrix_coefficients=9 -crf 28 -s ",
                             preview_width,
                             "x",
                             preview_height,
@@ -217,9 +223,9 @@ class ClipWorker(object):
                     insert_clip_sql = "INSERT INTO mat_clip(material_path, material_size, material_time, material_note, material_status, " \
                                       "material_create, material_type, is_copyright, is_show, is_merge, error_info) " \
                                       "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-                                      (after_name, material_size, duration, pymysql.escape_string(instruction_set["file_path"]),
+                                      (after_name, material_size, duration, pymysql.converters.escape_string(instruction_set["file_path"]),
                                        '1', creation_time, material_type, is_copyright, '0', '1', '')
-                    self.db_handle.modify_DB(insert_clip_sql)
+                    self.db_handle.modify(insert_clip_sql)
 
                     # 删除本地文件
                     os.remove(self.origin_path + instruction_set["file_path"])
@@ -268,32 +274,159 @@ class ClipWorker(object):
 
                     self.tools_handle.assert_file_exist(self.raw_path + instruction_set["file_path"] + ".mp4")
 
-                    crop_preview_set_list = [
-                        "./ffmpeg -threads ",
-                        self.threads,
-                        " -ss ",
-                        str(instruction_set["start"]),
-                        " -to ",
-                        str(instruction_set["end"]),
-                        " -i ",
-                        self.preview_path,
-                        instruction_set["file_path"],
-                        ".mp4",
-                        " -c copy ",
-                        self.preview_path,
-                        instruction_set["file_path"],
-                        "_temp.mp4"
-                    ]
-                    crop_preview_set = "".join(crop_preview_set_list)
-                    os.system(crop_preview_set)
+                    if instruction_set["is_stabilizer"] == 1:
 
-                    self.tools_handle.assert_file_exist(self.preview_path + instruction_set["file_path"] + "_temp.mp4")
+                        ikey = self.raw_path + instruction_set["file_path"] + ".mp4"
 
-                    # 删除旧的，将新的改回原名称
-                    os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
-                    os.remove(self.final_path + instruction_set["file_path"] + ".mp4")
-                    os.rename(self.preview_path + instruction_set["file_path"] + "_temp.mp4",
-                              self.preview_path + instruction_set["file_path"] + ".mp4")
+                        # 稳定视频
+                        # border_type: 'black', 'reflect', 'reflect_101', 'replicate' and 'wrap'
+                        # initiate stabilizer object with defined parameters
+                        stab = Stabilizer(
+                            smoothing_radius=35,
+                            crop_n_zoom=True,
+                            border_size=0,
+                            border_type="wrap",
+                            logging=True,
+                        )
+
+                        stream = CamGear(source=ikey).start()
+
+                        output_params = {
+                            "-preset": "medium",
+                            "-clones": []
+                        }
+
+                        # 获取文件meta_info
+                        origin_info = video_meta(ikey)
+                        clip_rate = video_rate_info(origin_info)
+
+                        # 确定帧率
+                        output_params["-input_framerate"] = clip_rate
+                        output_params["-r"] = clip_rate
+
+                        # 预设渲染质量
+                        output_params["-crf"] = 18
+
+                        # 确定色彩深度
+                        if video_is_ten_bit(origin_info):
+                            output_params["-clones"].append("-pix_fmt")
+                            output_params["-clones"].append("yuv422p10le")
+
+                            output_params["-crf"] = 0
+
+                        # 确定色彩范围
+                        if video_is_bt2020(origin_info):
+                            output_params["-clones"].append("-color_primaries")
+                            output_params["-clones"].append("bt2020")
+
+                            output_params["-clones"].append("-bsf:v")
+                            output_params["-clones"].append(
+                                "h264_metadata=colour_primaries=9:transfer_characteristics=18:matrix_coefficients=9")
+
+                            output_params["-crf"] = 0
+
+                        # 开始渲染
+                        writer = WriteGear(
+                            output_filename=self.raw_path + instruction_set["file_path"] + "_temp.mp4",
+                            logging=True,
+                            **output_params,
+                        )
+
+                        while True:
+
+                            frame = stream.read()
+                            if frame is None:
+                                break
+
+                            stabilized_frame = stab.stabilize(frame)
+                            if stabilized_frame is None:
+                                continue
+
+                            writer.write(stabilized_frame)
+
+                        stream.stop()
+                        writer.close()
+                        stab.clean()
+
+                        self.tools_handle.assert_file_exist(self.raw_path + instruction_set["file_path"] + "_temp.mp4")
+
+                        # 删除原始素材
+                        os.remove(self.raw_path + instruction_set["file_path"] + ".mp4")
+
+                        # 重新生成预览视频
+                        os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
+
+                        # 获取当前预览素材参数
+                        preview_width, preview_height, preview_duration, preview_rate = video_meta_info(self.preview_path + instruction_set["file_path"])
+
+                        if "color_primaries" in origin_info['streams'][0] and origin_info['streams'][0]['color_primaries'] == 'bt2020':
+                            import_preview_set_list = [
+                                "./ffmpeg -threads ",
+                                self.threads, " -i ",
+                                self.raw_path,
+                                instruction_set["file_path"],
+                                "_temp.mp4",
+                                " -bsf:v h264_metadata=colour_primaries=9:transfer_characteristics=18:matrix_coefficients=9 -crf 28 -s ",
+                                preview_width,
+                                "x",
+                                preview_height,
+                                " ",
+                                self.preview_path,
+                                instruction_set["file_path"],
+                                ".mp4"
+                            ]
+                            import_preview_set = "".join(import_preview_set_list)
+                        else:
+                            import_preview_set_list = [
+                                "./ffmpeg -threads ",
+                                self.threads, " -i ",
+                                self.raw_path,
+                                instruction_set["file_path"],
+                                "_temp.mp4",
+                                " -crf 28 -s ",
+                                preview_width,
+                                "x",
+                                preview_height,
+                                " ",
+                                self.preview_path,
+                                instruction_set["file_path"],
+                                ".mp4"
+                            ]
+                            import_preview_set = "".join(import_preview_set_list)
+
+                        os.system(import_preview_set)
+
+                        self.tools_handle.assert_file_exist(self.preview_path + instruction_set["file_path"] + ".mp4")
+
+                        # 素材改名
+                        os.rename(self.raw_path + instruction_set["file_path"] + "_temp.mp4", self.raw_path + instruction_set["file_path"] + ".mp4")
+
+                    else:
+                        crop_preview_set_list = [
+                            "./ffmpeg -threads ",
+                            self.threads,
+                            " -ss ",
+                            str(instruction_set["start"]),
+                            " -to ",
+                            str(instruction_set["end"]),
+                            " -i ",
+                            self.preview_path,
+                            instruction_set["file_path"],
+                            ".mp4",
+                            " -c copy ",
+                            self.preview_path,
+                            instruction_set["file_path"],
+                            "_temp.mp4"
+                        ]
+                        crop_preview_set = "".join(crop_preview_set_list)
+                        os.system(crop_preview_set)
+
+                        self.tools_handle.assert_file_exist(self.preview_path + instruction_set["file_path"] + "_temp.mp4")
+
+                        # 删除旧的，将新的改回原名称
+                        os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
+                        os.remove(self.final_path + instruction_set["file_path"] + ".mp4")
+                        os.rename(self.preview_path + instruction_set["file_path"] + "_temp.mp4", self.preview_path + instruction_set["file_path"] + ".mp4")
 
                     # 重新获取修改后的素材信息
                     catch_set = f'./ffprobe -of json -select_streams v -show_streams "{self.preview_path + instruction_set["file_path"] + ".mp4"}"'
@@ -369,10 +502,10 @@ class ClipWorker(object):
                     update_clip_sql = "UPDATE mat_clip set material_time = '%s', material_mark = %s, material_tag = '%s', " \
                                       "material_analyze_meta = '%s', material_status = '%s' where material_id = %s" % \
                                       (duration, pic_mark,
-                                       pymysql.escape_string(json.dumps(pic_tag_list, ensure_ascii=False)),
-                                       pymysql.escape_string(json.dumps(pic_meta, ensure_ascii=False)), "0",
+                                       pymysql.converters.escape_string(json.dumps(pic_tag_list, ensure_ascii=False)),
+                                       pymysql.converters.escape_string(json.dumps(pic_meta, ensure_ascii=False)), "0",
                                        instruction_set["material_id"])
-                    self.db_handle.modify_DB(update_clip_sql)
+                    self.db_handle.modify(update_clip_sql)
 
                     # 删除远程
                     os.remove(self.clip_slot_path + instruction_set["file_path"] + "_cover_temp" + ".jpg")

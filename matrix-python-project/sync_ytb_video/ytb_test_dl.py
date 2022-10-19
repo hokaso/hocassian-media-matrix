@@ -34,10 +34,11 @@ bili_opts = {
 }
 
 # video_url = "https://www.bilibili.com/video/BV1YF41187Hr"
-video_url = "https://www.tiktok.com/@letsweight/video/7074640188122746158?is_from_webapp=v1&item_id=7074640188122746158"
+# video_url = "https://www.tiktok.com/@letsweight/video/7074640188122746158?is_from_webapp=v1&item_id=7074640188122746158"
+video_url = "https://www.youtube.com/watch?v=bGK4zEgGBV0"
 # channel_url = "https://www.youtube.com/channel/UCf3z3UGPivTyGDeLWNREIJw"
 channel_url = "https://www.youtube.com/c/%E5%90%8C%E5%92%8C%E5%90%9BHocassian/videos"
-choice = "2"
+choice = "1"
 
 
 class EasyDownload(object):
@@ -46,8 +47,8 @@ class EasyDownload(object):
 
         if choice == "1":
             opt = ydl_opts
-        elif choice == "2":
-            opt = tt_opts
+        # elif choice == "2":
+        #     opt = tt_opts
         else:
             opt = bili_opts
 

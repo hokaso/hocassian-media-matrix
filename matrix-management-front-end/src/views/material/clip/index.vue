@@ -338,6 +338,16 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="是否稳定" prop="isShow">
+              <el-select v-model="form.isStabilizer" placeholder="请选择是否需要稳定">
+                <el-option
+                  v-for="dict in isStabilizerOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                ></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="是否归档" prop="isMerge">
               <el-select v-model="form.isMerge" disabled placeholder="请选择是否归档">
                 <el-option
@@ -636,6 +646,8 @@
         isMergeOptions: [],
         // 是否上架字典
         isShowOptions: [],
+        // 是否需要稳定
+        isStabilizerOptions: [],
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -672,6 +684,9 @@
       });
       this.getDicts("material_public").then(response => {
         this.isShowOptions = response.data;
+      });
+      this.getDicts("material_need_stable").then(response => {
+        this.isStabilizerOptions = response.data;
       });
     },
     methods: {
@@ -810,6 +825,7 @@
           materialEnd: 0,
           isCopyright: null,
           isShow: null,
+          isStabilizer: null,
           isMerge: null,
           errorInfo: null
         };

@@ -1,7 +1,7 @@
 import sys, os, time, json, shutil, pymysql, pika, requests, traceback
 
 sys.path.append(os.getcwd())
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from db.redis_handler import InstantRedis
 from utils.snow_id import HSIS
 from tenacity import retry, wait_fixed
@@ -42,7 +42,7 @@ class ImageMaster(object):
         self.suffix = info["imagex"]["suffix"]
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.redis_handle = InstantRedis().get_redis_connect()
         # 本地路径
         self.origin_path = current + "/matrix/material/image_temp/"
@@ -207,12 +207,12 @@ class ImageMaster(object):
                     update_sql = "insert into mat_image(image_path, image_note, image_size, image_tag, image_mark, " \
                                  "image_status, image_type, is_copyright, is_show, image_meta) VALUES " \
                                  "('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
-                                 (after_name, pymysql.escape_string(file.split('.')[0]),
+                                 (after_name, pymysql.converters.escape_string(file.split('.')[0]),
                                   str(origin_width) + "*" + str(origin_height),
-                                  pymysql.escape_string(json.dumps(pic_tag_set, ensure_ascii=False)), pic_mark, "0",
+                                  pymysql.converters.escape_string(json.dumps(pic_tag_set, ensure_ascii=False)), pic_mark, "0",
                                   image_type, "0", "0",
-                                  pymysql.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
-                    self.db_handle.modify_DB(update_sql)
+                                  pymysql.converters.escape_string(json.dumps(analyze_json, ensure_ascii=False)))
+                    self.db_handle.modify(update_sql)
 
             end = time.perf_counter()
             mo, so = divmod(round(end - start), 60)

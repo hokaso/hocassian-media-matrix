@@ -19,7 +19,7 @@ class DatabaseHandler(object):
         self.cursor = self.db.cursor()
 
     # 增删改数据库操作
-    def modify_DB(self, sql):
+    def modify(self, sql):
         self.db.ping(reconnect=True)
         try:
             self.cursor.execute(sql)
@@ -32,7 +32,7 @@ class DatabaseHandler(object):
             self.db.rollback()
 
     # 查数据库操作
-    def search_DB(self, sql):
+    def search(self, sql):
         self.db.ping(reconnect=True)
         try:
             self.cursor.execute(sql)

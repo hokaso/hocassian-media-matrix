@@ -6,7 +6,7 @@ import json, time, os, sys, requests, pymysql
 
 sys.path.append(os.getcwd())
 
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from material_process.clip.clip_analyze import ClipAnalyze
 
 
@@ -19,7 +19,7 @@ class ClipRepair(object):
 
         # self.__dict__ = {**self.__dict__, **info["local_prod"]}
 
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.az = ClipAnalyze()
 
         current = os.getcwd().replace("/prod/matrix-python-project", "")
@@ -30,7 +30,7 @@ class ClipRepair(object):
 
         prepare_sql = "SELECT material_id, material_path, material_tag from mat_clip where material_status = '0' order by material_id desc limit 100"
 
-        all_prepared_clips = self.db_handle.search_DB(prepare_sql)
+        all_prepared_clips = self.db_handle.search(prepare_sql)
 
         for ikey in all_prepared_clips:
 
@@ -52,10 +52,10 @@ class ClipRepair(object):
                 print(ikey["material_path"])
 
                 rewrite_sql = "Update mat_clip set material_tag = '%s' where material_id = %s" % \
-                              (pymysql.escape_string(json.dumps(list(set_temp), ensure_ascii=False)),
+                              (pymysql.converters.escape_string(json.dumps(list(set_temp), ensure_ascii=False)),
                                ikey["material_id"])
 
-                self.db_handle.modify_DB(rewrite_sql)
+                self.db_handle.modify(rewrite_sql)
 
 
 if __name__ == '__main__':

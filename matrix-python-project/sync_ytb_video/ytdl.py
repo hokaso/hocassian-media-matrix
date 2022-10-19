@@ -78,21 +78,21 @@ class VideoDownload(object):
                             else:
                                 video_status = "-1"
 
-                            video_ytb_id = pymysql.escape_string(i["id"])
+                            video_ytb_id = pymysql.converters.escape_string(i["id"])
                         else:
                             continue
                     else:
                         continue
                     if "webpage_url" in i:
-                        video_url = pymysql.escape_string(i["webpage_url"])
+                        video_url = pymysql.converters.escape_string(i["webpage_url"])
                     else:
                         continue
                     if "title" in i:
-                        video_title = pymysql.escape_string(i["title"])
+                        video_title = pymysql.converters.escape_string(i["title"])
                     else:
                         video_title = ""
                     if "description" in i:
-                        video_profile = pymysql.escape_string(i["description"])
+                        video_profile = pymysql.converters.escape_string(i["description"])
                     else:
                         video_profile = ""
                     if "upload_date" in i:
@@ -105,13 +105,13 @@ class VideoDownload(object):
                     if "categories" in i and "tags" in i:
                         if i["categories"] is not None and i["tags"] is not None:
                             _video_class = i["categories"] + i["tags"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
                         elif i["categories"] is None and i["tags"] is not None:
                             _video_class = i["tags"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
                         elif i["categories"] is not None and i["tags"] is None:
                             _video_class = i["categories"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
 
                     if video_status == "2":
 
@@ -188,7 +188,7 @@ class VideoDownload(object):
                             os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
 
             if sub_list:
-                sub_list_fin = pymysql.escape_string(json.dumps(sub_list, ensure_ascii=False))
+                sub_list_fin = pymysql.converters.escape_string(json.dumps(sub_list, ensure_ascii=False))
             else:
                 sub_list_fin = ""
 

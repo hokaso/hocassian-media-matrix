@@ -15,7 +15,7 @@ class Main(object):
         self.test_title = "测试文案试测试"
         # 副标题限定11字
         self.test_secord_title = "测试副标题测试副标题测"
-        # self.db_handle = InstantDB().get_conncet()
+        # self.db_handle = InstantDBPool().get_conncet()
 
     def run_test(self):
         Style("0").run()

@@ -4,7 +4,7 @@ import pika, json, time, os, sys, requests, traceback, shutil
 sys.path.append(os.getcwd())
 from multiprocessing import JoinableQueue
 from multiprocessing.managers import BaseManager
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from db.redis_handler import InstantRedis
 from tenacity import retry, wait_fixed
 
@@ -50,7 +50,7 @@ class ClipMaster(object):
         self.send_url = info["send_url"]
         self.origin_path = current + "/matrix/material/video_clip_temp"
         self.final_path = current + "/matrix/material/video_clip"
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.redis_handle = InstantRedis().get_redis_connect()
         self.task_queue = JoinableQueue()
         ServerManager.register("get_task_queue", callable=lambda: self.task_queue)
@@ -167,6 +167,11 @@ class ClipMaster(object):
         print(body.decode())
         raw_msg = json.loads(body.decode())
 
+        # TODO
+        #  这里以后如果要上分布式架构，必须给我重构！写的什么玩意，直接调用worker就完事了，所谓task_queue消息队列的功能直接用for循环堵塞解决；
+        #  不知道自己当时是不是有什么大病，要写这么复杂……python原生消息队列能不用就不用，稳定性极差；
+        #  血压上来了……
+
         if raw_msg["optional_id"] == 1:
             start = time.perf_counter()
             counting = 0
@@ -196,11 +201,11 @@ class ClipMaster(object):
         elif raw_msg["optional_id"] == 2:
             start = time.perf_counter()
             # 整理
-            prepare_sql = "SELECT material_id, material_path, material_type, material_start, material_end from mat_clip " \
+            prepare_sql = "SELECT material_id, material_path, material_type, material_start, material_end, is_stabilizer from mat_clip " \
                           "where material_status = '3' or material_status = '2'"
-            all_prepared_clips = self.db_handle.search_DB(prepare_sql)
+            all_prepared_clips = self.db_handle.search(prepare_sql)
             update_status_sql = "UPDATE mat_clip set material_status = '2' where material_status = '3'"
-            self.db_handle.modify_DB(update_status_sql)
+            self.db_handle.modify(update_status_sql)
             counting = 0
             for ikey in all_prepared_clips:
                 counting += 1
@@ -210,6 +215,7 @@ class ClipMaster(object):
                     "material_type": ikey["material_type"],
                     "start": ikey["material_start"],
                     "end": ikey["material_end"],
+                    "is_stabilizer": ikey["is_stabilizer"],
                     "op": 2
                 }
                 self.task_queue.put(instruction_set)
@@ -227,7 +233,7 @@ class ClipMaster(object):
             start = time.perf_counter()
             prepare_sql = "SELECT material_id, material_path from mat_clip " \
                           "where material_status = '4'"
-            all_prepared_clips = self.db_handle.search_DB(prepare_sql)
+            all_prepared_clips = self.db_handle.search(prepare_sql)
 
             if not os.path.exists(self.final_path + "/output"):
                 os.makedirs(self.final_path + "/output")
@@ -251,7 +257,7 @@ class ClipMaster(object):
 
                 reduction_sql = "UPDATE mat_clip set material_status = '0' where material_id = '%s'" % (
                 ikey["material_id"])
-                self.db_handle.modify_DB(reduction_sql)
+                self.db_handle.modify(reduction_sql)
 
             self.task_queue.join()
             end = time.perf_counter()
