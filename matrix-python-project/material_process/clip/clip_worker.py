@@ -221,10 +221,10 @@ class ClipWorker(object):
 
                     # 录入数据
                     insert_clip_sql = "INSERT INTO mat_clip(material_path, material_size, material_time, material_note, material_status, " \
-                                      "material_create, material_type, is_copyright, is_show, is_merge, error_info) " \
-                                      "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
+                                      "material_create, material_type, is_copyright, is_show, is_stabilizer, is_merge, error_info) " \
+                                      "VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
                                       (after_name, material_size, duration, pymysql.converters.escape_string(instruction_set["file_path"]),
-                                       '1', creation_time, material_type, is_copyright, '0', '1', '')
+                                       '1', creation_time, material_type, is_copyright, '0', '0', '1', '')
                     self.db_handle.modify(insert_clip_sql)
 
                     # 删除本地文件
@@ -274,7 +274,7 @@ class ClipWorker(object):
 
                     self.tools_handle.assert_file_exist(self.raw_path + instruction_set["file_path"] + ".mp4")
 
-                    if instruction_set["is_stabilizer"] == 1:
+                    if instruction_set["is_stabilizer"] == "1":
 
                         ikey = self.raw_path + instruction_set["file_path"] + ".mp4"
 
@@ -353,11 +353,11 @@ class ClipWorker(object):
                         # 删除原始素材
                         os.remove(self.raw_path + instruction_set["file_path"] + ".mp4")
 
+                        # 获取当前预览素材参数
+                        preview_width, preview_height, preview_duration, preview_rate = video_meta_info(self.preview_path + instruction_set["file_path"] + ".mp4")
+
                         # 重新生成预览视频
                         os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
-
-                        # 获取当前预览素材参数
-                        preview_width, preview_height, preview_duration, preview_rate = video_meta_info(self.preview_path + instruction_set["file_path"])
 
                         if "color_primaries" in origin_info['streams'][0] and origin_info['streams'][0]['color_primaries'] == 'bt2020':
                             import_preview_set_list = [
@@ -367,9 +367,9 @@ class ClipWorker(object):
                                 instruction_set["file_path"],
                                 "_temp.mp4",
                                 " -bsf:v h264_metadata=colour_primaries=9:transfer_characteristics=18:matrix_coefficients=9 -crf 28 -s ",
-                                preview_width,
+                                str(preview_width),
                                 "x",
-                                preview_height,
+                                str(preview_height),
                                 " ",
                                 self.preview_path,
                                 instruction_set["file_path"],
@@ -384,9 +384,9 @@ class ClipWorker(object):
                                 instruction_set["file_path"],
                                 "_temp.mp4",
                                 " -crf 28 -s ",
-                                preview_width,
+                                str(preview_width),
                                 "x",
-                                preview_height,
+                                str(preview_height),
                                 " ",
                                 self.preview_path,
                                 instruction_set["file_path"],
@@ -425,9 +425,9 @@ class ClipWorker(object):
 
                         # 删除旧的，将新的改回原名称
                         os.remove(self.preview_path + instruction_set["file_path"] + ".mp4")
-                        os.remove(self.final_path + instruction_set["file_path"] + ".mp4")
                         os.rename(self.preview_path + instruction_set["file_path"] + "_temp.mp4", self.preview_path + instruction_set["file_path"] + ".mp4")
 
+                    os.remove(self.final_path + instruction_set["file_path"] + ".mp4")
                     # 重新获取修改后的素材信息
                     catch_set = f'./ffprobe -of json -select_streams v -show_streams "{self.preview_path + instruction_set["file_path"] + ".mp4"}"'
                     catch_json = subprocess.run(shlex.split(catch_set), capture_output=True, encoding='utf-8',

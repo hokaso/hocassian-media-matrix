@@ -57,6 +57,16 @@ class ClipRepair(object):
 
                 self.db_handle.modify(rewrite_sql)
 
+    def stabilizer(self):
+
+        # TODO 把所有需要稳定的视频全部重新处理一遍
+        pass
+
+    def color_repair(self):
+
+        # TODO 把所有bt2020的预览视频全部矫正那三个值
+        pass
+
 
 if __name__ == '__main__':
     clip_repair = ClipRepair()

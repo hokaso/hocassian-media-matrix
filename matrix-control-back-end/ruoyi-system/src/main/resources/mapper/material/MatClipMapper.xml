@@ -40,6 +40,7 @@
                is_copyright,
                is_show,
                is_merge,
+               is_stabilizer,
                error_info
         from mat_clip
     </sql>

@@ -338,7 +338,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="是否稳定" prop="isShow">
+            <el-form-item label="是否稳定" prop="isStabilizer">
               <el-select v-model="form.isStabilizer" placeholder="请选择是否需要稳定">
                 <el-option
                   v-for="dict in isStabilizerOptions"
