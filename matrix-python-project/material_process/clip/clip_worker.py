@@ -298,11 +298,6 @@ class ClipWorker(object):
 
                         # 获取文件meta_info
                         origin_info = video_meta(ikey)
-                        clip_rate = video_rate_info(origin_info)
-
-                        # 确定帧率
-                        output_params["-input_framerate"] = clip_rate
-                        output_params["-r"] = clip_rate
 
                         # 预设渲染质量
                         output_params["-crf"] = 18

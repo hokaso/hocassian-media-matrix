@@ -7,6 +7,7 @@ from PIL import Image
 from utils.snow_id import HSIS
 from tenacity import retry, wait_random
 import json, pymysql, time, traceback, shutil
+import emoji
 
 
 class VideoDownload(object):
@@ -29,7 +30,8 @@ class VideoDownload(object):
             'nocheckcertificate': True,
             "proxy": info["ydl_opts"]["proxy"],
             "outtmpl": info["ydl_opts"]["outtmpl"],
-            "cookies": info["ydl_opts"]["cookies"]
+            "cookies": info["ydl_opts"]["cookies"],
+            "--skip-download": ""
         }
 
         self.file_path = info["file_path"]
@@ -39,7 +41,8 @@ class VideoDownload(object):
 
     def run(self):
 
-        os.system("sudo pip3 install --upgrade youtube-dl")
+        # os.system("sudo pip3 install --upgrade youtube-dl")
+        os.system("sudo pip3 install --upgrade yt_dlp")
 
         uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
 
@@ -88,11 +91,11 @@ class VideoDownload(object):
                     else:
                         continue
                     if "title" in i:
-                        video_title = pymysql.converters.escape_string(i["title"])
+                        video_title = emoji.demojize(pymysql.converters.escape_string(i["title"]))
                     else:
                         video_title = ""
                     if "description" in i:
-                        video_profile = pymysql.converters.escape_string(i["description"])
+                        video_profile = emoji.demojize(pymysql.converters.escape_string(i["description"]))
                     else:
                         video_profile = ""
                     if "upload_date" in i:
