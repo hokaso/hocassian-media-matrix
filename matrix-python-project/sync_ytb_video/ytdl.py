@@ -1,4 +1,4 @@
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 import os, sys
 
 sys.path.append(os.getcwd())
@@ -7,6 +7,7 @@ from PIL import Image
 from utils.snow_id import HSIS
 from tenacity import retry, wait_random
 import json, pymysql, time, traceback, shutil
+import emoji
 
 
 class VideoDownload(object):
@@ -29,7 +30,8 @@ class VideoDownload(object):
             'nocheckcertificate': True,
             "proxy": info["ydl_opts"]["proxy"],
             "outtmpl": info["ydl_opts"]["outtmpl"],
-            "cookies": info["ydl_opts"]["cookies"]
+            "cookies": info["ydl_opts"]["cookies"],
+            "--skip-download": ""
         }
 
         self.file_path = info["file_path"]
@@ -39,7 +41,8 @@ class VideoDownload(object):
 
     def run(self):
 
-        os.system("sudo pip3 install --upgrade youtube-dl")
+        # os.system("sudo pip3 install --upgrade youtube-dl")
+        os.system("sudo pip3 install --upgrade yt_dlp")
 
         uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
 
@@ -78,21 +81,21 @@ class VideoDownload(object):
                             else:
                                 video_status = "-1"
 
-                            video_ytb_id = pymysql.escape_string(i["id"])
+                            video_ytb_id = pymysql.converters.escape_string(i["id"])
                         else:
                             continue
                     else:
                         continue
                     if "webpage_url" in i:
-                        video_url = pymysql.escape_string(i["webpage_url"])
+                        video_url = pymysql.converters.escape_string(i["webpage_url"])
                     else:
                         continue
                     if "title" in i:
-                        video_title = pymysql.escape_string(i["title"])
+                        video_title = emoji.demojize(pymysql.converters.escape_string(i["title"]))
                     else:
                         video_title = ""
                     if "description" in i:
-                        video_profile = pymysql.escape_string(i["description"])
+                        video_profile = emoji.demojize(pymysql.converters.escape_string(i["description"]))
                     else:
                         video_profile = ""
                     if "upload_date" in i:
@@ -105,13 +108,13 @@ class VideoDownload(object):
                     if "categories" in i and "tags" in i:
                         if i["categories"] is not None and i["tags"] is not None:
                             _video_class = i["categories"] + i["tags"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
                         elif i["categories"] is None and i["tags"] is not None:
                             _video_class = i["tags"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
                         elif i["categories"] is not None and i["tags"] is None:
                             _video_class = i["categories"]
-                            video_class = pymysql.escape_string(json.dumps(_video_class, ensure_ascii=False))
+                            video_class = pymysql.converters.escape_string(json.dumps(_video_class, ensure_ascii=False))
 
                     if video_status == "2":
 
@@ -141,68 +144,75 @@ class VideoDownload(object):
     @retry(wait=wait_random(min=3600, max=7200))
     def video_dl(self):
 
-        ydlk = YoutubeDL(self.ydl_opts)
-        ydlk.add_default_info_extractors()
-        dl_sql = "select video_ytb_id, video_url from bus_video where video_pic IS NULL or video_pic ='' ORDER BY RAND()"
-        dl_url = self.db_handle.search(dl_sql)
+        try:
 
-        for t in dl_url:
-            ydlk.extract_info(t["video_url"], download=True)
-            after_name = HSIS.main()
+            ydlk = YoutubeDL(self.ydl_opts)
+            ydlk.add_default_info_extractors()
+            dl_sql = "select video_ytb_id, video_url from bus_video where video_pic IS NULL or video_pic ='' ORDER BY RAND()"
+            dl_url = self.db_handle.search(dl_sql)
 
-            # 重命名视频
-            os.rename(self.file_path_temp + t["video_ytb_id"] + ".mp4", self.file_path_temp + after_name + ".mp4")
-            os.rename(self.file_path_temp + t["video_ytb_id"] + ".info.json", self.file_path_temp + after_name + ".json")
+            for t in dl_url:
+                ydlk.extract_info(t["video_url"], download=True)
+                after_name = HSIS.main()
 
-            # 重命名图片
-            if os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".jpg"):
-                os.rename(self.file_path_temp + t["video_ytb_id"] + ".jpg", self.file_path_temp + after_name + ".jpg")
-            elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".webp"):
-                target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".webp")
-                target = target.convert('RGB')
-                target.save(self.file_path_temp + after_name + ".jpg", quality=100)
-                os.remove(self.file_path_temp + t["video_ytb_id"] + ".webp")
-            elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".png"):
-                target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".png")
-                target = target.convert('RGB')
-                target.save(self.file_path_temp + after_name + ".jpg", quality=100)
-                os.remove(self.file_path_temp + t["video_ytb_id"] + ".png")
-            else:
-                after_name = "undefined"
+                # 重命名视频
+                os.rename(self.file_path_temp + t["video_ytb_id"] + ".mp4", self.file_path_temp + after_name + ".mp4")
+                os.rename(self.file_path_temp + t["video_ytb_id"] + ".info.json", self.file_path_temp + after_name + ".json")
 
-            # 如有字幕，重命名字幕
-            has_sub = "0"
-            sub_list = []
-            for root, dirs, files in os.walk(self.file_path_temp):
-                # 遍历所有文件
-                for file in files:
-                    if file.endswith('.vtt'):
-                        has_sub = "1"
-                        sub_name = file.split(".")
-                        # 下表为1的值表示字幕语言（例如：zh-Hant）
-                        if sub_name[1] == "vtt":
-                            # 表示默认语言，直接vtt即可
-                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + ".vtt")
-                        else:
-                            sub_list.append(sub_name[1])
-                            os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
+                # 重命名图片
+                if os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".jpg"):
+                    os.rename(self.file_path_temp + t["video_ytb_id"] + ".jpg", self.file_path_temp + after_name + ".jpg")
+                elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".webp"):
+                    target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".webp")
+                    target = target.convert('RGB')
+                    target.save(self.file_path_temp + after_name + ".jpg", quality=100)
+                    os.remove(self.file_path_temp + t["video_ytb_id"] + ".webp")
+                elif os.path.isfile(self.file_path_temp + t["video_ytb_id"] + ".png"):
+                    target = Image.open(self.file_path_temp + t["video_ytb_id"] + ".png")
+                    target = target.convert('RGB')
+                    target.save(self.file_path_temp + after_name + ".jpg", quality=100)
+                    os.remove(self.file_path_temp + t["video_ytb_id"] + ".png")
+                else:
+                    after_name = "undefined"
 
-            if sub_list:
-                sub_list_fin = pymysql.escape_string(json.dumps(sub_list, ensure_ascii=False))
-            else:
-                sub_list_fin = ""
+                # 如有字幕，重命名字幕
+                has_sub = "0"
+                sub_list = []
+                for root, dirs, files in os.walk(self.file_path_temp):
+                    # 遍历所有文件
+                    for file in files:
+                        if file.endswith('.vtt'):
+                            has_sub = "1"
+                            sub_name = file.split(".")
+                            # 下表为1的值表示字幕语言（例如：zh-Hant）
+                            if sub_name[1] == "vtt":
+                                # 表示默认语言，直接vtt即可
+                                os.rename(self.file_path_temp + file, self.file_path_temp + after_name + ".vtt")
+                            else:
+                                sub_list.append(sub_name[1])
+                                os.rename(self.file_path_temp + file, self.file_path_temp + after_name + "-" + sub_name[1] + ".vtt")
 
-            # 把所有文件移动到主文件夹下
-            temp_files = os.listdir(self.file_path_temp)
-            for file in temp_files:
-                shutil.move(self.file_path_temp + file, self.file_path)
+                if sub_list:
+                    sub_list_fin = pymysql.converters.escape_string(json.dumps(sub_list, ensure_ascii=False))
+                else:
+                    sub_list_fin = ""
 
-            update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s', video_has_subtitle = '%s', video_sub_list = '%s' where video_ytb_id = '%s'" % \
-                               (after_name + ".mp4", after_name + ".json", after_name + ".jpg", "0", "1", has_sub, sub_list_fin, t["video_ytb_id"])
-            self.db_handle.modify(update_video_sql)
+                # 把所有文件移动到主文件夹下
+                temp_files = os.listdir(self.file_path_temp)
+                for file in temp_files:
+                    shutil.copy(self.file_path_temp + file, self.file_path)
+                    os.remove(self.file_path_temp + file)
+
+                update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s', video_has_subtitle = '%s', video_sub_list = '%s' where video_ytb_id = '%s'" % \
+                                   (after_name + ".mp4", after_name + ".json", after_name + ".jpg", "0", "1", has_sub, sub_list_fin, t["video_ytb_id"])
+                self.db_handle.modify(update_video_sql)
+
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
 
 
 if __name__ == '__main__':
     video_download = VideoDownload()
-    video_download.run()
-    # video_download.video_dl()
+    # video_download.run()
+    video_download.video_dl()

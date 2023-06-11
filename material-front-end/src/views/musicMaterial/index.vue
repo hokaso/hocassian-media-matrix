@@ -29,9 +29,10 @@
       :showCopyRight="getToken() !== '' && getToken() !== undefined"
       @handleCurrentChange="handleCurrentChange"
       @getPlayListIndex="getPlayListIndex" />
+    <!--      :playList="initMusicList.length > 0 ? initMusicList : musicList"-->
     <AudioPlay
       v-if="canPlay"
-      :playList="initMusicList.length > 0 ? initMusicList : musicList"
+      :playList="musicList"
       :currentIndex.sync="currentIndex"
       :isAccompany="isAccompany" />
   </div>

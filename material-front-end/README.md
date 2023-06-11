@@ -6,6 +6,10 @@
 
 ``` bash
 # install dependencies
+
+# 初次安装： npm install --registry=https://registry.npm.taobao.org --python=python2.7.15 --python2=python2.7.15 --legacy-peer-d
+eps
+
 npm install --registry=https://registry.npm.taobao.org
 
 # serve with hot reload at localhost:8080

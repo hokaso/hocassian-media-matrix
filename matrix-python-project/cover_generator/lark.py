@@ -6,7 +6,7 @@ from gevent import pywsgi
 
 sys.path.append(os.getcwd())
 from utils.snow_id import HSIS
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from cover_generator.main import Main
 
 with open("cover_generator/config.json", 'r') as f0:
@@ -650,7 +650,7 @@ def save_pic(record_id, open_id, pic_key, handler):
 
     # 当超过16张的时候直接返回（16张图片时提示无法继续输入）
     select_count_sql = "select record_pic_count from gen_pic where record_id = '%s'" % record_id
-    rsg = handler.search_DB(select_count_sql)
+    rsg = handler.search(select_count_sql)
     if rsg[0]["record_pic_count"] >= 16:
         return send_out_of_msg(open_id)
 
@@ -688,7 +688,7 @@ def save_pic(record_id, open_id, pic_key, handler):
 
     # 改变库中图片张数
     count_sql = "update gen_pic set record_pic_count=record_pic_count+'1' where record_id = '%s'" % record_id
-    handler.modify_DB(count_sql)
+    handler.modify(count_sql)
 
     # 发送消息提示用户上传了几张图片
     send_pic_count_msg(open_id, rsg[0]["record_pic_count"] + 1)
@@ -780,7 +780,7 @@ def generator():
             print("unknown msg_type =", event_data)
             return send_tip_msg(open_id)
 
-        db_handle = InstantDB().get_connect()
+        db_handle = InstantDBPool().get_connect()
 
         # 如果输入为文字，进行文字相关的操作
         if event_data["msg_type"] == "text":
@@ -794,7 +794,7 @@ def generator():
                                  "and record_status in ('1', '2', '3') limit 1" % \
                                  event_data["employee_id"]
 
-                    if db_handle.search_DB(search_sql):
+                    if db_handle.search(search_sql):
                         db_handle.db_close()
                         return send_repeat_msg(open_id)
 
@@ -804,7 +804,7 @@ def generator():
                     create_sql = "INSERT INTO gen_pic(record_pic_count, record_created_by, record_created_at, record_status, record_changes) VALUES" \
                                  "('%s', '%s', '%s', '%s', '%s')" % \
                                  (0, record_created_by, record_created_at, "1", 5)
-                    db_handle.modify_DB(create_sql)
+                    db_handle.modify(create_sql)
 
                 except Exception as e:
 
@@ -823,7 +823,7 @@ def generator():
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
-                record = db_handle.search_DB(search_sql)
+                record = db_handle.search(search_sql)
 
                 if not record:
                     db_handle.db_close()
@@ -831,7 +831,7 @@ def generator():
 
                 # 更新状态
                 update_first_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (2, record[0]["record_id"])
-                db_handle.modify_DB(update_first_sql)
+                db_handle.modify(update_first_sql)
 
                 return send_first_msg(open_id)
 
@@ -843,7 +843,7 @@ def generator():
                              "and record_status in ('1', '2', '3') limit 1" % \
                              event_data["employee_id"]
 
-                record = db_handle.search_DB(search_sql)
+                record = db_handle.search(search_sql)
 
                 if not record:
                     db_handle.db_close()
@@ -851,7 +851,7 @@ def generator():
 
                 # 更新状态
                 update_secord_sql = "update gen_pic set record_status = '%s' where record_id = '%s'" % (3, record[0]["record_id"])
-                db_handle.modify_DB(update_secord_sql)
+                db_handle.modify(update_secord_sql)
 
                 _return = send_secord_msg(open_id)
 
@@ -863,7 +863,7 @@ def generator():
                              "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
-                record = db_handle.search_DB(search_sql)
+                record = db_handle.search(search_sql)
 
                 # print(record)
 
@@ -881,7 +881,7 @@ def generator():
                             "and record_status != '5' limit 1" % \
                             event_data["employee_id"]
 
-                check = db_handle.search_DB(check_sql)
+                check = db_handle.search(check_sql)
 
                 if not check:
                     db_handle.db_close()
@@ -915,7 +915,7 @@ def generator():
 
                     # 改变生成次数
                     count_sql = "update gen_pic set record_changes=record_changes-'1' where record_id = '%s'" % check[0]["record_id"]
-                    db_handle.modify_DB(count_sql)
+                    db_handle.modify(count_sql)
 
                 except Exception as e:
 
@@ -932,7 +932,7 @@ def generator():
                              "and record_status in ('2', '3')" % \
                              event_data["employee_id"]
 
-                record = db_handle.search_DB(search_sql)
+                record = db_handle.search(search_sql)
 
                 if not record:
                     db_handle.db_close()
@@ -940,7 +940,7 @@ def generator():
 
                 # 清除当前用户的所有未完成的流程
                 update_secord_sql = "update gen_pic set record_status = '%s' where record_status in ('1', '2', '3') and record_created_by = '%s'" % (5, event_data["employee_id"])
-                db_handle.modify_DB(update_secord_sql)
+                db_handle.modify(update_secord_sql)
 
                 # 删除用户数据
                 for ikey in record:
@@ -957,7 +957,7 @@ def generator():
                              "and record_status in ('2', '3') limit 1" % \
                              event_data["employee_id"]
 
-                record = db_handle.search_DB(search_sql)
+                record = db_handle.search(search_sql)
 
                 if not record:
 
@@ -969,14 +969,14 @@ def generator():
                     if record[0]["record_status"] == '2':
 
                         update_first_sql = "update gen_pic set record_first_title = '%s' where record_id = '%s'" % (event_data["text"][:7], record[0]["record_id"])
-                        db_handle.modify_DB(update_first_sql)
+                        db_handle.modify(update_first_sql)
                         _return = send_first_note_msg(open_id, event_data["text"][:7])
 
 
                     else:
 
                         update_secord_sql = "update gen_pic set record_secord_title = '%s' where record_id = '%s'" % (event_data["text"][:11], record[0]["record_id"])
-                        db_handle.modify_DB(update_secord_sql)
+                        db_handle.modify(update_secord_sql)
                         _return = send_secord_note_msg(open_id, event_data["text"][:11])
 
         # 如果输入的是图片，首先查找当前用户是否在10分钟之内创建过记录，如果创建过就并入之前创建的记录，没有创建直接返回提示（先输入1开始流程）
@@ -987,7 +987,7 @@ def generator():
                          "and record_status in ('1', '2', '3') limit 1" % \
                          event_data["employee_id"]
 
-            record = db_handle.search_DB(search_sql)
+            record = db_handle.search(search_sql)
 
             if not record:
                 return send_init_msg(open_id)

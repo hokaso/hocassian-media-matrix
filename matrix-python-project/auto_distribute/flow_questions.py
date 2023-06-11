@@ -137,9 +137,9 @@ def cover_generator(instruction_set):
 
         # 素材列表、素材时长、素材关键字存入数据库（此处不需要考虑幂等问题）
         save_sql = "update flow_distribute set mat_list = '%s', duration = '%s', keywords = '%s', adj_keywords = '%s' where id = '%s'" % \
-                   (pymysql.escape_string(json.dumps(render_clips_list, cls=DecimalEncoder, ensure_ascii=False)), duration_counter,
-                    pymysql.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)),
-                    pymysql.escape_string(json.dumps(adj_keywords, ensure_ascii=False)), instruction_set["flow_id"])
+                   (pymysql.converters.escape_string(json.dumps(render_clips_list, cls=DecimalEncoder, ensure_ascii=False)), duration_counter,
+                    pymysql.converters.escape_string(json.dumps(fin_keywords_list, ensure_ascii=False)),
+                    pymysql.converters.escape_string(json.dumps(adj_keywords, ensure_ascii=False)), instruction_set["flow_id"])
 
         db_handle.modify(save_sql)
 

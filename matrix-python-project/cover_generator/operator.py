@@ -1,19 +1,19 @@
 import schedule, time, sys, os, shutil
 sys.path.append(os.getcwd())
 
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 
 
 class Operator(object):
 
     def __init__(self):
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
 
     def main(self):
 
         # 每天清除一次
         pick_sql = "select record_id from gen_pic where record_status in ('1', '2', '3') and record_created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)"
-        rsg = self.db_handle.search_DB(pick_sql)
+        rsg = self.db_handle.search(pick_sql)
         id_list = [i["record_id"] for i in rsg]
 
         print(id_list)
@@ -29,7 +29,7 @@ class Operator(object):
                 print(e)
 
             update_sql = "update gen_pic set record_status = '4' where record_id = '%s'" % ikey
-            self.db_handle.modify_DB(update_sql)
+            self.db_handle.modify(update_sql)
 
 if __name__ == '__main__':
     p = Operator().main

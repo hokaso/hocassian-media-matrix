@@ -4,7 +4,7 @@
       v-if="!isMobile && listTemp"
       :interval="5000"
       type="card"
-      height="400px"
+      height="22vw"
       style="padding: 40px 0 10px 0;"
     >
       <el-carousel-item v-for="(row, i) in listTemp" :key="i">

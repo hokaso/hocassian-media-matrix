@@ -13,7 +13,6 @@ def add_to_16(value):
 
 # 加密方法
 def encrypt():
-
     with open("../key.txt", 'r') as f:
         key = f.readline()
 
@@ -32,6 +31,7 @@ def encrypt():
 
         with open(ikey + ".en", 'w') as f1:
             f1.write(encrypted_text)
+
 
 if __name__ == '__main__':
     encrypt()

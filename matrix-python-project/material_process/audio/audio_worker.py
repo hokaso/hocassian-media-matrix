@@ -2,7 +2,7 @@ import requests, time, sys, os, time, json, pymysql, traceback, shutil
 
 sys.path.append(os.getcwd())
 from multiprocessing.managers import BaseManager
-from db.database_handler import InstantDB
+from db.db_pool_handler import InstantDBPool
 from tenacity import retry, wait_fixed
 from utils.tools import Tools
 
@@ -23,7 +23,7 @@ class AudioWorker(object):
         ServerManager.register("get_task_queue")
         self.tools_handle = Tools()
         self.server_manager = ServerManager(address=(SERVER_IP, SERVER_PORT), authkey=b'0')
-        self.db_handle = InstantDB().get_connect()
+        self.db_handle = InstantDBPool().get_connect()
         self.local_path = current + "/matrix/material/audio_music/"
         self.off_vocal_url = current + "/matrix/material/audio_music/audio_off_vocal/"
         self.task_queue = None
@@ -48,7 +48,7 @@ class AudioWorker(object):
                     self.optional(instruction_set["file_path"])
                     update_sql = "UPDATE mat_audio set audio_status = '0', is_show = '1' where audio_id = '%s'" % \
                                  instruction_set["audio_id"]
-                    self.db_handle.modify_DB(update_sql)
+                    self.db_handle.modify(update_sql)
                     os.remove(instruction_set["file_path"])
 
             except Exception as e:
