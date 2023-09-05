@@ -214,5 +214,5 @@ class VideoDownload(object):
 
 if __name__ == '__main__':
     video_download = VideoDownload()
-    # video_download.run()
-    video_download.video_dl()
+    video_download.run()
+    # video_download.video_dl()
