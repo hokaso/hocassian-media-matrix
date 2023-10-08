@@ -39,10 +39,15 @@ class VideoDownload(object):
         if not os.path.exists(self.file_path_temp):
             os.makedirs(self.file_path_temp)
 
+        # temp_files = os.listdir(self.file_path_temp)
+        # for file in temp_files:
+        #     shutil.copyfile(self.file_path_temp + file, self.file_path + file)
+        #     os.remove(self.file_path_temp + file)
+
     def run(self):
 
         # os.system("sudo pip3 install --upgrade youtube-dl")
-        os.system("sudo pip3 install --upgrade yt_dlp")
+        os.system("pip install --upgrade yt_dlp")
 
         uncatch_channel_sql = "SELECT channel_id, channel_url from bus_channel"
 
@@ -71,6 +76,9 @@ class VideoDownload(object):
                     json.dump(info, fp)
                 with open("full_info.json", 'r') as f0:
                     info = json.load(f0)
+
+                if not info or "entries" not in info:
+                    continue
 
                 for i in info["entries"]:
 
@@ -152,7 +160,10 @@ class VideoDownload(object):
             dl_url = self.db_handle.search(dl_sql)
 
             for t in dl_url:
-                ydlk.extract_info(t["video_url"], download=True)
+
+                while not os.path.exists(self.file_path_temp + t["video_ytb_id"] + ".mp4"):
+                    ydlk.extract_info(t["video_url"], download=True)
+
                 after_name = HSIS.main()
 
                 # 重命名视频
@@ -200,7 +211,9 @@ class VideoDownload(object):
                 # 把所有文件移动到主文件夹下
                 temp_files = os.listdir(self.file_path_temp)
                 for file in temp_files:
-                    shutil.copy(self.file_path_temp + file, self.file_path)
+                    if os.path.basename(file)[0] == ".":
+                        continue
+                    shutil.copyfile(self.file_path_temp + file, self.file_path + file)
                     os.remove(self.file_path_temp + file)
 
                 update_video_sql = "update bus_video set video_path = '%s', video_json = '%s', video_pic = '%s', video_status = '%s', video_is_huge = '%s', video_has_subtitle = '%s', video_sub_list = '%s' where video_ytb_id = '%s'" % \
