@@ -13,12 +13,13 @@ from scenedetect.stats_manager import StatsManager
 # For content-aware scene detection:
 from scenedetect.detectors.content_detector import ContentDetector
 
+
 class AutoClip(object):
 
     def __init__(self):
 
-        self.input_dir = './input'
-        self.output_dir = 'output'
+        self.input_dir = 'temp_input'
+        self.output_dir = 'temp_output'
 
         self.current_clip_input_path = os.getcwd() + "/" + self.input_dir
         self.current_clip_output_path = os.getcwd() + "/" + self.output_dir
@@ -32,21 +33,31 @@ class AutoClip(object):
         self.threshold_default = 27.5
         self.crf_default = 20
 
-
     def run(self):
         print("请确保运行前素材已经放置在同一目录下的input文件夹中~\n")
         _file_list = self.file_prepare()
-        threshold = input("请输入画面阈值（选择区间[10, 90]，如无输入则默认27.5）：")
+        # threshold = input("请输入画面阈值（选择区间[10, 90]，如无输入则默认27.5）：")
+        threshold = 10
         if not threshold:
             threshold = self.threshold_default
 
-        crf = input("请输入crf值（选择区间[1, 51]，如无输入则默认20）：")
+        # crf = input("请输入crf值（选择区间[1, 51]，如无输入则默认20）：")
+        crf = 20
         if not crf:
             crf = self.crf_default
 
         for key in _file_list:
             scenes = self.find_scenes(key, threshold)
             print(scenes)
+            new_scenes = []
+
+            for ikey in scenes:
+                dur = ikey[1].get_seconds() - ikey[0].get_seconds()
+                if dur >= 5:
+                    new_scenes.append(ikey)
+
+            print(new_scenes)
+
             file_path, full_name = os.path.split(key)
             f_name, ext = os.path.splitext(full_name)
             split_video_ffmpeg(
@@ -108,6 +119,7 @@ class AutoClip(object):
         for root, dirs, files in os.walk(self.input_dir):
             file_list = [self.input_dir + "/" + i for i in files]
         return file_list
+
 
 if __name__ == '__main__':
     print("如果出现错误，请通过「pip install scenedetect[opencv,progress_bar,scenedetect]」安装部分所需要的依赖~")

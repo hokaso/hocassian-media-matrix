@@ -80,7 +80,7 @@ class Lark(object):
         try:
             rsp_body = requests.post(url, headers=headers, data=json.dumps(body))
         except Exception as e:
-            print(e.read().decode())
+            print(e)
             return "fail"
 
         # rsp_body = response.read().decode('utf-8')
@@ -109,7 +109,7 @@ class Lark(object):
         try:
             rsp_body = requests.post(url, headers=headers, data=json.dumps(body))
         except Exception as e:
-            print(e.read().decode())
+            print(e)
             return "fail"
 
         # rsp_body = response.read().decode('utf-8')

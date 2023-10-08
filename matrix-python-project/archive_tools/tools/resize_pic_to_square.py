@@ -4,6 +4,7 @@ sys.path.append(os.getcwd())
 
 from PIL import Image
 
+
 class PicResize(object):
 
     def __init__(self, max_line):
@@ -49,21 +50,21 @@ class PicResize(object):
                         plus = self.max_line / new_long_side
                         new_width = self.max_line
                         new_height = round(plus * new_height)
-                        target = target.resize((new_width, new_height), Image.ANTIALIAS)
+                        target = target.resize((new_width, new_height), Image.Resampling.LANCZOS)
                 else:
                     new_long_side = new_height
                     if new_long_side > self.max_line:
                         plus = self.max_line / new_long_side
                         new_width = round(plus * new_width)
                         new_height = self.max_line
-                        target = target.resize((new_width, new_height), Image.ANTIALIAS)
+                        target = target.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # 不用叠了，但高度超标
             elif self.image.height > self.max_line:
                 plus = self.max_line / self.image.height
                 new_width = round(plus * self.image.width)
                 new_height = self.max_line
-                target = image.resize((new_width, new_height), Image.ANTIALIAS)
+                target = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # 一切符合标准
             else:
@@ -99,21 +100,21 @@ class PicResize(object):
                         plus = self.max_line / new_long_side
                         new_width = self.max_line
                         new_height = round(plus * new_height)
-                        target = target.resize((new_width, new_height), Image.ANTIALIAS)
+                        target = target.resize((new_width, new_height), Image.Resampling.LANCZOS)
                 else:
                     new_long_side = new_height
                     if new_long_side > self.max_line:
                         plus = self.max_line / new_long_side
                         new_width = round(plus * new_width)
                         new_height = self.max_line
-                        target = target.resize((new_width, new_height), Image.ANTIALIAS)
+                        target = target.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # 不用叠了，但宽度超标
             elif self.image.height > self.max_line:
                 plus = self.max_line / self.image.height
                 new_width = round(plus * self.image.width)
                 new_height = self.max_line
-                target = image.resize((new_width, new_height), Image.ANTIALIAS)
+                target = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
             # 一切符合标准
             else:
@@ -123,21 +124,20 @@ class PicResize(object):
 
         # 若超出4MB，压缩图像；其中4*1024*1024 = 4194304
         _quality = 90
-        while os.path.getsize(new_name)>4194304:
+        while os.path.getsize(new_name) > 4194304:
             _quality = _quality - 10
             # emmmm……
             if _quality == 0:
                 return False
-            target.save(new_name, quality = _quality)
+            target.save(new_name, quality=_quality)
 
         return os.path.getsize(new_name)
-
 
     def run(self):
         for file in os.listdir(self.img_source_path):
             new_pic_name = int(round(time.time() * 1000))
-            _ = self.resize2square(self.img_source_path + file, os.path.join(self.img_save_path, str(new_pic_name) + '.jpg'))
-
+            _ = self.resize2square(self.img_source_path + file,
+                                   os.path.join(self.img_save_path, str(new_pic_name) + '.jpg'))
 
 
 if __name__ == '__main__':

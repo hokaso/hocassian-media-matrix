@@ -113,6 +113,8 @@ public class MatClip extends BaseEntity {
 
     private String orderbyMark;
 
+    private String isStabilizer;
+
     public void setMaterialId(Long materialId) {
         this.materialId = materialId;
     }
@@ -233,6 +235,14 @@ public class MatClip extends BaseEntity {
         return isMerge;
     }
 
+    public void setIsStabilizer(String isStabilizer) {
+        this.isStabilizer = isStabilizer;
+    }
+
+    public String getIsStabilizer() {
+        return isStabilizer;
+    }
+
     public void setErrorInfo(String errorInfo) {
         this.errorInfo = errorInfo;
     }
@@ -267,6 +277,7 @@ public class MatClip extends BaseEntity {
                 .append("isCopyright", getIsCopyright())
                 .append("isShow", getIsShow())
                 .append("isMerge", getIsMerge())
+                .append("isStabilizer", getIsStabilizer())
                 .append("errorInfo", getErrorInfo())
                 .append("orderbyMark", getOrderbyMark())
                 .toString();

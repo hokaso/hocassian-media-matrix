@@ -35,8 +35,8 @@ class AudioTagMakeUp(object):
 
             # 录入数据
             update_audio_sql = "UPDATE mat_audio set audio_emotion = '%s', audio_meta = '%s' where audio_path = '%s'" % \
-                               (pymysql.escape_string(json.dumps(list(audio_set), ensure_ascii=False)),
-                                pymysql.escape_string(json.dumps(analyze_json, ensure_ascii=False)),
+                               (pymysql.converters.escape_string(json.dumps(list(audio_set), ensure_ascii=False)),
+                                pymysql.converters.escape_string(json.dumps(analyze_json, ensure_ascii=False)),
                                 ikey["audio_path"])
 
             self.db_handle.modify(update_audio_sql)
